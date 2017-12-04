@@ -8,13 +8,13 @@
         <version>0.1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>fika-cli</artifactId>
-    <packaging>jar</packaging>
+    <artifactId>fika-distribution</artifactId>
+    <packaging>pom</packaging>
 
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>fika-core</artifactId>
+            <artifactId>fika-cli</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -28,15 +28,22 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>io.github.leadpony.fika.cli.Launcher</mainClass>
-                            <addClasspath>true</addClasspath>    
-                        </manifest>    
-                    </archive>
-                </configuration>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>assemble</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/assembly/distribution.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

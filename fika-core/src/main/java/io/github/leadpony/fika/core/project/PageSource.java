@@ -13,10 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.leadpony.fika.core.project;
+
+import java.nio.file.Path;
 
 /**
- * Provides document builders.
- *
  * @author leadpony
  */
-package io.github.leadpony.fika.core.builders;
+public interface PageSource {
+
+    Path path();
+    
+    String mediaType();
+}

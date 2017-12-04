@@ -23,9 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import io.github.leadpony.fika.api.parser.Parser;
-import io.github.leadpony.fika.api.parser.ParserFactory;
-import io.github.leadpony.fika.api.project.PageSource;
+import io.github.leadpony.fika.base.parser.Parser;
+import io.github.leadpony.fika.base.parser.ParserFactory;
+import io.github.leadpony.fika.core.project.PageSource;
 
 /**
  * @author leadpony

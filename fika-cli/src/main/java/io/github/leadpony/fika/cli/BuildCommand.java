@@ -20,7 +20,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import io.github.leadpony.fika.api.builders.Builder;
+import io.github.leadpony.fika.core.builders.Builder;
 
 /**
  *

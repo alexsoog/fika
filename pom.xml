@@ -14,10 +14,11 @@
     </properties>
 
     <modules>
-        <module>fika-api</module>
+        <module>fika-base</module>
         <module>fika-core</module>
         <module>fika-cli</module>
         <module>fika-parser-markdown</module>
+        <module>fika-distribution</module>
     </modules>
 
     <build>
@@ -48,7 +49,7 @@
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>2.10.4</version>
                     <configuration>
-                       <locale>en_US</locale>
+                        <locale>en_US</locale>
                     </configuration>
                 </plugin>
                 <plugin>

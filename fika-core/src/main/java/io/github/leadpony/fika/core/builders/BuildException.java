@@ -13,10 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.leadpony.fika.core.builders;
 
 /**
- * Provides document builders.
- *
  * @author leadpony
  */
-package io.github.leadpony.fika.core.builders;
+@SuppressWarnings("serial")
+public class BuildException extends RuntimeException {
+
+    public BuildException(String message) {
+        super(message);
+    }
+}

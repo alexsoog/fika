@@ -17,8 +17,7 @@ package io.github.leadpony.fika.core.builders;
 
 import java.nio.file.Path;
 
-import io.github.leadpony.fika.api.builders.Builder;
-import io.github.leadpony.fika.api.project.Project;
+import io.github.leadpony.fika.core.project.Project;
 
 /**
  * @author leadpony

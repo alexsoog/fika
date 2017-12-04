@@ -26,7 +26,7 @@ import org.yaml.snakeyaml.Yaml;
  * @author leadpony
  *
  */
-public class ProjectParser {
+class ProjectParser {
     
     private final Object root;
     private final ProjectParseListener listener;

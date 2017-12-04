@@ -19,10 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.leadpony.fika.api.project.NavigationItem;
-import io.github.leadpony.fika.api.project.PageSource;
-
-public class NavigationGroup extends AbstractNavigationItem {
+class NavigationGroup extends AbstractNavigationItem {
    
     private List<NavigationItem> children;
     

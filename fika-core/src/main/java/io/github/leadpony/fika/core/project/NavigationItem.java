@@ -15,33 +15,37 @@
  */
 package io.github.leadpony.fika.core.project;
 
-import java.nio.file.Path;
-
-import io.github.leadpony.fika.core.common.MediaTypeRegistry;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 /**
+ * An item in the navigation list.
+ * 
  * @author leadpony
  */
-class BasicPageSource implements PageSource {
+public interface NavigationItem extends Iterable<NavigationItem> {
     
-    private final Path path;
+    Optional<String> label();
     
-    public BasicPageSource(Path path) {
-        this.path = path;
-    }
-
+    Optional<PageSource> pageSource();
+    
+    NavigationItem parentItem();
+    
+    /**
+     * Returns the children of this item.
+     * 
+     * @return the list of the children.
+     */
+    List<NavigationItem> children();
+    
+    /**
+     * Returns an iterator over child items.
+     * 
+     * @return an iterator over child items.
+     */
     @Override
-    public Path path() {
-        return path;
-    }
-    
-    @Override
-    public String mediaType() {
-        return MediaTypeRegistry.get().guessMediaType(path());
-    }
-    
-    @Override
-    public String toString() {
-        return path.toString();
+    default Iterator<NavigationItem> iterator() {
+        return children().iterator();
     }
 }

@@ -13,40 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.leadpony.fika.core.builders;
 
-package io.github.leadpony.fika.cli;
-
-import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
 
 import io.github.leadpony.fika.core.project.Project;
 
 /**
- *
+ * Document builder.
+ * 
+ * @author leadpony
  */
-public abstract class Command {
+public interface Builder {
 
-    private static final Path DEFAULT_PATH = Paths.get("fika.yml");
+    static final String HTML = "html";
+    static final String SINGLE_HTML = "singlehtml";
+    
+    static Builder newBuilder(String type) {
+        if (type == null) {
+            throw new NullPointerException("type must not be null.");
+        }
+        Builder builder = null;
+        switch (type) {
+        case "html":
+            builder = new HtmlBuilder();
+            break;
+        }
+        return builder;
+    }
 
-    private Path path = DEFAULT_PATH;
-    protected Project project;
+    void setTargetDirectory(Path path);
     
-    protected Command() {
-    }
+    void setProperty(String name, Object value);
     
-    public void prepare(List<String> options) {
-    }
-    
-    public void execute() throws Exception {
-        this.project = loadProject();
-        run();
-    }
-    
-    abstract protected void run() throws Exception;
-    
-    private Project loadProject() throws IOException {
-        return Project.loadFrom(this.path);
-    }
+    void build(Project project);
 }

@@ -17,8 +17,6 @@ package io.github.leadpony.fika.core.project;
 
 import java.util.Optional;
 
-import io.github.leadpony.fika.api.project.NavigationItem;
-
 abstract class AbstractNavigationItem implements NavigationItem {
     
     private final Optional<String> label;

@@ -15,8 +15,8 @@
  */
 
 /**
- * Provides document builders.
- *
+ * Provides the parser interface for page sources.
+ * 
  * @author leadpony
  */
-package io.github.leadpony.fika.core.builders;
+package io.github.leadpony.fika.base.parser;

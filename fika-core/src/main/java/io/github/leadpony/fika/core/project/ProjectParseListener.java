@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * @author leadpony
  */
-public interface ProjectParseListener {
+interface ProjectParseListener {
 
     default void title(String value) {
     }

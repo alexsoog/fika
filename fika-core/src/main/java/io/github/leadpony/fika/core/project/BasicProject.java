@@ -23,14 +23,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import io.github.leadpony.fika.api.project.NavigationItem;
-import io.github.leadpony.fika.api.project.PageSource;
-import io.github.leadpony.fika.api.project.Project;
-
 /**
  *
  */
-public class BasicProject implements Project {
+class BasicProject implements Project {
     
     private static final Path DEFAULT_SOURCE_DIRECTORY = Paths.get("docs");
     

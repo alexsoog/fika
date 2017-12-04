@@ -23,9 +23,6 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
 
-import io.github.leadpony.fika.api.project.NavigationItem;
-import io.github.leadpony.fika.api.project.Project;
-
 /**
  * @author leadpony
  */

@@ -17,8 +17,8 @@ package io.github.leadpony.fika.parsers.markdown;
 
 import java.io.InputStream;
 
-import io.github.leadpony.fika.api.parser.Parser;
-import io.github.leadpony.fika.api.parser.ParserFactory;
+import io.github.leadpony.fika.base.parser.Parser;
+import io.github.leadpony.fika.base.parser.ParserFactory;
 
 /**
  * @author leadpony

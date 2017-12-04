@@ -13,10 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.leadpony.fika.base.parser;
+
+import java.io.InputStream;
 
 /**
- * Provides document builders.
- *
  * @author leadpony
+ *
  */
-package io.github.leadpony.fika.core.builders;
+public interface ParserFactory {
+    
+    static ParserFactory newInstance(String mediaType) {
+        ParserFactoryService service = ParserFactoryService.findService(mediaType);
+        if (service != null) {
+            return service.newFactory(mediaType);
+        }
+        return null;
+    }
+    
+    Parser newParser(InputStream stream);
+}
