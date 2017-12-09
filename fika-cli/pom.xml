@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>fika-core</artifactId>
+            <artifactId>fika-publication</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

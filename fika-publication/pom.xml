@@ -8,9 +8,22 @@
         <version>0.1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>fika-core</artifactId>
+    <artifactId>fika-publication</artifactId>
     <packaging>jar</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>fika-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.19</version>
+        </dependency>
+    </dependencies>
+    
     <build>
         <plugins>
             <plugin>
@@ -19,9 +32,16 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Automatic-Module-Name>io.github.leadpony.fika.core</Automatic-Module-Name>
+                            <Automatic-Module-Name>io.github.leadpony.fika.publication</Automatic-Module-Name>
                         </manifestEntries>
                     </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <excludePackageNames>io.github.leadpony.fika.publication.common</excludePackageNames>
                 </configuration>
             </plugin>
         </plugins>

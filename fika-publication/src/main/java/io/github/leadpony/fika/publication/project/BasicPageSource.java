@@ -13,27 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown;
+package io.github.leadpony.fika.publication.project;
 
-import java.io.InputStream;
-import java.util.logging.Logger;
+import java.nio.file.Path;
 
-import io.github.leadpony.fika.core.parser.Parser;
+import io.github.leadpony.fika.publication.common.MediaTypeRegistry;
 
 /**
  * @author leadpony
- *
  */
-class MarkdownParser implements Parser {
+class BasicPageSource implements PageSource {
     
-    private static final Logger log = Logger.getLogger(MarkdownParser.class.getName());
+    private final Path path;
     
-    public MarkdownParser(InputStream stream) {
+    public BasicPageSource(Path path) {
+        this.path = path;
     }
 
     @Override
-    public String parse() {
-        log.info("Parsing markdown");
-        return null;
+    public Path path() {
+        return path;
+    }
+    
+    @Override
+    public String mediaType() {
+        return MediaTypeRegistry.get().guessMediaType(path());
+    }
+    
+    @Override
+    public String toString() {
+        return path.toString();
     }
 }

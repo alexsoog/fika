@@ -13,27 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown;
+package io.github.leadpony.fika.core.parser;
 
 import java.io.InputStream;
-import java.util.logging.Logger;
-
-import io.github.leadpony.fika.core.parser.Parser;
 
 /**
  * @author leadpony
  *
  */
-class MarkdownParser implements Parser {
+public interface ParserFactory {
     
-    private static final Logger log = Logger.getLogger(MarkdownParser.class.getName());
-    
-    public MarkdownParser(InputStream stream) {
-    }
-
-    @Override
-    public String parse() {
-        log.info("Parsing markdown");
+    static ParserFactory newInstance(String mediaType) {
+        ParserFactoryService service = ParserFactoryService.findService(mediaType);
+        if (service != null) {
+            return service.newFactory(mediaType);
+        }
         return null;
     }
+    
+    Parser newParser(InputStream stream);
 }
