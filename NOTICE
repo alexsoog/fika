@@ -1,0 +1,11 @@
+# Fika
+
+## fika-parser-markdown
+
+The following files are obtained from:
+    http://spec.commonmark.org/
+and licensed under:
+    CC BY-SA 4.0
+
+- src/test/resources/spec.json
+- src/test/resources/spec.original.json

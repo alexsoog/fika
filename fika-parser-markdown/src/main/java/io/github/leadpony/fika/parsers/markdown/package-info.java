@@ -15,7 +15,8 @@
  */
 
 /**
+ * Provides markdown parser.
+ * 
  * @author leadpony
- *
  */
 package io.github.leadpony.fika.parsers.markdown;

@@ -15,11 +15,13 @@
  */
 package io.github.leadpony.fika.core.parser;
 
+import io.github.leadpony.fika.core.nodes.Document;
+
 /**
  * @author leadpony
  *
  */
 public interface Parser {
 
-    String parse();
+    Document parse();
 }

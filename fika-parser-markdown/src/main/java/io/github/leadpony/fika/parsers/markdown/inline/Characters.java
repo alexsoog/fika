@@ -13,23 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser;
+package io.github.leadpony.fika.parsers.markdown.inline;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
+ * Characters defined in CommonMark spec.
+ * 
  * @author leadpony
  */
-@SuppressWarnings("serial")
-public class ParserException extends RuntimeException {
-
-    public ParserException(String message) {
-        super(message);
+final class Characters {
+    
+    private static final Pattern BACKSLASH_CAPE = Pattern.compile("\\\\(\\p{Punct})");
+    
+    static String unescape(String input) {
+        Matcher m = BACKSLASH_CAPE.matcher(input);
+        return m.replaceAll("$1");
     }
 
-    public ParserException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ParserException(Throwable cause) {
-        super(cause);
+    private Characters() {
     }
 }

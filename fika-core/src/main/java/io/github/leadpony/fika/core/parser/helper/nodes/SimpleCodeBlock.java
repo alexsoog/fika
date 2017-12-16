@@ -13,23 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser;
+package io.github.leadpony.fika.core.parser.helper.nodes;
+
+import io.github.leadpony.fika.core.nodes.CodeBlock;
 
 /**
  * @author leadpony
  */
-@SuppressWarnings("serial")
-public class ParserException extends RuntimeException {
+public class SimpleCodeBlock implements CodeBlock {
 
-    public ParserException(String message) {
-        super(message);
+    private final String content;
+    
+    public SimpleCodeBlock(String content) {
+        this.content = content;
     }
 
-    public ParserException(String message, Throwable cause) {
-        super(message, cause);
+    @Override
+    public String content() {
+        return content;
     }
-
-    public ParserException(Throwable cause) {
-        super(cause);
+    
+    @Override
+    public String toString() {
+        return content;
     }
 }

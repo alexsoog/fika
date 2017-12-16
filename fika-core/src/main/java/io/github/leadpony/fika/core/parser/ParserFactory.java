@@ -15,7 +15,8 @@
  */
 package io.github.leadpony.fika.core.parser;
 
-import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 
 /**
  * @author leadpony
@@ -31,5 +32,9 @@ public interface ParserFactory {
         return null;
     }
     
-    Parser newParser(InputStream stream);
+    default Parser newParser(String text) {
+        return newParser(new StringReader(text));
+    }
+
+    Parser newParser(Reader reader);
 }

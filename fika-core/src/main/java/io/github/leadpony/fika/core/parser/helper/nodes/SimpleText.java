@@ -13,23 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser;
+package io.github.leadpony.fika.core.parser.helper.nodes;
+
+import io.github.leadpony.fika.core.nodes.Text;
 
 /**
  * @author leadpony
  */
-@SuppressWarnings("serial")
-public class ParserException extends RuntimeException {
-
-    public ParserException(String message) {
-        super(message);
+public class SimpleText implements Text {
+    
+    private final String content;
+    
+    public SimpleText(String content) {
+        this.content = content;
     }
 
-    public ParserException(String message, Throwable cause) {
-        super(message, cause);
+    @Override
+    public String content() {
+        return content;
     }
-
-    public ParserException(Throwable cause) {
-        super(cause);
+    
+    @Override
+    public String toString() {
+        return content;
     }
 }

@@ -13,23 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser;
+package io.github.leadpony.fika.core.parser.helper.nodes;
+
+import io.github.leadpony.fika.core.nodes.Paragraph;
 
 /**
  * @author leadpony
  */
-@SuppressWarnings("serial")
-public class ParserException extends RuntimeException {
+public class SimpleParagraph extends ModifiableNode implements Paragraph {
 
-    public ParserException(String message) {
-        super(message);
-    }
-
-    public ParserException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ParserException(Throwable cause) {
-        super(cause);
+    public SimpleParagraph() {
     }
 }

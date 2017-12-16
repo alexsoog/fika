@@ -13,23 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser;
+package io.github.leadpony.fika.core.parser.helper.nodes;
+
+import java.util.Collections;
+import java.util.List;
+
+import io.github.leadpony.fika.core.nodes.Node;
 
 /**
  * @author leadpony
  */
-@SuppressWarnings("serial")
-public class ParserException extends RuntimeException {
+abstract class ModifiableNode implements Node, Modifiable {
 
-    public ParserException(String message) {
-        super(message);
+    private List<Node> children;
+    
+    ModifiableNode() {
+        children = Collections.emptyList();
     }
-
-    public ParserException(String message, Throwable cause) {
-        super(message, cause);
+    
+    @Override
+    public List<Node> children() {
+        return children;
     }
-
-    public ParserException(Throwable cause) {
-        super(cause);
+    
+    @Override
+    public void replaceChildren(List<? extends Node> children) {
+        this.children = Collections.unmodifiableList(children);
     }
 }

@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser;
+package io.github.leadpony.fika.core.renderers;
 
 /**
  * @author leadpony
+ *
  */
-@SuppressWarnings("serial")
-public class ParserException extends RuntimeException {
+public interface HtmlFormatter {
+    
+    void doctype(String type);
+    
+    void startTag(String tagName, String... attributes);
 
-    public ParserException(String message) {
-        super(message);
-    }
+    void endTag(String tagName);
 
-    public ParserException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    void emptyTag(String tagName, String... attributes);
 
-    public ParserException(Throwable cause) {
-        super(cause);
-    }
+    void text(String text);
+    
+    void preformatted(String text);
 }

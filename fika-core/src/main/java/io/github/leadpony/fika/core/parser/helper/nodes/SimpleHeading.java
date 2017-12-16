@@ -13,23 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser;
+package io.github.leadpony.fika.core.parser.helper.nodes;
+
+import io.github.leadpony.fika.core.nodes.Heading;
 
 /**
  * @author leadpony
  */
-@SuppressWarnings("serial")
-public class ParserException extends RuntimeException {
-
-    public ParserException(String message) {
-        super(message);
+public class SimpleHeading extends ModifiableNode implements Heading {
+    
+    private final int level;
+    
+    public SimpleHeading(int level) {
+        this.level = level;
     }
 
-    public ParserException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ParserException(Throwable cause) {
-        super(cause);
+    @Override
+    public int level() {
+        return level;
     }
 }

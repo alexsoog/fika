@@ -13,23 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser;
+package io.github.leadpony.fika.core.renderers;
+
+import io.github.leadpony.fika.core.nodes.Document;
 
 /**
  * @author leadpony
+ *
  */
-@SuppressWarnings("serial")
-public class ParserException extends RuntimeException {
-
-    public ParserException(String message) {
-        super(message);
-    }
-
-    public ParserException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ParserException(Throwable cause) {
-        super(cause);
-    }
+public interface Renderer {
+    
+    String render(Document doc);
 }

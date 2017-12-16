@@ -17,12 +17,14 @@ package io.github.leadpony.fika.publication.builders;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import io.github.leadpony.fika.core.nodes.Document;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserFactory;
 import io.github.leadpony.fika.publication.project.PageSource;
@@ -59,9 +61,9 @@ class HtmlBuilder extends BaseBuilder {
         if (factory == null) {
             return;
         }
-        try (InputStream in = Files.newInputStream(resolveSource(path))) {
-            Parser parser = factory.newParser(in);
-            parser.parse();
+        try (Reader reader = Files.newBufferedReader(resolveSource(path))) {
+            Parser parser = factory.newParser(reader);
+            Document doc = parser.parse();
         }
     }
     

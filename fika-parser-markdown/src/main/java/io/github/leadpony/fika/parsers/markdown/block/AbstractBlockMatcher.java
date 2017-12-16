@@ -13,23 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser;
+package io.github.leadpony.fika.parsers.markdown.block;
 
 /**
  * @author leadpony
  */
-@SuppressWarnings("serial")
-public class ParserException extends RuntimeException {
+abstract class AbstractBlockMatcher implements BlockMatcher {
 
-    public ParserException(String message) {
-        super(message);
+    private Context context;
+    
+    @Override
+    public void bind(Context context) {
+        this.context = context;
     }
-
-    public ParserException(String message, Throwable cause) {
-        super(message, cause);
+    
+    @Override
+    public BlockMatcher interrupt(Content content) {
+        if (isInterruptible()) {
+            return context().match(content, precedence());
+        }
+        return null;
     }
-
-    public ParserException(Throwable cause) {
-        super(cause);
+    
+    protected Context context() {
+        return context;
     }
 }

@@ -13,23 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser;
+package io.github.leadpony.fika.core.renderers;
+
+import io.github.leadpony.fika.core.nodes.Document;
 
 /**
  * @author leadpony
  */
-@SuppressWarnings("serial")
-public class ParserException extends RuntimeException {
+public class FullHtmlRenderingVisitor extends HtmlRenderingVisitor {
 
-    public ParserException(String message) {
-        super(message);
+    FullHtmlRenderingVisitor(HtmlFormatter formatter) {
+        super(formatter);
     }
 
-    public ParserException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ParserException(Throwable cause) {
-        super(cause);
+    @Override
+    public void visit(Document node) {
+        formatter.doctype("html");
+        formatter.startTag("html");
+        formatter.startTag("head");
+        formatter.emptyTag("meta", "charset", "UTF-8");
+        formatter.endTag("head");
+        formatter.startTag("body");
+        visitChildren(node);
+        formatter.endTag("body");
     }
 }

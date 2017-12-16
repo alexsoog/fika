@@ -13,23 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser;
+package io.github.leadpony.fika.parsers.markdown.block;
+
+import io.github.leadpony.fika.core.nodes.Document;
+import io.github.leadpony.fika.core.parser.helper.nodes.SimpleDocument;
 
 /**
  * @author leadpony
  */
-@SuppressWarnings("serial")
-public class ParserException extends RuntimeException {
-
-    public ParserException(String message) {
-        super(message);
+class DocumentMatcher extends CompositeMatcher {
+    
+    DocumentMatcher() {
     }
 
-    public ParserException(String message, Throwable cause) {
-        super(message, cause);
+    @Override
+    public Document close() {
+        super.close();
+        return new SimpleDocument(this.children); 
     }
-
-    public ParserException(Throwable cause) {
-        super(cause);
+    
+    @Override
+    protected boolean matchLast(Content content) {
+        BlockMatcher matcher = context().match(content);
+        if (matcher == null) {
+            return true;
+        }
+        startNext(matcher);
+        forward(content);
+        return true;
     }
 }

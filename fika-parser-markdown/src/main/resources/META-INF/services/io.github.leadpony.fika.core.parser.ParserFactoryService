@@ -1,1 +1,1 @@
-io.github.leadpony.fika.parsers.markdown.MarkdownParserFactoryService
+io.github.leadpony.fika.parsers.markdown.parser.MarkdownParserFactoryService

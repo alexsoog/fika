@@ -13,23 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser;
+package io.github.leadpony.fika.parsers.markdown.inline;
+
+import static io.github.leadpony.fika.parsers.markdown.inline.Characters.unescape;
+
+import java.util.Arrays;
+import java.util.List;
+
+import io.github.leadpony.fika.core.nodes.Inline;
+import io.github.leadpony.fika.core.nodes.Text;
+import io.github.leadpony.fika.core.parser.helper.nodes.SimpleText;
 
 /**
  * @author leadpony
  */
-@SuppressWarnings("serial")
-public class ParserException extends RuntimeException {
-
-    public ParserException(String message) {
-        super(message);
-    }
-
-    public ParserException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ParserException(Throwable cause) {
-        super(cause);
+public class InlineProcessor {
+    
+    public List<Inline> process(String content) {
+        Text text = new SimpleText(unescape(content));
+        return Arrays.asList(text);
     }
 }
