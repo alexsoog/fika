@@ -13,25 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.inline;
+package io.github.leadpony.fika.parsers.markdown;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Characters defined in CommonMark spec.
- * 
  * @author leadpony
  */
-final class Characters {
-    
-    private static final Pattern BACKSLASH_CAPE = Pattern.compile("\\\\(\\p{Punct})");
-    
-    static String unescape(String input) {
-        Matcher m = BACKSLASH_CAPE.matcher(input);
-        return m.replaceAll("$1");
-    }
+@RunWith(Parameterized.class)
+public class AtxHeadingTest extends AbstractSpecTest {
 
-    private Characters() {
+    public AtxHeadingTest(int index, String source, String expected) {
+        super(source, expected);
+    }
+  
+    @Parameters(name = "{0}: {1}")
+    public static Iterable<Object[]> parameters() {
+        return parameters("/atx-heading.json");
     }
 }

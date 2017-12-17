@@ -40,7 +40,15 @@ abstract class CompositeMatcher extends AbstractBlockMatcher {
     }
     
     @Override
-    public boolean match(Content content) {
+    public Node close() {
+        if (hasNext()) {
+            disconnect();
+        }
+        return null;
+    }
+    
+    @Override
+    protected Status match(Content content, int lineNo) {
         if (hasNext()) {
             return matchAndForward(content);
         } else {
@@ -48,44 +56,61 @@ abstract class CompositeMatcher extends AbstractBlockMatcher {
         }
     }
     
-    @Override
-    public Node close() {
-        if (hasNext()) {
-            finishNext();
-        }
-        return null;
-    }
-    
-    protected boolean matchAndForward(Content content) {
+    protected Status matchAndForward(Content content) {
         return forward(content);
     }
     
-    protected boolean forward(Content content) {
-        BlockMatcher interrupter = next().interrupt(content);
-        if (interrupter != null) {
-            finishNext();
-            startNext(interrupter);
+    protected Status matchLast(Content content) {
+        BlockMatcher matcher = context().match(content);
+        if (matcher != null) {
+            connect(matcher);
+            return forwardFirst(content);
         }
-        if (next().match(content)) {
-            return true;
-        } else {
-            finishNext();
-            return false;
-        }
-    }
-    
-    protected boolean matchLast(Content content) {
-        return false;
+        return Status.CONTINUED;
     }
 
-    protected void startNext(BlockMatcher next) {
+    protected Status forward(Content content) {
+        BlockMatcher interrupter = next().interrupt(content);
+        if (interrupter != null) {
+            disconnect();
+            connect(interrupter);
+            return forwardFirst(content);
+        }
+        BlockMatcher.Status status = next().match(content);
+        switch (status) {
+        case COMPLETED:
+            disconnect();
+            break;
+        case NOT_MATCHED:
+            disconnect();
+            BlockMatcher matcher = context().match(content);
+            if (matcher != null) {
+                connect(matcher);
+                return forwardFirst(content);
+            }
+            break;
+        default:
+            break;
+        }
+        return status;
+    }
+    
+    protected Status forwardFirst(Content content) {
+        Status status = next().match(content);
+        if (status == Status.COMPLETED) {
+            disconnect();
+        }
+        return status;
+    }
+    
+    protected void connect(BlockMatcher next) {
         this.next = next;
         if (this.next != null) {
             this.next.bind(context());
         }
     }
     
-    protected void finishNext() {
+    protected void disconnect() {
         Node node = this.next.close();
         if (node != null) {
             this.children.add(node);

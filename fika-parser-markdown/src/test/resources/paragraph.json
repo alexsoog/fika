@@ -1,0 +1,66 @@
+[
+  {
+    "end_line": 3092,
+    "section": "Paragraphs",
+    "html": "<p>aaa</p>\n<p>bbb</p>\n",
+    "markdown": "aaa\n\nbbb\n",
+    "example": 182,
+    "start_line": 3085
+  },
+  {
+    "end_line": 3108,
+    "section": "Paragraphs",
+    "html": "<p>aaa\nbbb</p>\n<p>ccc\nddd</p>\n",
+    "markdown": "aaa\nbbb\n\nccc\nddd\n",
+    "example": 183,
+    "start_line": 3097
+  },
+  {
+    "end_line": 3121,
+    "section": "Paragraphs",
+    "html": "<p>aaa</p>\n<p>bbb</p>\n",
+    "markdown": "aaa\n\n\nbbb\n",
+    "example": 184,
+    "start_line": 3113
+  },
+  {
+    "end_line": 3132,
+    "section": "Paragraphs",
+    "html": "<p>aaa\nbbb</p>\n",
+    "markdown": "  aaa\n bbb\n",
+    "example": 185,
+    "start_line": 3126
+  },
+  {
+    "end_line": 3146,
+    "section": "Paragraphs",
+    "html": "<p>aaa\nbbb\nccc</p>\n",
+    "markdown": "aaa\n             bbb\n                                       ccc\n",
+    "example": 186,
+    "start_line": 3138
+  },
+  {
+    "end_line": 3158,
+    "section": "Paragraphs",
+    "html": "<p>aaa\nbbb</p>\n",
+    "markdown": "   aaa\nbbb\n",
+    "example": 187,
+    "start_line": 3152
+  },
+  {
+    "end_line": 3168,
+    "section": "Paragraphs",
+    "html": "<pre><code>aaa\n</code></pre>\n<p>bbb</p>\n",
+    "markdown": "    aaa\nbbb\n",
+    "example": 188,
+    "start_line": 3161
+  },
+  {
+    "end_line": 3181,
+    "section": "Paragraphs",
+    "html": "<p>aaa<br />\nbbb</p>\n",
+    "markdown": "aaa     \nbbb     \n",
+    "example": 189,
+    "start_line": 3175
+  }
+]

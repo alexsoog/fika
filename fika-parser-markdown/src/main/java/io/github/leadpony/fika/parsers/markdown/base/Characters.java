@@ -13,23 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.helper.nodes;
+package io.github.leadpony.fika.parsers.markdown.base;
 
-import java.util.List;
-
-import io.github.leadpony.fika.core.nodes.Node;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
- * Node wchich is modifiable of children.
+ * Characters defined in CommonMark spec.
  * 
  * @author leadpony
  */
-public interface Modifiable extends Node {
+public final class Characters {
     
-    /**
-     * Replaces children of the node.
-     * 
-     * @param children new children.
-     */
-    void replaceChildren(List<? extends Node> children);
+    public static final char SPACE = '\u0020';
+    private static final Pattern BACKSLASH_CAPE = Pattern.compile("\\\\(\\p{Punct})");
+    
+    public static String unescape(String input) {
+        Matcher m = BACKSLASH_CAPE.matcher(input);
+        return m.replaceAll("$1");
+    }
+
+    private Characters() {
+    }
 }

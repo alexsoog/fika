@@ -15,7 +15,14 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
-import io.github.leadpony.fika.core.nodes.Paragraph;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import io.github.leadpony.fika.core.nodes.Node;
+import io.github.leadpony.fika.core.parser.helper.nodes.Modifiable;
+import io.github.leadpony.fika.core.parser.helper.nodes.SimpleHeading;
 import io.github.leadpony.fika.core.parser.helper.nodes.SimpleParagraph;
 
 /**
@@ -23,14 +30,18 @@ import io.github.leadpony.fika.core.parser.helper.nodes.SimpleParagraph;
  */
 class ParagraphMatcher extends AbstractBlockMatcher {
     
-    private static final int PRECEDENCE = 2;
-    
-    private final StringBuilder builder;
-    private int lines;
+    private final List<String> lines;
 
-    ParagraphMatcher(Content content) {
-        this.builder = new StringBuilder(extractContent(content));
-        this.lines = 0;
+    private boolean underlined;
+    private int headingLevel;
+    
+    private static final int PRECEDENCE = 2;
+    private static final Pattern UNDERLINE_PATTERN = Pattern.compile("\\u0020{0,3}(=+|-{2,})\\u0020*");
+    
+    ParagraphMatcher() {
+        this.lines = new ArrayList<>();
+        this.underlined = false;
+        this.headingLevel = 0;
     }
     
     @Override
@@ -39,30 +50,68 @@ class ParagraphMatcher extends AbstractBlockMatcher {
     }
     
     @Override
+    public BlockMatcher interrupt(Content content) {
+        // Handles underline before interrupted by ThematicBreakMatcher. 
+        if (testUnderline(content)) {
+            return null;
+        }
+        return super.interrupt(content);
+    }
+    
+    @Override
     public int precedence() {
         return PRECEDENCE;
     }
     
     @Override
-    public boolean match(Content content) {
-        if (lines++ == 0) {
-            return true;
-        }
-        if (content.isBlank()) {
-            return false;
-        }
-        builder.append('\n').append(extractContent(content));
-        return true;
-    }
-
-    @Override
-    public Paragraph close() {
-        SimpleParagraph node = new SimpleParagraph();
-        context().addInline(node, builder.toString());
+    public Node close() {
+        Modifiable node = createNode();
+        String content = lines.stream().collect(Collectors.joining("\n"));
+        context().addInline(node, content.trim());
         return node;
     }
     
-    private static String extractContent(Content content) {
-        return content.trimLeadingSpaces().toString();
+    @Override
+    protected Status match(Content content, int lineNo) {
+        if (lineNo == 0) {
+            appendLine(content);
+            return Status.CONTINUED;
+        } else if (testUnderline(content)) {
+            return Status.COMPLETED;
+        } else if (content.isBlank()) {
+            return Status.COMPLETED;
+        }
+        appendLine(content);
+        return Status.CONTINUED;
     }
-}
+    
+    private void appendLine(Content content) {
+        String extracted = content.trimLeadingSpaces().toOriginalString();
+        this.lines.add(extracted);
+    }
+
+    private boolean testUnderline(Content content) {
+        if (!underlined) {
+            underlined = UNDERLINE_PATTERN.matcher(content).matches();
+            if (underlined) {
+                this.headingLevel = probeHeadingLevel(content);
+            }
+        }
+        return underlined;
+    }
+    
+    private int probeHeadingLevel(Content content) {
+        assert(this.underlined);
+        int index = content.detectSmallIndent();
+        char c = content.charAt(index);
+        return (c == '=') ? 1 : 2;
+    }
+
+    private Modifiable createNode() {
+        if (this.underlined) {
+            return new SimpleHeading(this.headingLevel);
+        } else {
+            return new SimpleParagraph();
+        }
+    }
+}    

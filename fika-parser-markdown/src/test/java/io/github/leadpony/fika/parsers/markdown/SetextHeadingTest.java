@@ -13,23 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.helper.nodes;
+package io.github.leadpony.fika.parsers.markdown;
 
-import java.util.List;
-
-import io.github.leadpony.fika.core.nodes.Node;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Node wchich is modifiable of children.
- * 
  * @author leadpony
  */
-public interface Modifiable extends Node {
-    
-    /**
-     * Replaces children of the node.
-     * 
-     * @param children new children.
-     */
-    void replaceChildren(List<? extends Node> children);
+@RunWith(Parameterized.class)
+public class SetextHeadingTest extends AbstractSpecTest {
+
+    public SetextHeadingTest(int index, String source, String expected) {
+        super(source, expected);
+    }
+  
+    @Parameters(name = "{0}: {1}")
+    public static Iterable<Object[]> parameters() {
+        return parameters("/setext-heading.json");
+    }
 }

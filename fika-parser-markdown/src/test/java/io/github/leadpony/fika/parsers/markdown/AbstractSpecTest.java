@@ -17,6 +17,14 @@ package io.github.leadpony.fika.parsers.markdown;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonReader;
+
 import org.junit.Test;
 
 import io.github.leadpony.fika.core.nodes.Document;
@@ -26,16 +34,15 @@ import io.github.leadpony.fika.parsers.markdown.parser.MarkdownParserFactory;
 
 /**
  * @author leadpony
- *
  */
-public abstract class AbstractTest {
-    
+public abstract class AbstractSpecTest {
+   
     private static final MarkdownParserFactory factory = new MarkdownParserFactory();
 
     protected final Fixture fixture;
     
-    protected AbstractTest(String source, String html) {
-        this.fixture = new Fixture(source, html);
+    protected AbstractSpecTest(String source, String expected) {
+        this.fixture = new Fixture(source, expected);
     }
     
     @Test
@@ -54,5 +61,23 @@ public abstract class AbstractTest {
         StringBuilder b = new StringBuilder();
         b.append("<_>").append(xml).append("</_>");
         return b.toString();
+    }
+
+    protected static Iterable<Object[]> parameters(String path) {
+        JsonArray array = loadSpecJson(path);
+        Iterator<Object[]> it = array.stream()
+            .map(v->v.asJsonObject())
+            .map(v->new Object[] {v.getInt("example"), v.getString("markdown"), v.getString("html")})
+            .iterator();
+        return ()->it;
+    }
+    
+    private static JsonArray loadSpecJson(String path) {
+        try (InputStream in = AbstractSpecTest.class.getResourceAsStream(path)) {
+            JsonReader reader = Json.createReader(in);
+            return reader.readArray();
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

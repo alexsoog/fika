@@ -15,7 +15,7 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline;
 
-import static io.github.leadpony.fika.parsers.markdown.inline.Characters.unescape;
+import static io.github.leadpony.fika.parsers.markdown.base.Characters.unescape;
 
 import java.util.Arrays;
 import java.util.List;

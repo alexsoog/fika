@@ -24,18 +24,18 @@ import io.github.leadpony.fika.core.parser.helper.nodes.SimpleThematicBreak;
 class ThematicBreakMatcher extends AbstractBlockMatcher {
 
     private static final int PRECEDENCE = 1;
+    private static final ThematicBreakMatcher instance = new ThematicBreakMatcher();
+    
+    static Factory factory() {
+        return Factory.instance;
+    }
     
     private ThematicBreakMatcher() {
     }
-
+    
     @Override
-    public int precedence() {
-        return PRECEDENCE;
-    }
-
-    @Override
-    public boolean match(Content content) {
-        return false;
+    public Status match(Content content) {
+        return Status.COMPLETED;
     }
     
     @Override
@@ -44,18 +44,22 @@ class ThematicBreakMatcher extends AbstractBlockMatcher {
     }
 
     private static boolean testLine(Content content) {
-        int i = content.skipSmallIndent();
-        char d = content.charAt(i++);
-        if (d != '-' && d != '_' && d != '*') {
+        int i = content.detectSmallIndent();
+        char lineChar = content.charAt(i);
+        if (lineChar != '-' && lineChar != '_' && lineChar != '*') {
             return false;
         }
+        return testLine(content, i + 1, lineChar);
+    }
+
+    private static boolean testLine(Content content, int offset, char lineChar) {
         int dashes = 1;
-        for (; i < content.length(); i++) {
+        for (int i = offset; i < content.length(); ++i) {
             char c = content.charAt(i);
-            if (c == '\u0020' || c == '\u0009') {
+            if (c == '\u0020' || c == '\t') {
                 continue;
-            } else if (c == d) {
-                dashes++;
+            } else if (c == lineChar) {
+                ++dashes;
             } else {
                 return false;
             }
@@ -65,8 +69,8 @@ class ThematicBreakMatcher extends AbstractBlockMatcher {
 
     static class Factory implements BlockMatcher.Factory {
         
-        private final ThematicBreakMatcher handler = new ThematicBreakMatcher();
-
+        private static final Factory instance = new Factory();
+        
         @Override
         public int precedence() {
             return PRECEDENCE;
@@ -74,7 +78,7 @@ class ThematicBreakMatcher extends AbstractBlockMatcher {
 
         @Override
         public BlockMatcher newMatcher(Content content) {
-            return testLine(content) ? handler : null;
+            return testLine(content) ? ThematicBreakMatcher.instance : null;
         }
     }
 }

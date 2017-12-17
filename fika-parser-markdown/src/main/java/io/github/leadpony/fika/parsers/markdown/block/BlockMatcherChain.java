@@ -38,9 +38,9 @@ public class BlockMatcherChain {
         this.rootMatcher.bind(this.context);
     }
     
-    public boolean match(String line) {
-        Content content = new Content(line);
-        return rootMatcher.match(content);
+    public void match(String line) {
+        Content content = Content.of(line);
+        rootMatcher.match(content);
     }
     
     public Document close() {
@@ -58,9 +58,10 @@ public class BlockMatcherChain {
     
     private List<BlockMatcher.Factory> createBlockBuilderFactries() {
         List<BlockMatcher.Factory> factories = new ArrayList<>();
-        factories.add(new ThematicBreakMatcher.Factory());
-        factories.add(new HeadingMatcher.Factory());
-        factories.add(new IndentedCodeMatcher.Factory());
+        factories.add(ThematicBreakMatcher.factory());
+        factories.add(HeadingMatcher.factory());
+        factories.add(IndentedCodeMatcher.factory());
+        factories.add(FencedCodeMatcher.factory());
         Collections.sort(factories, (x, y)->x.precedence() - y.precedence());
         return factories;
     }
@@ -85,7 +86,7 @@ public class BlockMatcherChain {
                     return matched;
                 }
             }
-            return new ParagraphMatcher(content);
+            return new ParagraphMatcher();
         }
 
         @Override

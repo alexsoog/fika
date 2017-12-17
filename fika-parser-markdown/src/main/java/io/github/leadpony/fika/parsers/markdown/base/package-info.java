@@ -13,25 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.helper.nodes;
-
-import java.util.List;
-
-import io.github.leadpony.fika.core.nodes.Node;
 
 /**
+ * Provides basic elements for parsing.
+ * 
  * @author leadpony
  */
-abstract class CompositeNode implements Node {
-
-    protected final List<Node> children;
-    
-    protected CompositeNode(List<Node> children) {
-        this.children = children;
-    }
-
-    @Override
-    public List<Node> children() {
-        return children;
-    }
-}
+package io.github.leadpony.fika.parsers.markdown.base;

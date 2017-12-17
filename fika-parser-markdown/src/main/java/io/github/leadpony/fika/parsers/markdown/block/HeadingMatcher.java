@@ -28,6 +28,10 @@ class HeadingMatcher extends AbstractBlockMatcher {
     
     private final int level;
     private final String title;
+  
+    static Factory factory() {
+        return Factory.instance;
+    }
     
     private HeadingMatcher(int level, String title) {
         this.level = level;
@@ -38,10 +42,10 @@ class HeadingMatcher extends AbstractBlockMatcher {
     public int precedence() {
         return PRECEDENCE;
     }
-    
+ 
     @Override
-    public boolean match(Content content) {
-        return false;
+    public Status match(Content content) {
+        return Status.COMPLETED;
     }
     
     @Override
@@ -54,7 +58,7 @@ class HeadingMatcher extends AbstractBlockMatcher {
     private static String extractTitle(Content content) {
         content = content.trimSpaces();
         content = trimClosingSequenceOfHash(content);
-        return content.trimSpaces().toString();
+        return content.trimSpaces().toOriginalString();
     }
     
     private static Content trimClosingSequenceOfHash(Content content) {
@@ -74,18 +78,20 @@ class HeadingMatcher extends AbstractBlockMatcher {
             --i;
         }
         if (i < 0) {
-            return content.subcontent(0, 0);
+            return content.subContent(0, 0);
         }
         c = content.charAt(i);
         if (c == '\u0020' || c == '\t') {
-            return content.subcontent(0, i);
+            return content.subContent(0, i);
         } else {
             return content;
         }
     }
     
     static class Factory implements BlockMatcher.Factory {
-
+        
+        private static final Factory instance = new Factory();
+        
         @Override
         public int precedence() {
             return PRECEDENCE;
@@ -93,7 +99,7 @@ class HeadingMatcher extends AbstractBlockMatcher {
 
         @Override
         public BlockMatcher newMatcher(Content content) {
-            int i = content.skipSmallIndent();
+            int i = content.detectSmallIndent();
             int level = 0;
             for (; i < content.length(); i++) {
                 if (content.charAt(i) != '#') {
@@ -113,7 +119,7 @@ class HeadingMatcher extends AbstractBlockMatcher {
                     return null;
                 }
             }
-            return new HeadingMatcher(level, extractTitle(content.subcontent(i)));
+            return new HeadingMatcher(level, extractTitle(content.subContent(i)));
         }
     }
 }

@@ -25,21 +25,16 @@ class DocumentMatcher extends CompositeMatcher {
     
     DocumentMatcher() {
     }
-
+    
+    @Override
+    public Status match(Content content) {
+        super.match(content);
+        return Status.CONTINUED;
+    }
+    
     @Override
     public Document close() {
         super.close();
         return new SimpleDocument(this.children); 
-    }
-    
-    @Override
-    protected boolean matchLast(Content content) {
-        BlockMatcher matcher = context().match(content);
-        if (matcher == null) {
-            return true;
-        }
-        startNext(matcher);
-        forward(content);
-        return true;
     }
 }

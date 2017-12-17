@@ -38,6 +38,9 @@ public class SimpleHtmlFormatter implements HtmlFormatter {
     @Override
     public void startTag(String tagName, String... attributes) {
         writer.append("<").append(tagName);
+        if (attributes.length > 0) {
+            appendAttributes(attributes);
+        }
         writer.append(">");
     }
 
@@ -48,7 +51,11 @@ public class SimpleHtmlFormatter implements HtmlFormatter {
 
     @Override
     public void emptyTag(String tagName, String... attributes) {
-        writer.append("<").append(tagName).append(" />");
+        writer.append("<").append(tagName);
+        if (attributes.length > 0) {
+            appendAttributes(attributes);
+        }
+        writer.append(" />");
     }
 
     @Override
@@ -63,5 +70,13 @@ public class SimpleHtmlFormatter implements HtmlFormatter {
     @Override
     public void preformatted(String text) {
         writer.append(text);
+    }
+    
+    private void appendAttributes(String[] attributes) {
+        for (int i = 0; i + 1 < attributes.length; i += 2) {
+            writer.append(" ")
+                  .append(attributes[i]).append("=\"")
+                  .append(attributes[i + 1]).append("\"");
+        }
     }
 }

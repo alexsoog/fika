@@ -25,6 +25,12 @@ public interface BlockMatcher {
     
     static final int DEFAULT_PRECEDENCE = Integer.MAX_VALUE;
     
+    enum Status {
+        NOT_MATCHED,
+        CONTINUED,
+        COMPLETED
+    }
+    
     /**
      * Binds the context to this matcher.
      * 
@@ -44,7 +50,7 @@ public interface BlockMatcher {
         return null;
     }
     
-    boolean match(Content content);
+    Status match(Content content);
     
     /**
      * Closes this matcher.

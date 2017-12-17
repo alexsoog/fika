@@ -21,6 +21,7 @@ package io.github.leadpony.fika.parsers.markdown.block;
 abstract class AbstractBlockMatcher implements BlockMatcher {
 
     private Context context;
+    private int lines;
     
     @Override
     public void bind(Context context) {
@@ -35,7 +36,16 @@ abstract class AbstractBlockMatcher implements BlockMatcher {
         return null;
     }
     
+    @Override
+    public Status match(Content content) {
+        return match(content, lines++);
+    }
+   
     protected Context context() {
         return context;
+    }
+    
+    protected Status match(Content content, int lineNo) {
+        return Status.NOT_MATCHED;
     }
 }

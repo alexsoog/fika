@@ -15,14 +15,22 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
+import static io.github.leadpony.fika.parsers.markdown.base.Characters.SPACE;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ * Content in a line.
+ * 
  * @author leadpony
  */
-class Content {
+class Content implements CharSequence {
     
     private final String line;
+    private final List<Integer> tabs;
     private final int beginIndex;
     private final int endIndex;
     private final int length;
@@ -31,50 +39,102 @@ class Content {
      * A line containing no characters, or a line containing only spaces (U+0020) 
      * or tabs (U+0009), is called a blank line.
      */
-    private static final Pattern BLANK_PATTERN = Pattern.compile("[\\u0020\\t]*");
-  
-    private static final String[] EXPANDED_TAB = { "\t   ", "\t  ", "\t ", "\t" }; 
+    private static final Pattern BLANK_PATTERN = Pattern.compile("\\u0020*");
+    private static final Pattern TAB_PATTERN = Pattern.compile("\\t");
     
-    Content(String line) {
-        this.line = expandTabs(line);
-        this.beginIndex = 0;
-        this.endIndex = this.length = this.line.length();
+    private static final String[] EXPANDED_TAB = { "    ", "   ", "  ", " " }; 
+   
+    static Content of(String line) {
+        List<Integer> tabs = new ArrayList<>();
+        String expaned = expandTabs(line, tabs);
+        return new Content(expaned, tabs, 0, expaned.length());
     }
     
-    private Content(String line, int beginIndex, int endIndex) {
+    private Content(String line, List<Integer> tabs, int beginIndex, int endIndex) {
         this.line = line;
+        this.tabs = tabs;
         this.beginIndex = beginIndex;
         this.endIndex = endIndex;
         this.length = endIndex - beginIndex;
     }
     
-    int length() {
+    /* CharSequence interface */
+    
+    @Override
+    public char charAt(int index) {
+        return this.line.charAt(this.beginIndex + index);
+    }
+
+    @Override
+    public int length() {
         return length;
     }
     
-    char charAt(int index) {
-        return this.line.charAt(this.beginIndex + index);
+    @Override
+    public CharSequence subSequence(int start, int end) {
+        return subContent(start, end);
     }
     
-    Content subcontent(int beginIndex) {
-        return subcontent(beginIndex, length);
+    @Override
+    public String toString() {
+        if (beginIndex == 0 && endIndex == line.length()) {
+            return line;
+        } else {
+            return line.substring(beginIndex, endIndex);
+        }
+    }
+    
+    Content subContent(int beginIndex) {
+        if (beginIndex == 0) {
+            return this;
+        }
+        return subContent(beginIndex, length);
     }
 
-    Content subcontent(int beginIndex, int endIndex) {
-        int offset = this.beginIndex;
-        return new Content(this.line, offset + beginIndex, offset + endIndex);
+    Content subContent(int beginIndex, int endIndex) {
+        if (beginIndex == 0 && endIndex == length) {
+            return this;
+        }
+        int newBeginIndex = this.beginIndex + beginIndex;
+        int newEndIndex = this.beginIndex + endIndex;
+        return new Content(this.line, this.tabs, newBeginIndex, newEndIndex);
     }
     
     boolean isBlank() {
-        String s = line.substring(beginIndex, endIndex);
-        return BLANK_PATTERN.matcher(s).matches();
+        return BLANK_PATTERN.matcher(this).matches();
+    }
+    
+    boolean hasIndent(int size) {
+        int spaces = 0;
+        for (int i = 0; i < length; i++) {
+            char c = charAt(i);
+            if (c == SPACE) {
+                if (++spaces >= size) {
+                    return true;
+                }
+            } else {
+                break;
+            }
+        }
+        return false;
+    }
+    
+    Content removeIndentUpTo(int size) {
+        int i = 0;
+        while (i < size) {
+            if (charAt(i) != SPACE) {
+                break;
+            }
+            ++i;
+        }
+        return subContent(i);
     }
     
     Content trimSpaces() {
         int i = 0;
         while (i < length) {
             char c = charAt(i);
-            if (c != '\u0020' && c != '\t') {
+            if (c != SPACE) {
                 break;
             }
             ++i;
@@ -83,32 +143,32 @@ class Content {
         i = length() - 1;
         while (i > beginIndex) {
             char c = charAt(i);
-            if (c != '\u0020' && c != '\t') {
+            if (c != SPACE) {
                 break;
             }
             --i;
         }
         int endIndex = i + 1;
-        return subcontent(beginIndex, endIndex);
+        return subContent(beginIndex, endIndex);
     }
     
     Content trimLeadingSpaces() {
         int i = 0;
         while (i < length) {
             char c = charAt(i);
-            if (c != '\u0020' && c != '\t') {
+            if (c != SPACE) {
                 break;
             }
             ++i;
         }
-        return subcontent(i, length);
+        return subContent(i, length);
     }
     
-    int skipSmallIndent() {
+    int detectSmallIndent() {
         int i = 0;
         while (i < length && i < 3) {
             char c = charAt(i);
-            if (c != '\u0020' && c != '\t') {
+            if (c != SPACE) {
                 break;
             }
             ++i;
@@ -117,42 +177,47 @@ class Content {
     }
     
     Content trimSmallIndent() {
-        int beginIndex = skipSmallIndent();
-        return subcontent(beginIndex, length());
+        int beginIndex = detectSmallIndent();
+        return subContent(beginIndex, length());
     }
     
-    @Override
-    public String toString() {
-        return restoreTabs(line, beginIndex, endIndex);
+    public String toOriginalString() {
+        return restoreTabs(line, tabs, beginIndex, endIndex);
     }
-
-    private static String expandTabs(String line) {
+    
+    private static String expandTabs(String line, List<Integer> tabs) {
         StringBuilder b = new StringBuilder();
         int last = 0;
-        for (int i = 0; i < line.length(); ++i) {
-            if (line.charAt(i) == '\t') {
-                b.append(line, last, i);
-                b.append(EXPANDED_TAB[b.length() % 4]);
-                last = i + 1;
-            }
+        Matcher m = TAB_PATTERN.matcher(line);
+        while (m.find()) {
+            int tab = m.start();
+            b.append(line, last, tab);
+            tabs.add(b.length());
+            b.append(EXPANDED_TAB[b.length() % 4]);
+            last = tab + 1;
         }
-        if (last < line.length()) {
+        if (last == 0) {
+            return line;
+        } else if (last < line.length()) {
             b.append(line, last, line.length());
         }
         return b.toString();
     }
 
-    private static String restoreTabs(String line, int beginIndex, int endIndex) {
+    private static String restoreTabs(String line, List<Integer> tabs, int beginIndex, int endIndex) {
+        if (tabs.size() == 0) {
+            return line.substring(beginIndex, endIndex);
+        }
         StringBuilder b = new StringBuilder();
         int last = beginIndex;
-        for (int i = beginIndex; i < endIndex;) {
-            if (line.charAt(i) == '\t') {
-                b.append(line, last, i + 1);
-                i += EXPANDED_TAB[i % 4].length();
-                last = i;
-            } else {
-                ++i;
+        for (int tab: tabs) {
+            if (tab < beginIndex) {
+                continue;
+            } else if (tab >= endIndex) {
+                break;
             }
+            b.append(line, last, tab).append('\t');
+            last = tab + EXPANDED_TAB[tab % 4].length();
         }
         if (last < endIndex) {
             b.append(line, last, endIndex);

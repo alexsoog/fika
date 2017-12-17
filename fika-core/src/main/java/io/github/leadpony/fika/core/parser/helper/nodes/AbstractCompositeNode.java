@@ -20,16 +20,18 @@ import java.util.List;
 import io.github.leadpony.fika.core.nodes.Node;
 
 /**
- * Node wchich is modifiable of children.
- * 
  * @author leadpony
  */
-public interface Modifiable extends Node {
+abstract class AbstractCompositeNode implements Node {
+
+    protected final List<Node> children;
     
-    /**
-     * Replaces children of the node.
-     * 
-     * @param children new children.
-     */
-    void replaceChildren(List<? extends Node> children);
+    protected AbstractCompositeNode(List<Node> children) {
+        this.children = children;
+    }
+
+    @Override
+    public List<Node> children() {
+        return children;
+    }
 }

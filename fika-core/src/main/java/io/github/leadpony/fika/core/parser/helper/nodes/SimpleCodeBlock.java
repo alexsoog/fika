@@ -23,14 +23,21 @@ import io.github.leadpony.fika.core.nodes.CodeBlock;
 public class SimpleCodeBlock implements CodeBlock {
 
     private final String content;
+    private final String language;
     
-    public SimpleCodeBlock(String content) {
+    public SimpleCodeBlock(String content, String language) {
         this.content = content;
+        this.language = language;
     }
 
     @Override
     public String content() {
         return content;
+    }
+    
+    @Override
+    public String language() {
+        return language;
     }
     
     @Override

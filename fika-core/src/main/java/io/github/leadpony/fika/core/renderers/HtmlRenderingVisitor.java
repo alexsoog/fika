@@ -47,7 +47,13 @@ class HtmlRenderingVisitor implements Visitor {
     @Override
     public void visit(CodeBlock node) {
         formatter.startTag("pre");
-        formatter.startTag("code");
+        String language = node.language();
+        if (language != null) {
+            String classValue = "language-" + language;
+            formatter.startTag("code", "class", classValue);
+        } else {
+            formatter.startTag("code");
+        }
         formatter.text(node.content());
         formatter.endTag("code");
         formatter.endTag("pre");

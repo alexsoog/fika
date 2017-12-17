@@ -15,6 +15,9 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.github.leadpony.fika.core.nodes.CodeBlock;
 import io.github.leadpony.fika.core.parser.helper.nodes.SimpleCodeBlock;
 
@@ -23,55 +26,59 @@ import io.github.leadpony.fika.core.parser.helper.nodes.SimpleCodeBlock;
  */
 public class IndentedCodeMatcher extends AbstractBlockMatcher {
 
-    private final StringBuilder builder;
-    private int lines;
+    private final List<String> lines;
+    private int nonBlankLineNo;
     
     private static final int INDENT_SIZE = 4;
 
-    private IndentedCodeMatcher() {
-        this.builder = new StringBuilder();
+    static Factory factory() {
+        return Factory.instance;
     }
-
-    @Override
-    public boolean match(Content content) {
-        if (this.lines == 0 || testLine(content)) {
-            appendLine(content);
-            return true;
-        }
-        return false;
+    
+    private IndentedCodeMatcher() {
+        this.lines = new ArrayList<>();
     }
 
     @Override
     public CodeBlock close() {
-        return new SimpleCodeBlock(builder.toString());
-    }
-    
-    private void appendLine(Content content) {
-        content = content.subcontent(INDENT_SIZE);
-        this.builder.append(content.toString()).append("\n");
-        this.lines++;
-    }
-    
-    private static boolean testLine(Content content) {
-        int spaces = 0;
-        for (int i = 0; i < content.length(); i++) {
-            char c = content.charAt(i);
-            if (c == '\u0020' || c == '\t') {
-                if (++spaces >= 4) {
-                    return true;
-                }
-            } else {
-                break;
-            }
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i <= nonBlankLineNo; ++i) {
+            builder.append(lines.get(i)).append('\n');
         }
-        return false;
+        return new SimpleCodeBlock(builder.toString(), null);
+    }
+    
+    @Override
+    protected Status match(Content content, int lineNo) {
+        if (lineNo == 0 || content.hasIndent(INDENT_SIZE)) {
+            appendLine(content, lineNo);
+            return Status.CONTINUED;
+        } else if (content.isBlank()) {
+            appendBlank();
+            return Status.CONTINUED;
+        }
+        return Status.NOT_MATCHED;
     }
 
-    public static class Factory implements BlockMatcher.Factory {
-
+    private void appendLine(Content content, int lineNo) {
+        content = content.subContent(INDENT_SIZE);
+        this.lines.add(content.toOriginalString());
+        if (!content.isBlank()) {
+            this.nonBlankLineNo = lineNo;
+        }
+    }
+    
+    private void appendBlank() {
+        this.lines.add("");
+    }
+    
+    private static class Factory implements BlockMatcher.Factory {
+  
+        private static final Factory instance = new Factory();
+        
         @Override
         public BlockMatcher newMatcher(Content content) {
-            if (!testLine(content)) {
+            if (!content.hasIndent(INDENT_SIZE)) {
                 return null;
             }
             return new IndentedCodeMatcher();
