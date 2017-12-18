@@ -13,22 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.block;
+package io.github.leadpony.fika.parsers.markdown;
 
-import io.github.leadpony.fika.core.nodes.Document;
-import io.github.leadpony.fika.core.parser.helper.nodes.SimpleDocument;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * @author leadpony
  */
-class DocumentMatcher extends ContainerBlockMatcher {
-    
-    DocumentMatcher() {
+@RunWith(Parameterized.class)
+public class BlankLineTest extends AbstractSpecTest {
+
+    public BlankLineTest(int index, String source, String expected) {
+        super(source, expected);
     }
-    
-    @Override
-    public Document close() {
-        super.close();
-        return new SimpleDocument(this.children); 
+  
+    @Parameters(name = "{0}: {1}")
+    public static Iterable<Object[]> parameters() {
+        return parameters("/blank-lines.json");
     }
 }

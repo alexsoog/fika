@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.leadpony.fika.core.nodes.Document;
-import io.github.leadpony.fika.core.parser.helper.nodes.Modifiable;
+import io.github.leadpony.fika.core.parser.helper.nodes.ContainerNode;
 
 /**
  * @author leadpony
@@ -40,6 +40,7 @@ public class BlockMatcherChain {
     
     public void match(String line) {
         Content content = Content.of(line);
+        context.lineNo++;
         rootMatcher.match(content);
     }
     
@@ -47,7 +48,7 @@ public class BlockMatcherChain {
         return rootMatcher.close();
     }
     
-    public Map<Modifiable, String> getInlines() {
+    public Map<ContainerNode, String> getInlines() {
         return context.inlines;
     }
     
@@ -62,6 +63,7 @@ public class BlockMatcherChain {
         factories.add(HeadingMatcher.factory());
         factories.add(IndentedCodeMatcher.factory());
         factories.add(FencedCodeMatcher.factory());
+        factories.add(BlockQuoteMatcher.factory());
         Collections.sort(factories, (x, y)->x.precedence() - y.precedence());
         return factories;
     }
@@ -69,10 +71,17 @@ public class BlockMatcherChain {
     private static class Context implements BlockMatcher.Context {
 
         private final List<BlockMatcher.Factory> factories;
-        private final Map<Modifiable, String> inlines = new IdentityHashMap<>();
+        private int lineNo;
+        private final Map<ContainerNode, String> inlines = new IdentityHashMap<>();
         
         Context(List<BlockMatcher.Factory> factories) {
             this.factories = factories;
+            this.lineNo = 1;
+        }
+        
+        @Override
+        public int lineNo() {
+            return lineNo;
         }
 
         @Override
@@ -106,7 +115,7 @@ public class BlockMatcherChain {
         }
         
         @Override
-        public void addInline(Modifiable container, String content) {
+        public void addInline(ContainerNode container, String content) {
             this.inlines.put(container, content);
         }
     }

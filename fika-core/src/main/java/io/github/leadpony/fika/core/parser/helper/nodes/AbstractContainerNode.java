@@ -15,13 +15,33 @@
  */
 package io.github.leadpony.fika.core.parser.helper.nodes;
 
-import io.github.leadpony.fika.core.nodes.Paragraph;
+import java.util.Collections;
+import java.util.List;
+
+import io.github.leadpony.fika.core.nodes.Node;
 
 /**
  * @author leadpony
  */
-public class SimpleParagraph extends AbstractContainerNode implements Paragraph {
+abstract class AbstractContainerNode implements ContainerNode {
 
-    public SimpleParagraph() {
+    protected List<Node> children;
+    
+    protected AbstractContainerNode() {
+        this.children = Collections.emptyList();
+    }
+    
+    protected AbstractContainerNode(List<Node> children) {
+        this.children = Collections.unmodifiableList(children);
+    }
+
+    @Override
+    public List<Node> children() {
+        return children;
+    }
+
+    @Override
+    public void replaceChildren(List<? extends Node> children) {
+        this.children = Collections.unmodifiableList(children);
     }
 }

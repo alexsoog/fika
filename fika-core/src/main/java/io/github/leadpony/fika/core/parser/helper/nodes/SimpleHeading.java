@@ -20,7 +20,7 @@ import io.github.leadpony.fika.core.nodes.Heading;
 /**
  * @author leadpony
  */
-public class SimpleHeading extends ModifiableNode implements Heading {
+public class SimpleHeading extends AbstractContainerNode implements Heading {
     
     private final int level;
     

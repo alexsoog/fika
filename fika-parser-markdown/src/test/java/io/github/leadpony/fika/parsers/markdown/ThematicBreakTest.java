@@ -31,6 +31,6 @@ public class ThematicBreakTest extends AbstractSpecTest {
   
     @Parameters(name = "{0}: {1}")
     public static Iterable<Object[]> parameters() {
-        return parameters("/thematic-break.json");
+        return parameters("/thematic-breaks.json");
     }
 }

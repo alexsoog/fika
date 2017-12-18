@@ -31,6 +31,6 @@ public class FencedCodeBlockTest extends AbstractSpecTest {
   
     @Parameters(name = "{0}: {1}")
     public static Iterable<Object[]> parameters() {
-        return parameters("/fenced-code-block.json");
+        return parameters("/fenced-code-blocks.json");
     }
 }

@@ -25,7 +25,7 @@ import io.github.leadpony.fika.core.nodes.Document;
 import io.github.leadpony.fika.core.nodes.Inline;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserException;
-import io.github.leadpony.fika.core.parser.helper.nodes.Modifiable;
+import io.github.leadpony.fika.core.parser.helper.nodes.ContainerNode;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherChain;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineProcessor;
 
@@ -63,13 +63,13 @@ class MarkdownParser implements Parser {
         return doc;
     }
     
-    private void processInlines(Map<Modifiable, String> inlines) {
-        for (Map.Entry<Modifiable, String> entry: inlines.entrySet()) {
+    private void processInlines(Map<ContainerNode, String> inlines) {
+        for (Map.Entry<ContainerNode, String> entry: inlines.entrySet()) {
             processInline(entry.getKey(), entry.getValue());
         }
     }
     
-    private void processInline(Modifiable container, String content) {
+    private void processInline(ContainerNode container, String content) {
         List<Inline> children = inlineProcessor.process(content);
         container.replaceChildren(children);
     }

@@ -13,25 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.helper.nodes;
+package io.github.leadpony.fika.parsers.markdown;
 
-import java.util.List;
-
-import io.github.leadpony.fika.core.nodes.Node;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * @author leadpony
  */
-abstract class AbstractCompositeNode implements Node {
-
-    protected final List<Node> children;
+@RunWith(Parameterized.class)
+public class BlockQuoteTest extends AbstractSpecTest {
     
-    protected AbstractCompositeNode(List<Node> children) {
-        this.children = children;
+    public BlockQuoteTest(int index, String source, String expected) {
+        super(source, expected);
     }
-
-    @Override
-    public List<Node> children() {
-        return children;
+  
+    @Parameters(name = "{0}: {1}")
+    public static Iterable<Object[]> parameters() {
+        return parameters("/block-quotes.json");
+    }
+    
+    @Before
+    public void setUp() {
     }
 }

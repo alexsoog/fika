@@ -31,6 +31,6 @@ public class AtxHeadingTest extends AbstractSpecTest {
   
     @Parameters(name = "{0}: {1}")
     public static Iterable<Object[]> parameters() {
-        return parameters("/atx-heading.json");
+        return parameters("/atx-headings.json");
     }
 }

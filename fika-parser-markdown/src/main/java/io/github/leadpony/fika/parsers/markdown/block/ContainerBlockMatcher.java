@@ -21,72 +21,83 @@ import java.util.List;
 import io.github.leadpony.fika.core.nodes.Node;
 
 /**
+ * Matcher for container blocks such as documents, block quotes, and lists.
+ * 
  * @author leadpony
  */
-abstract class CompositeMatcher extends AbstractBlockMatcher {
+abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
     
     protected BlockMatcher next;
     protected final List<Node> children = new ArrayList<>();
     
-    protected CompositeMatcher() {
+    protected ContainerBlockMatcher() {
     }
 
-    boolean hasNext() {
+    @Override
+    public boolean hasNext() {
         return this.next != null;
     }
     
-    BlockMatcher next() {
+    @Override
+    public BlockMatcher next() {
         return next;
     }
     
     @Override
+    public Status match(Content content) {
+        matchNext(content);
+        return Status.CONTINUED;
+    }
+
+    @Override
     public Node close() {
         if (hasNext()) {
-            disconnect();
+            closeNext();
         }
         return null;
     }
     
-    @Override
-    protected Status match(Content content, int lineNo) {
+    protected Status matchNext(Content content) {
         if (hasNext()) {
-            return matchAndForward(content);
+            return forwardTo(next(), content);
         } else {
-            return matchLast(content);
+            BlockMatcher matcher = context().match(content);
+            if (matcher != null) {
+                openNext(matcher);
+                return forwardFirstTo(matcher, content);
+            }
+            return Status.CONTINUED;
         }
     }
     
-    protected Status matchAndForward(Content content) {
-        return forward(content);
+    protected Status matchLazyContinuationLine(Content content) {
+        BlockMatcher last = last();
+        if (last.canContinue(content)) {
+            forwardTo(last, content);
+            return Status.CONTINUED;
+        } else {
+            return Status.NOT_MATCHED;
+        }
     }
     
-    protected Status matchLast(Content content) {
-        BlockMatcher matcher = context().match(content);
-        if (matcher != null) {
-            connect(matcher);
-            return forwardFirst(content);
-        }
-        return Status.CONTINUED;
-    }
-
-    protected Status forward(Content content) {
+    private Status forwardTo(BlockMatcher next, Content content) {
         BlockMatcher interrupter = next().interrupt(content);
         if (interrupter != null) {
-            disconnect();
-            connect(interrupter);
-            return forwardFirst(content);
+            closeNext();
+            openNext(interrupter);
+            return forwardFirstTo(interrupter, content);
         }
         BlockMatcher.Status status = next().match(content);
         switch (status) {
         case COMPLETED:
-            disconnect();
+            closeNext();
             break;
         case NOT_MATCHED:
-            disconnect();
+            closeNext();
             BlockMatcher matcher = context().match(content);
             if (matcher != null) {
-                connect(matcher);
-                return forwardFirst(content);
+                openNext(matcher);
+                return forwardFirstTo(matcher, content);
             }
             break;
         default:
@@ -95,22 +106,22 @@ abstract class CompositeMatcher extends AbstractBlockMatcher {
         return status;
     }
     
-    protected Status forwardFirst(Content content) {
-        Status status = next().match(content);
+    private Status forwardFirstTo(BlockMatcher next, Content content) {
+        Status status = next.match(content);
         if (status == Status.COMPLETED) {
-            disconnect();
+            closeNext();
         }
         return status;
     }
     
-    protected void connect(BlockMatcher next) {
+    private void openNext(BlockMatcher next) {
         this.next = next;
         if (this.next != null) {
             this.next.bind(context());
         }
     }
     
-    protected void disconnect() {
+    private void closeNext() {
         Node node = this.next.close();
         if (node != null) {
             this.children.add(node);

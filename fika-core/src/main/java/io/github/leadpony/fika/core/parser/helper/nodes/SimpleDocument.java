@@ -23,7 +23,7 @@ import io.github.leadpony.fika.core.nodes.Node;
 /**
  * @author leadpony
  */
-public class SimpleDocument extends AbstractCompositeNode implements Document {
+public class SimpleDocument extends AbstractContainerNode implements Document {
     
     public SimpleDocument(List<Node> children) {
         super(children);

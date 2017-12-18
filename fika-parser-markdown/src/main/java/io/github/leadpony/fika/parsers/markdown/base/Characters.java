@@ -27,10 +27,16 @@ public final class Characters {
     
     public static final char SPACE = '\u0020';
     private static final Pattern BACKSLASH_CAPE = Pattern.compile("\\\\(\\p{Punct})");
-    
+    private static final Pattern LEADING_TRAILING_WHITESPACE = Pattern.compile("^\\s+|\\s+$");
+ 
     public static String unescape(String input) {
         Matcher m = BACKSLASH_CAPE.matcher(input);
         return m.replaceAll("$1");
+    }
+    
+    public static String trim(String input) {
+        Matcher m = LEADING_TRAILING_WHITESPACE.matcher(input);
+        return m.replaceAll("");
     }
 
     private Characters() {

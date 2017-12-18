@@ -25,6 +25,8 @@ import io.github.leadpony.fika.core.parser.helper.nodes.SimpleCodeBlock;
  */
 class FencedCodeMatcher extends AbstractBlockMatcher {
 
+    private static final int PRECEDENCE = 1;
+
     private final int indentSize;
     private final char fenceChar;
     private final int fenceLength;
@@ -45,13 +47,8 @@ class FencedCodeMatcher extends AbstractBlockMatcher {
     }
     
     @Override
-    public Node close() {
-        return new SimpleCodeBlock(builder.toString(), infoString);
-    }
-
-    @Override
-    protected Status match(Content content, int lineNo) {
-        if (lineNo == 0) {
+    public Status match(Content content) {
+        if (lineNo() <= 1) {
             return Status.CONTINUED;
         }
         if (testClosingFence(content)) {
@@ -60,7 +57,12 @@ class FencedCodeMatcher extends AbstractBlockMatcher {
         appendLine(content);
         return Status.CONTINUED;
     }
-    
+
+    @Override
+    public Node close() {
+        return new SimpleCodeBlock(builder.toString(), infoString);
+    }
+
     private boolean testClosingFence(Content content) {
         int i = content.detectSmallIndent();
         if (i >= content.length()) {
@@ -103,6 +105,11 @@ class FencedCodeMatcher extends AbstractBlockMatcher {
     static class Factory implements BlockMatcher.Factory {
 
         private static final Factory instance = new Factory();
+        
+        @Override
+        public int precedence() {
+            return PRECEDENCE;
+        }
         
         @Override
         public BlockMatcher newMatcher(Content content) {

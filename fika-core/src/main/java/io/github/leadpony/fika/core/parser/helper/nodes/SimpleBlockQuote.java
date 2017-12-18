@@ -15,29 +15,17 @@
  */
 package io.github.leadpony.fika.core.parser.helper.nodes;
 
-import java.util.Collections;
 import java.util.List;
 
+import io.github.leadpony.fika.core.nodes.BlockQuote;
 import io.github.leadpony.fika.core.nodes.Node;
 
 /**
  * @author leadpony
  */
-abstract class ModifiableNode implements Node, Modifiable {
-
-    private List<Node> children;
+public class SimpleBlockQuote extends AbstractContainerNode implements BlockQuote {
     
-    ModifiableNode() {
-        children = Collections.emptyList();
-    }
-    
-    @Override
-    public List<Node> children() {
-        return children;
-    }
-    
-    @Override
-    public void replaceChildren(List<? extends Node> children) {
-        this.children = Collections.unmodifiableList(children);
+    public SimpleBlockQuote(List<Node> children) {
+        super(children);
     }
 }

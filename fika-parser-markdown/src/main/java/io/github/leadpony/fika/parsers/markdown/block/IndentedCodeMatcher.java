@@ -27,7 +27,7 @@ import io.github.leadpony.fika.core.parser.helper.nodes.SimpleCodeBlock;
 public class IndentedCodeMatcher extends AbstractBlockMatcher {
 
     private final List<String> lines;
-    private int nonBlankLineNo;
+    private int lastNonBlankLineNo;
     
     private static final int INDENT_SIZE = 4;
 
@@ -40,18 +40,9 @@ public class IndentedCodeMatcher extends AbstractBlockMatcher {
     }
 
     @Override
-    public CodeBlock close() {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i <= nonBlankLineNo; ++i) {
-            builder.append(lines.get(i)).append('\n');
-        }
-        return new SimpleCodeBlock(builder.toString(), null);
-    }
-    
-    @Override
-    protected Status match(Content content, int lineNo) {
-        if (lineNo == 0 || content.hasIndent(INDENT_SIZE)) {
-            appendLine(content, lineNo);
+    public Status match(Content content) {
+        if (lineNo() <= 1 || content.hasIndent(INDENT_SIZE)) {
+            appendLine(content);
             return Status.CONTINUED;
         } else if (content.isBlank()) {
             appendBlank();
@@ -60,11 +51,20 @@ public class IndentedCodeMatcher extends AbstractBlockMatcher {
         return Status.NOT_MATCHED;
     }
 
-    private void appendLine(Content content, int lineNo) {
+    @Override
+    public CodeBlock close() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 1; i <= lastNonBlankLineNo; ++i) {
+            builder.append(lines.get(i - 1)).append('\n');
+        }
+        return new SimpleCodeBlock(builder.toString(), null);
+    }
+
+    private void appendLine(Content content) {
         content = content.subContent(INDENT_SIZE);
         this.lines.add(content.toOriginalString());
         if (!content.isBlank()) {
-            this.nonBlankLineNo = lineNo;
+            this.lastNonBlankLineNo = lineNo();
         }
     }
     

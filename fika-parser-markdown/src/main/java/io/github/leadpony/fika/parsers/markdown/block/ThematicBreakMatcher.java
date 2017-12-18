@@ -21,16 +21,25 @@ import io.github.leadpony.fika.core.parser.helper.nodes.SimpleThematicBreak;
 /**
  * @author leadpony
  */
-class ThematicBreakMatcher extends AbstractBlockMatcher {
+class ThematicBreakMatcher implements BlockMatcher {
 
-    private static final int PRECEDENCE = 1;
     private static final ThematicBreakMatcher instance = new ThematicBreakMatcher();
+    private static final int PRECEDENCE = 1;
     
     static Factory factory() {
         return Factory.instance;
     }
     
     private ThematicBreakMatcher() {
+    }
+
+    @Override
+    public void bind(Context context) {
+    }
+    
+    @Override
+    public int lineNo() {
+        return 1;
     }
     
     @Override

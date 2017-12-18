@@ -20,11 +20,11 @@ import java.util.List;
 import io.github.leadpony.fika.core.nodes.Node;
 
 /**
- * Node wchich is modifiable of children.
+ * Node containing other nodes.
  * 
  * @author leadpony
  */
-public interface Modifiable extends Node {
+public interface ContainerNode extends Node {
     
     /**
      * Replaces children of the node.

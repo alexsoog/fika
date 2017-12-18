@@ -31,6 +31,6 @@ public class IndentedCodeBlockTest extends AbstractSpecTest {
   
     @Parameters(name = "{0}: {1}")
     public static Iterable<Object[]> parameters() {
-        return parameters("/indented-code-block.json");
+        return parameters("/indented-code-blocks.json");
     }
 }

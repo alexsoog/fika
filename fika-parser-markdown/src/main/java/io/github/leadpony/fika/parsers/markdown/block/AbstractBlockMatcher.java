@@ -21,31 +21,33 @@ package io.github.leadpony.fika.parsers.markdown.block;
 abstract class AbstractBlockMatcher implements BlockMatcher {
 
     private Context context;
-    private int lines;
+    private int firstLineNo;
     
     @Override
     public void bind(Context context) {
         this.context = context;
+        this.firstLineNo = context.lineNo();
     }
     
     @Override
-    public BlockMatcher interrupt(Content content) {
-        if (isInterruptible()) {
-            return context().match(content, precedence());
-        }
-        return null;
+    public int lineNo() {
+        return context().lineNo() - firstLineNo + 1;
     }
     
     @Override
     public Status match(Content content) {
-        return match(content, lines++);
-    }
-   
-    protected Context context() {
-        return context;
+        return Status.NOT_MATCHED;
     }
     
-    protected Status match(Content content, int lineNo) {
-        return Status.NOT_MATCHED;
+    @Override
+    public BlockMatcher interrupt(Content content) {
+        if (isInterruptible() && lineNo() > 1) {
+            return context().match(content, precedence());
+        }
+        return null;
+    }
+
+    protected Context context() {
+        return context;
     }
 }
