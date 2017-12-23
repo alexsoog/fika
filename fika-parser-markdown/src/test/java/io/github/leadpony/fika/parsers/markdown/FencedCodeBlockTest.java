@@ -26,7 +26,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class FencedCodeBlockTest extends AbstractSpecTest {
 
     public FencedCodeBlockTest(int index, String source, String expected) {
-        super(source, expected);
+        super(index, source, expected);
     }
   
     @Parameters(name = "{0}: {1}")

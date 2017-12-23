@@ -16,7 +16,7 @@
 package io.github.leadpony.fika.parsers.markdown.block;
 
 import io.github.leadpony.fika.core.nodes.Document;
-import io.github.leadpony.fika.core.parser.helper.nodes.SimpleDocument;
+import io.github.leadpony.fika.core.parser.support.nodes.SimpleDocument;
 
 /**
  * @author leadpony
@@ -25,10 +25,20 @@ class DocumentMatcher extends ContainerBlockMatcher {
     
     DocumentMatcher() {
     }
+   
+    @Override
+    public BlockType blockType() {
+        return BasicBlockType.DOCUMENT;
+    }
     
     @Override
-    public Document close() {
-        super.close();
-        return new SimpleDocument(this.children); 
+    public Result match(Content content) {
+        super.match(content);
+        return Result.CONTINUED;
+    }
+    
+    @Override
+    protected Document buildNode() {
+        return new SimpleDocument(); 
     }
 }

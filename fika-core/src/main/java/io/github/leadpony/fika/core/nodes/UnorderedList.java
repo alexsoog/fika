@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.helper.nodes;
-
-import java.util.List;
-
-import io.github.leadpony.fika.core.nodes.Node;
+package io.github.leadpony.fika.core.nodes;
 
 /**
- * Node containing other nodes.
- * 
  * @author leadpony
  */
-public interface ContainerNode extends Node {
-    
-    /**
-     * Replaces children of the node.
-     * 
-     * @param children new children.
-     */
-    void replaceChildren(List<? extends Node> children);
+public interface UnorderedList extends ListBlock {
+
+    @Override
+    default void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override
+    default ListType listType() {
+        return ListType.UNORDERED;
+    }
 }

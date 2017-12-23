@@ -15,6 +15,8 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
+import io.github.leadpony.fika.core.nodes.Node;
+
 /**
  * @author leadpony
  */
@@ -35,19 +37,23 @@ abstract class AbstractBlockMatcher implements BlockMatcher {
     }
     
     @Override
-    public Status match(Content content) {
-        return Status.NOT_MATCHED;
+    public Result match(Content content) {
+        return Result.NOT_MATCHED;
     }
     
     @Override
     public BlockMatcher interrupt(Content content) {
-        if (isInterruptible() && lineNo() > 1) {
-            return context().match(content, precedence());
-        }
-        return null;
+        return context().match(content, precedence());
+    }
+    
+    @Override
+    public Node close() {
+        return buildNode();
     }
 
     protected Context context() {
         return context;
     }
+    
+    protected abstract Node buildNode();
 }

@@ -21,11 +21,13 @@ package io.github.leadpony.fika.core.nodes;
  */
 public interface CodeBlock extends Block {
 
-    String content();
+    String getContent();
     
-    default String language() {
-        return null;
-    }
+    void setContent(String content);
+    
+    String getLanguage();
+    
+    void setLanguage(String language);
 
     @Override
     default void accept(Visitor visitor) {

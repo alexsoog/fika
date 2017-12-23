@@ -20,7 +20,9 @@ package io.github.leadpony.fika.core.nodes;
  */
 public interface Text extends Inline {
 
-    String content();
+    String getContent();
+    
+    void setContent(String content);
     
     @Override
     default void accept(Visitor visitor) {

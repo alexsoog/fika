@@ -17,6 +17,7 @@ package io.github.leadpony.fika.core.renderers;
 
 import java.io.PrintWriter;
 import java.io.Writer;
+import java.util.Map;
 
 /**
  * @author leadpony
@@ -36,9 +37,14 @@ public class SimpleHtmlFormatter implements HtmlFormatter {
     }
 
     @Override
-    public void startTag(String tagName, String... attributes) {
+    public void startTag(String tagName) {
+        writer.append("<").append(tagName).append(">");
+    }
+    
+    @Override
+    public void startTag(String tagName, Map<String, Object> attributes) {
         writer.append("<").append(tagName);
-        if (attributes.length > 0) {
+        if (!attributes.isEmpty()) {
             appendAttributes(attributes);
         }
         writer.append(">");
@@ -50,9 +56,14 @@ public class SimpleHtmlFormatter implements HtmlFormatter {
     }
 
     @Override
-    public void emptyTag(String tagName, String... attributes) {
+    public void emptyTag(String tagName) {
+        writer.append("<").append(tagName).append(" />");
+    }
+
+    @Override
+    public void emptyTag(String tagName, Map<String, Object> attributes) {
         writer.append("<").append(tagName);
-        if (attributes.length > 0) {
+        if (!attributes.isEmpty()) {
             appendAttributes(attributes);
         }
         writer.append(" />");
@@ -72,11 +83,11 @@ public class SimpleHtmlFormatter implements HtmlFormatter {
         writer.append(text);
     }
     
-    private void appendAttributes(String[] attributes) {
-        for (int i = 0; i + 1 < attributes.length; i += 2) {
+    private void appendAttributes(Map<String, Object> attributes) {
+        for (Map.Entry<String, Object> entry: attributes.entrySet()) {
             writer.append(" ")
-                  .append(attributes[i]).append("=\"")
-                  .append(attributes[i + 1]).append("\"");
+                  .append(entry.getKey()).append("=\"")
+                  .append(entry.getValue().toString()).append("\"");
         }
     }
 }

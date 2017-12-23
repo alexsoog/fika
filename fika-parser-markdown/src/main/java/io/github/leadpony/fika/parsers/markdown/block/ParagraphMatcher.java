@@ -23,9 +23,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import io.github.leadpony.fika.core.nodes.Node;
-import io.github.leadpony.fika.core.parser.helper.nodes.ContainerNode;
-import io.github.leadpony.fika.core.parser.helper.nodes.SimpleHeading;
-import io.github.leadpony.fika.core.parser.helper.nodes.SimpleParagraph;
+import io.github.leadpony.fika.core.parser.support.nodes.SimpleHeading;
+import io.github.leadpony.fika.core.parser.support.nodes.SimpleParagraph;
+import io.github.leadpony.fika.core.parser.support.nodes.SimpleText;
 
 /**
  * @author leadpony
@@ -33,49 +33,45 @@ import io.github.leadpony.fika.core.parser.helper.nodes.SimpleParagraph;
 class ParagraphMatcher extends AbstractBlockMatcher {
     
     private final List<String> lines;
-
-    private boolean underlined;
     private int headingLevel;
     
-    private static final int PRECEDENCE = 2;
     private static final Pattern UNDERLINE_PATTERN = Pattern.compile("\\u0020{0,3}(=+|-{2,})\\u0020*");
     
     ParagraphMatcher() {
         this.lines = new ArrayList<>();
-        this.underlined = false;
         this.headingLevel = 0;
     }
-    
+  
     @Override
-    public int precedence() {
-        return PRECEDENCE;
+    public BlockType blockType() {
+        return BasicBlockType.PARAGRAPH;
     }
     
     @Override
-    public Status match(Content content) {
+    public Result match(Content content) {
         if (lineNo() <= 1) {
             appendLine(content);
-            return Status.CONTINUED;
-        } else if (testUnderline(content)) {
-            this.underlined = true;
-            this.headingLevel = detectHeadingLevel(content);
-            return Status.COMPLETED;
+            return Result.CONTINUED;
+        }
+        headingLevel = parseUnderline(content);
+        if (headingLevel > 0) {
+            return Result.COMPLETED;
         } else if (content.isBlank()) {
-            return Status.COMPLETED;
+            return Result.COMPLETED;
         }
         appendLine(content);
-        return Status.CONTINUED;
+        return Result.CONTINUED;
     }
 
     @Override
     public boolean isInterruptible() {
-        return true;
+        return lineNo() > 1;
     }
     
     @Override
     public BlockMatcher interrupt(Content content) {
         // Handles underline before interrupted by ThematicBreakMatcher. 
-        if (testUnderline(content)) {
+        if (parseUnderline(content) > 0) {
             return null;
         }
         return super.interrupt(content);
@@ -90,9 +86,11 @@ class ParagraphMatcher extends AbstractBlockMatcher {
     }
     
     @Override
-    public Node close() {
-        ContainerNode node = createNode();
-        context().addInline(node, buildParagraphContent());
+    protected Node buildNode() {
+        Node node = createNode();
+        SimpleText text = new SimpleText(buildParagraphContent());
+        node.childNodes().add(text);
+        context().addInline(text);
         return node;
     }
     
@@ -101,18 +99,17 @@ class ParagraphMatcher extends AbstractBlockMatcher {
         this.lines.add(extracted);
     }
 
-    private boolean testUnderline(Content content) {
-        return UNDERLINE_PATTERN.matcher(content).matches();
-    }
-    
-    private int detectHeadingLevel(Content content) {
-        int index = content.detectSmallIndent();
+    private int parseUnderline(Content content) {
+        if (!UNDERLINE_PATTERN.matcher(content).matches()) {
+            return 0;
+        }
+        int index = content.countSpaces(0, 3);
         char c = content.charAt(index);
         return (c == '=') ? 1 : 2;
     }
 
-    private ContainerNode createNode() {
-        if (this.underlined) {
+    private Node createNode() {
+        if (this.headingLevel > 0) {
             return new SimpleHeading(this.headingLevel);
         } else {
             return new SimpleParagraph();

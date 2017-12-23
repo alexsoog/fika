@@ -17,20 +17,14 @@ package io.github.leadpony.fika.parsers.markdown.inline;
 
 import static io.github.leadpony.fika.parsers.markdown.base.Characters.unescape;
 
-import java.util.Arrays;
-import java.util.List;
-
-import io.github.leadpony.fika.core.nodes.Inline;
 import io.github.leadpony.fika.core.nodes.Text;
-import io.github.leadpony.fika.core.parser.helper.nodes.SimpleText;
 
 /**
  * @author leadpony
  */
 public class InlineProcessor {
     
-    public List<Inline> process(String content) {
-        Text text = new SimpleText(unescape(content));
-        return Arrays.asList(text);
+    public void process(Text text) {
+        text.setContent(unescape(text.getContent()));
     }
 }

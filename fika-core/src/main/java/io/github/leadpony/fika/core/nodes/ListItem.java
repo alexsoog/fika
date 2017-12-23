@@ -19,4 +19,9 @@ package io.github.leadpony.fika.core.nodes;
  * @author leadpony
  */
 public interface ListItem extends Block {
+
+    @Override
+    default void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
 }

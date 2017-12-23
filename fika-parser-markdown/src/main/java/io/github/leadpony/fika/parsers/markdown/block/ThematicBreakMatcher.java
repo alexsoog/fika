@@ -16,7 +16,7 @@
 package io.github.leadpony.fika.parsers.markdown.block;
 
 import io.github.leadpony.fika.core.nodes.Node;
-import io.github.leadpony.fika.core.parser.helper.nodes.SimpleThematicBreak;
+import io.github.leadpony.fika.core.parser.support.nodes.SimpleThematicBreak;
 
 /**
  * @author leadpony
@@ -24,13 +24,17 @@ import io.github.leadpony.fika.core.parser.helper.nodes.SimpleThematicBreak;
 class ThematicBreakMatcher implements BlockMatcher {
 
     private static final ThematicBreakMatcher instance = new ThematicBreakMatcher();
-    private static final int PRECEDENCE = 1;
     
     static Factory factory() {
         return Factory.instance;
     }
     
     private ThematicBreakMatcher() {
+    }
+
+    @Override
+    public BlockType blockType() {
+        return BasicBlockType.THEMATIC_BREAK;
     }
 
     @Override
@@ -43,8 +47,8 @@ class ThematicBreakMatcher implements BlockMatcher {
     }
     
     @Override
-    public Status match(Content content) {
-        return Status.COMPLETED;
+    public Result match(Content content) {
+        return Result.COMPLETED;
     }
     
     @Override
@@ -53,7 +57,7 @@ class ThematicBreakMatcher implements BlockMatcher {
     }
 
     private static boolean testLine(Content content) {
-        int i = content.detectSmallIndent();
+        int i = content.countSpaces(0, 3);
         char lineChar = content.charAt(i);
         if (lineChar != '-' && lineChar != '_' && lineChar != '*') {
             return false;
@@ -81,8 +85,8 @@ class ThematicBreakMatcher implements BlockMatcher {
         private static final Factory instance = new Factory();
         
         @Override
-        public int precedence() {
-            return PRECEDENCE;
+        public BlockType blockType() {
+            return BasicBlockType.THEMATIC_BREAK;
         }
 
         @Override

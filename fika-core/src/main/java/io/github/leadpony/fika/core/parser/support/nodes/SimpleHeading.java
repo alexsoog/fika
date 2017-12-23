@@ -13,19 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.helper.nodes;
+package io.github.leadpony.fika.core.parser.support.nodes;
 
-import java.util.List;
-
-import io.github.leadpony.fika.core.nodes.BlockQuote;
-import io.github.leadpony.fika.core.nodes.Node;
+import io.github.leadpony.fika.core.nodes.Heading;
 
 /**
  * @author leadpony
  */
-public class SimpleBlockQuote extends AbstractContainerNode implements BlockQuote {
+public class SimpleHeading extends AbstractContainerNode implements Heading {
     
-    public SimpleBlockQuote(List<Node> children) {
-        super(children);
+    private final int level;
+    
+    public SimpleHeading(int level) {
+        this.level = level;
+    }
+
+    @Override
+    public int level() {
+        return level;
     }
 }

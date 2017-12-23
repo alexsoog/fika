@@ -16,14 +16,14 @@
 package io.github.leadpony.fika.parsers.markdown.block;
 
 import io.github.leadpony.fika.core.nodes.Heading;
-import io.github.leadpony.fika.core.parser.helper.nodes.SimpleHeading;
+import io.github.leadpony.fika.core.parser.support.nodes.SimpleHeading;
+import io.github.leadpony.fika.core.parser.support.nodes.SimpleText;
 
 /**
  * @author leadpony
  */
 class HeadingMatcher extends AbstractBlockMatcher {
 
-    private static final int PRECEDENCE = 1;
     private static final int MAX_LEVEL = 6;
     
     private final int level;
@@ -39,19 +39,21 @@ class HeadingMatcher extends AbstractBlockMatcher {
     }
 
     @Override
-    public int precedence() {
-        return PRECEDENCE;
-    }
- 
-    @Override
-    public Status match(Content content) {
-        return Status.COMPLETED;
+    public BlockType blockType() {
+        return BasicBlockType.HEADING;
     }
     
     @Override
-    public Heading close() {
+    public Result match(Content content) {
+        return Result.COMPLETED;
+    }
+    
+    @Override
+    protected Heading buildNode() {
         SimpleHeading node = new SimpleHeading(this.level);
-        context().addInline(node, this.title);
+        SimpleText text = new SimpleText(this.title);
+        node.childNodes().add(text);
+        context().addInline(text);
         return node;
     }
     
@@ -93,13 +95,13 @@ class HeadingMatcher extends AbstractBlockMatcher {
         private static final Factory instance = new Factory();
         
         @Override
-        public int precedence() {
-            return PRECEDENCE;
+        public BlockType blockType() {
+            return BasicBlockType.HEADING;
         }
 
         @Override
         public BlockMatcher newMatcher(Content content) {
-            int i = content.detectSmallIndent();
+            int i = content.countSpaces(0, 3);
             int level = 0;
             for (; i < content.length(); i++) {
                 if (content.charAt(i) != '#') {

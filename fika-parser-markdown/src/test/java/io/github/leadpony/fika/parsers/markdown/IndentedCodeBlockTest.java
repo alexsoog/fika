@@ -26,7 +26,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class IndentedCodeBlockTest extends AbstractSpecTest {
 
     public IndentedCodeBlockTest(int index, String source, String expected) {
-        super(source, expected);
+        super(index, source, expected);
     }
   
     @Parameters(name = "{0}: {1}")

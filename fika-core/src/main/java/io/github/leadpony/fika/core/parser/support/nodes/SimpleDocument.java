@@ -13,28 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.helper.nodes;
+package io.github.leadpony.fika.core.parser.support.nodes;
 
-import io.github.leadpony.fika.core.nodes.Text;
+import io.github.leadpony.fika.core.nodes.Document;
 
 /**
  * @author leadpony
  */
-public class SimpleText implements Text {
+public class SimpleDocument extends AbstractContainerNode implements Document {
     
-    private final String content;
-    
-    public SimpleText(String content) {
-        this.content = content;
-    }
-
-    @Override
-    public String content() {
-        return content;
-    }
-    
-    @Override
-    public String toString() {
-        return content;
+    public SimpleDocument() {
     }
 }

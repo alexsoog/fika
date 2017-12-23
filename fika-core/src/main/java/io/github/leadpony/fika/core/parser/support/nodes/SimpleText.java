@@ -13,24 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown;
+package io.github.leadpony.fika.core.parser.support.nodes;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import io.github.leadpony.fika.core.nodes.Text;
 
 /**
  * @author leadpony
  */
-@RunWith(Parameterized.class)
-public class BlankLineTest extends AbstractSpecTest {
-
-    public BlankLineTest(int index, String source, String expected) {
-        super(index, source, expected);
+public class SimpleText extends AbstractNode implements Text {
+    
+    private String content;
+    
+    public SimpleText(String content) {
+        this.content = content;
     }
-  
-    @Parameters(name = "{0}: {1}")
-    public static Iterable<Object[]> parameters() {
-        return parameters("/blank-lines.json");
+    
+    @Override
+    public String getContent() {
+        return content;
+    }
+    
+    @Override
+    public void setContent(String content) {
+        this.content = content;
+    }
+    
+    @Override
+    public String toString() {
+        return content;
     }
 }

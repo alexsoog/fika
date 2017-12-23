@@ -13,35 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.helper.nodes;
+package io.github.leadpony.fika.core.parser.support.nodes;
 
-import io.github.leadpony.fika.core.nodes.CodeBlock;
+import io.github.leadpony.fika.core.nodes.Paragraph;
 
 /**
  * @author leadpony
  */
-public class SimpleCodeBlock implements CodeBlock {
+public class SimpleParagraph extends AbstractContainerNode implements Paragraph {
 
-    private final String content;
-    private final String language;
-    
-    public SimpleCodeBlock(String content, String language) {
-        this.content = content;
-        this.language = language;
-    }
-
-    @Override
-    public String content() {
-        return content;
-    }
-    
-    @Override
-    public String language() {
-        return language;
-    }
-    
-    @Override
-    public String toString() {
-        return content;
+    public SimpleParagraph() {
     }
 }

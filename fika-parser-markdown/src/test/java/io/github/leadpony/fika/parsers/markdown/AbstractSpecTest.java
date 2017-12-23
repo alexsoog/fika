@@ -39,9 +39,11 @@ public abstract class AbstractSpecTest {
    
     private static final MarkdownParserFactory factory = new MarkdownParserFactory();
 
+    private final int index;
     protected final Fixture fixture;
     
-    protected AbstractSpecTest(String source, String expected) {
+    protected AbstractSpecTest(int index, String source, String expected) {
+        this.index = index;
         this.fixture = new Fixture(source, expected);
     }
     
@@ -55,6 +57,10 @@ public abstract class AbstractSpecTest {
         String actual = renderer.render(doc);
         String expected = fixture.expected();
         assertThat(wrapXml(actual)).isXmlEqualTo(wrapXml(expected));
+    }
+    
+    public int index() {
+        return index;
     }
     
     private static String wrapXml(String xml) {

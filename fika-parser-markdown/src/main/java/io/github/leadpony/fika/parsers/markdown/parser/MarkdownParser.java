@@ -18,14 +18,12 @@ package io.github.leadpony.fika.parsers.markdown.parser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import io.github.leadpony.fika.core.nodes.Document;
-import io.github.leadpony.fika.core.nodes.Inline;
+import io.github.leadpony.fika.core.nodes.Text;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserException;
-import io.github.leadpony.fika.core.parser.helper.nodes.ContainerNode;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherChain;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineProcessor;
 
@@ -59,19 +57,18 @@ class MarkdownParser implements Parser {
             chain.match(line);
         }
         Document doc = chain.close();
-        processInlines(chain.getInlines());
+        processAllInlines(chain.getInlines());
         return doc;
     }
     
-    private void processInlines(Map<ContainerNode, String> inlines) {
-        for (Map.Entry<ContainerNode, String> entry: inlines.entrySet()) {
-            processInline(entry.getKey(), entry.getValue());
+    private void processAllInlines(Set<Text> inlines) {
+        for (Text text: inlines) {
+            processInline(text);
         }
     }
     
-    private void processInline(ContainerNode container, String content) {
-        List<Inline> children = inlineProcessor.process(content);
-        container.replaceChildren(children);
+    private void processInline(Text text) {
+        inlineProcessor.process(text);
     }
 }
 

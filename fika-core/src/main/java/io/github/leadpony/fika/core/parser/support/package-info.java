@@ -17,4 +17,4 @@
  * @author leadpony
  *
  */
-package io.github.leadpony.fika.core.parser.helper;
+package io.github.leadpony.fika.core.parser.support;

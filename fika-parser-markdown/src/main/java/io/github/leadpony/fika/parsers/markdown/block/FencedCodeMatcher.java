@@ -18,14 +18,12 @@ package io.github.leadpony.fika.parsers.markdown.block;
 import static io.github.leadpony.fika.parsers.markdown.base.Characters.SPACE;
 
 import io.github.leadpony.fika.core.nodes.Node;
-import io.github.leadpony.fika.core.parser.helper.nodes.SimpleCodeBlock;
+import io.github.leadpony.fika.core.parser.support.nodes.SimpleCodeBlock;
 
 /**
  * @author leadpony
  */
 class FencedCodeMatcher extends AbstractBlockMatcher {
-
-    private static final int PRECEDENCE = 1;
 
     private final int indentSize;
     private final char fenceChar;
@@ -45,26 +43,31 @@ class FencedCodeMatcher extends AbstractBlockMatcher {
         this.infoString = infoString;
         this.builder = new StringBuilder();
     }
+  
+    @Override
+    public BlockType blockType() {
+        return BasicBlockType.FENCED_CODE;
+    }
     
     @Override
-    public Status match(Content content) {
+    public Result match(Content content) {
         if (lineNo() <= 1) {
-            return Status.CONTINUED;
+            return Result.CONTINUED;
         }
         if (testClosingFence(content)) {
-            return Status.COMPLETED;
+            return Result.COMPLETED;
         }
         appendLine(content);
-        return Status.CONTINUED;
+        return Result.CONTINUED;
     }
 
     @Override
-    public Node close() {
+    protected Node buildNode() {
         return new SimpleCodeBlock(builder.toString(), infoString);
     }
 
     private boolean testClosingFence(Content content) {
-        int i = content.detectSmallIndent();
+        int i = content.countSpaces(0, 3);
         if (i >= content.length()) {
             return false;
         }
@@ -107,13 +110,13 @@ class FencedCodeMatcher extends AbstractBlockMatcher {
         private static final Factory instance = new Factory();
         
         @Override
-        public int precedence() {
-            return PRECEDENCE;
+        public BlockType blockType() {
+            return BasicBlockType.FENCED_CODE;
         }
         
         @Override
         public BlockMatcher newMatcher(Content content) {
-            int indentSize = content.detectSmallIndent();
+            int indentSize = content.countSpaces(0, 3);
             int i = indentSize;
             char fenceChar = content.charAt(i);
             if (fenceChar != '`' && fenceChar != '~') {

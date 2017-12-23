@@ -15,12 +15,20 @@
  */
 package io.github.leadpony.fika.core.renderers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import io.github.leadpony.fika.core.nodes.Document;
 
 /**
  * @author leadpony
  */
 public class FullHtmlRenderingVisitor extends HtmlRenderingVisitor {
+    
+    @SuppressWarnings("serial")
+    private static final Map<String, Object> charset = new HashMap<String, Object>() {{
+        put("charset", "UTF-8");
+    }};
 
     FullHtmlRenderingVisitor(HtmlFormatter formatter) {
         super(formatter);
@@ -31,7 +39,7 @@ public class FullHtmlRenderingVisitor extends HtmlRenderingVisitor {
         formatter.doctype("html");
         formatter.startTag("html");
         formatter.startTag("head");
-        formatter.emptyTag("meta", "charset", "UTF-8");
+        formatter.emptyTag("meta", charset);
         formatter.endTag("head");
         formatter.startTag("body");
         visitChildren(node);

@@ -84,6 +84,19 @@ class Content implements CharSequence {
         }
     }
     
+    /* */
+    
+    boolean isEmpty() {
+        return length == 0;
+    }
+    
+    boolean isBlank() {
+        if (isEmpty()) {
+            return true;
+        }
+        return BLANK_PATTERN.matcher(this).matches();
+    }
+
     Content subContent(int beginIndex) {
         if (beginIndex == 0) {
             return this;
@@ -92,16 +105,15 @@ class Content implements CharSequence {
     }
 
     Content subContent(int beginIndex, int endIndex) {
+        if (beginIndex < 0 || endIndex < 0 || beginIndex > endIndex || endIndex > length) {
+            throw new IndexOutOfBoundsException();
+        }
         if (beginIndex == 0 && endIndex == length) {
             return this;
         }
         int newBeginIndex = this.beginIndex + beginIndex;
         int newEndIndex = this.beginIndex + endIndex;
         return new Content(this.line, this.tabs, newBeginIndex, newEndIndex);
-    }
-    
-    boolean isBlank() {
-        return BLANK_PATTERN.matcher(this).matches();
     }
     
     boolean hasIndent(int size) {
@@ -164,20 +176,27 @@ class Content implements CharSequence {
         return subContent(i, length);
     }
     
-    int detectSmallIndent() {
-        int i = 0;
-        while (i < length && i < 3) {
-            char c = charAt(i);
-            if (c != SPACE) {
+    int countSpaces(int offset) {
+        return countSpaces(offset, length - offset);
+    }
+    
+    int countSpaces(int offset, int max) {
+        int end = offset + max;
+        if (end > length) {
+            end = length;
+        }
+        int i = offset;
+        while (i < end) {
+            if (charAt(i) != SPACE) {
                 break;
             }
             ++i;
         }
-        return i;
+        return i - offset;
     }
     
     Content trimSmallIndent() {
-        int beginIndex = detectSmallIndent();
+        int beginIndex = countSpaces(0, 3);
         return subContent(beginIndex, length());
     }
     

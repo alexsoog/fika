@@ -27,105 +27,114 @@ import io.github.leadpony.fika.core.nodes.Node;
  */
 abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
     
-    protected BlockMatcher next;
-    protected final List<Node> children = new ArrayList<>();
+    private BlockMatcher childMatcher;
+    private final List<Node> childNodes = new ArrayList<>();
     
     protected ContainerBlockMatcher() {
     }
 
     @Override
-    public boolean hasNext() {
-        return this.next != null;
+    public boolean hasChildMatcher() {
+        return this.childMatcher != null;
     }
     
     @Override
-    public BlockMatcher next() {
-        return next;
+    public BlockMatcher childMatcher() {
+        return childMatcher;
     }
     
     @Override
-    public Status match(Content content) {
-        matchNext(content);
-        return Status.CONTINUED;
+    public Result match(Content content) {
+        if (!hasChildMatcher()) {
+            if (findChildMatcher(content) == null) {
+                return Result.NOT_MATCHED;
+            }
+        }
+        return invokeChildMatcher(childMatcher(), content);
     }
 
     @Override
-    public Node close() {
-        if (hasNext()) {
-            closeNext();
+    public final Node close() {
+        if (hasChildMatcher()) {
+            closeCurrentChildMatcher();
         }
-        return null;
+        Node node = buildNode();
+        node.childNodes().addAll(childNodes());
+        return node;
     }
     
-    protected Status matchNext(Content content) {
-        if (hasNext()) {
-            return forwardTo(next(), content);
-        } else {
-            BlockMatcher matcher = context().match(content);
-            if (matcher != null) {
-                openNext(matcher);
-                return forwardFirstTo(matcher, content);
-            }
-            return Status.CONTINUED;
-        }
-    }
-    
-    protected Status matchLazyContinuationLine(Content content) {
-        BlockMatcher last = last();
+    protected Result matchLazyContinuationLine(Content content) {
+        BlockMatcher last = lastMatcher();
         if (last.canContinue(content)) {
-            forwardTo(last, content);
-            return Status.CONTINUED;
+            invokeChildMatcher(last, content);
+            return Result.CONTINUED;
         } else {
-            return Status.NOT_MATCHED;
+            return Result.NOT_MATCHED;
         }
     }
     
-    private Status forwardTo(BlockMatcher next, Content content) {
-        BlockMatcher interrupter = next().interrupt(content);
-        if (interrupter != null) {
-            closeNext();
-            openNext(interrupter);
-            return forwardFirstTo(interrupter, content);
+    protected Result invokeChildMatcher(BlockMatcher child, Content content) {
+        assert(child != null);
+        if (child.isInterruptible()) {
+            BlockMatcher interrupter = child.interrupt(content);
+            if (interrupter != null) {
+                openChildMatcher(interrupter);
+                child = interrupter;
+            }
         }
-        BlockMatcher.Status status = next().match(content);
-        switch (status) {
+        Result result = child.match(content);
+        switch (result) {
         case COMPLETED:
-            closeNext();
+            closeCurrentChildMatcher();
             break;
         case NOT_MATCHED:
-            closeNext();
-            BlockMatcher matcher = context().match(content);
-            if (matcher != null) {
-                openNext(matcher);
-                return forwardFirstTo(matcher, content);
+            closeCurrentChildMatcher();
+            child = findChildMatcher(content);
+            if (child != null) {
+                return invokeChildMatcher(child, content);
             }
             break;
         default:
             break;
         }
-        return status;
+        return result;
     }
     
-    private Status forwardFirstTo(BlockMatcher next, Content content) {
-        Status status = next.match(content);
-        if (status == Status.COMPLETED) {
-            closeNext();
+    protected BlockMatcher findChildMatcher(Content content) {
+        BlockMatcher matched = context().match(content);
+        if (matched != null) {
+            openChildMatcher(matched);
         }
-        return status;
+        return matched;
     }
     
-    private void openNext(BlockMatcher next) {
-        this.next = next;
-        if (this.next != null) {
-            this.next.bind(context());
+    protected void openChildMatcher(BlockMatcher childMatcher) {
+        if (childMatcher == null) {
+            throw new NullPointerException();
         }
+        closeCurrentChildMatcher();
+        this.childMatcher = childMatcher;
+        childMatcher.bind(context());
     }
     
-    private void closeNext() {
-        Node node = this.next.close();
+    protected void closeChildMatcher(BlockMatcher childMatcher) {
+        if (childMatcher == null) {
+            throw new NullPointerException();
+        }
+        Node node = childMatcher.close();
         if (node != null) {
-            this.children.add(node);
+            this.childNodes.add(node);
         }
-        this.next = null;
+        this.childMatcher = null;
+    }
+    
+    protected void closeCurrentChildMatcher() {
+        if (this.childMatcher != null) {
+            closeChildMatcher(this.childMatcher);
+        }
+    }
+    
+    protected List<Node> childNodes() {
+        return childNodes;
     }
 }

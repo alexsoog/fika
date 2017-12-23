@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.helper.nodes;
+package io.github.leadpony.fika.core.parser.support.nodes;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,25 +23,27 @@ import io.github.leadpony.fika.core.nodes.Node;
 /**
  * @author leadpony
  */
-abstract class AbstractContainerNode implements ContainerNode {
-
-    protected List<Node> children;
+abstract class AbstractNode implements Node {
     
-    protected AbstractContainerNode() {
-        this.children = Collections.emptyList();
+    private Node parentNode;
+    
+    @Override
+    public boolean hasChildNodes() {
+        return false;
     }
     
-    protected AbstractContainerNode(List<Node> children) {
-        this.children = Collections.unmodifiableList(children);
-    }
-
     @Override
-    public List<Node> children() {
-        return children;
+    public List<Node> childNodes() {
+        return Collections.emptyList();
     }
-
+    
     @Override
-    public void replaceChildren(List<? extends Node> children) {
-        this.children = Collections.unmodifiableList(children);
+    public Node getParentNode() {
+        return parentNode;
+    }
+    
+    @Override
+    public void setParentNode(Node parentNode) {
+        this.parentNode = parentNode;
     }
 }

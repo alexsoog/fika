@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.leadpony.fika.core.nodes.CodeBlock;
-import io.github.leadpony.fika.core.parser.helper.nodes.SimpleCodeBlock;
+import io.github.leadpony.fika.core.parser.support.nodes.SimpleCodeBlock;
 
 /**
  * @author leadpony
@@ -40,19 +40,24 @@ public class IndentedCodeMatcher extends AbstractBlockMatcher {
     }
 
     @Override
-    public Status match(Content content) {
+    public BlockType blockType() {
+        return BasicBlockType.INDENTED_CODE;
+    }
+    
+    @Override
+    public Result match(Content content) {
         if (lineNo() <= 1 || content.hasIndent(INDENT_SIZE)) {
             appendLine(content);
-            return Status.CONTINUED;
+            return Result.CONTINUED;
         } else if (content.isBlank()) {
             appendBlank();
-            return Status.CONTINUED;
+            return Result.CONTINUED;
         }
-        return Status.NOT_MATCHED;
+        return Result.NOT_MATCHED;
     }
 
     @Override
-    public CodeBlock close() {
+    protected CodeBlock buildNode() {
         StringBuilder builder = new StringBuilder();
         for (int i = 1; i <= lastNonBlankLineNo; ++i) {
             builder.append(lines.get(i - 1)).append('\n');
@@ -75,6 +80,11 @@ public class IndentedCodeMatcher extends AbstractBlockMatcher {
     private static class Factory implements BlockMatcher.Factory {
   
         private static final Factory instance = new Factory();
+        
+        @Override
+        public BlockType blockType() {
+            return BasicBlockType.INDENTED_CODE;
+        }
         
         @Override
         public BlockMatcher newMatcher(Content content) {

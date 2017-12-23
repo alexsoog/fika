@@ -15,6 +15,8 @@
  */
 package io.github.leadpony.fika.parsers.markdown;
 
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -26,11 +28,16 @@ import org.junit.runners.Parameterized.Parameters;
 public class SetextHeadingTest extends AbstractSpecTest {
 
     public SetextHeadingTest(int index, String source, String expected) {
-        super(source, expected);
+        super(index, source, expected);
     }
   
     @Parameters(name = "{0}: {1}")
     public static Iterable<Object[]> parameters() {
         return parameters("/setext-headings.json");
+    }
+    
+    @Before
+    public void setUp() {
+        //Assume.assumeTrue(index() == 62);
     }
 }

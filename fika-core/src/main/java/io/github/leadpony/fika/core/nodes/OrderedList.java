@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.helper.nodes;
-
-import java.util.List;
-
-import io.github.leadpony.fika.core.nodes.Document;
-import io.github.leadpony.fika.core.nodes.Node;
+package io.github.leadpony.fika.core.nodes;
 
 /**
  * @author leadpony
  */
-public class SimpleDocument extends AbstractContainerNode implements Document {
-    
-    public SimpleDocument(List<Node> children) {
-        super(children);
+public interface OrderedList extends ListBlock {
+
+    @Override
+    default void accept(Visitor visitor) {
+        visitor.visit(this);
     }
+    
+    @Override
+    default ListType listType() {
+        return ListType.ORDERED;
+    }
+    
+    int startNumber();
 }

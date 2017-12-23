@@ -16,18 +16,20 @@
 package io.github.leadpony.fika.parsers.markdown.block;
 
 import io.github.leadpony.fika.core.nodes.Node;
-import io.github.leadpony.fika.core.parser.helper.nodes.ContainerNode;
+import io.github.leadpony.fika.core.nodes.Text;
 
 /**
  * @author leadpony
  */
 public interface BlockMatcher {
     
-    enum Status {
+    enum Result {
         NOT_MATCHED,
         CONTINUED,
         COMPLETED
     }
+    
+    BlockType blockType();
     
     /**
      * Binds the context to this matcher.
@@ -37,28 +39,28 @@ public interface BlockMatcher {
     void bind(Context context);
     
     default int precedence() {
-        return Integer.MAX_VALUE;
+        return blockType().precedence();
     }
     
-    default boolean hasNext() {
+    default boolean hasChildMatcher() {
         return false;
     }
     
-    default BlockMatcher next() {
+    default BlockMatcher childMatcher() {
         return null;
     }
     
-    default BlockMatcher last() {
+    default BlockMatcher lastMatcher() {
         BlockMatcher matcher = this;
-        while (matcher.hasNext()) {
-            matcher = matcher.next();
+        while (matcher.hasChildMatcher()) {
+            matcher = matcher.childMatcher();
         }
         return matcher;
     }
     
     int lineNo();
 
-    Status match(Content content);
+    Result match(Content content);
 
     default boolean isInterruptible() {
         return false;
@@ -87,13 +89,15 @@ public interface BlockMatcher {
 
         BlockMatcher match(Content content, int precedence);
         
-        void addInline(ContainerNode container, String content);
+        void addInline(Text text);
     }
 
     interface Factory {
         
+        BlockType blockType();
+        
         default int precedence() {
-            return Integer.MAX_VALUE;
+            return blockType().precedence();
         }
         
         BlockMatcher newMatcher(Content content);

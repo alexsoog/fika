@@ -36,6 +36,14 @@ public interface Visitor {
         visitChildren(node);
     }
 
+    default void visit(ListItem node) {
+        visitChildren(node);
+    }
+
+    default void visit(OrderedList node) {
+        visitChildren(node);
+    }
+
     default void visit(Paragraph node) {
         visitChildren(node);
     }
@@ -47,8 +55,12 @@ public interface Visitor {
     default void visit(ThematicBreak node) {
     }
 
+    default void visit(UnorderedList node) {
+        visitChildren(node);
+    }
+
     default void visitChildren(Node node) {
-        for (Node child: node.children()) {
+        for (Node child: node.childNodes()) {
             child.accept(this);
         }
     }

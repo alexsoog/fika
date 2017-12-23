@@ -13,24 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown;
-
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+package io.github.leadpony.fika.parsers.markdown.block;
 
 /**
  * @author leadpony
+ *
  */
-@RunWith(Parameterized.class)
-public class BlankLineTest extends AbstractSpecTest {
+public enum BasicBlockType implements BlockType {
+    HEADING(100),
+    THEMATIC_BREAK(110),
+    BLOCK_QUOTE(120),
+    FENCED_CODE(130),
+    LIST(140),
+    LIST_ITEM,
+    PARAGRAPH(150),
+    INDENTED_CODE(160),
+    DOCUMENT,
+    ;
 
-    public BlankLineTest(int index, String source, String expected) {
-        super(index, source, expected);
+    private final int precedence;
+    
+    private BasicBlockType() {
+        this.precedence = Integer.MAX_VALUE;
     }
-  
-    @Parameters(name = "{0}: {1}")
-    public static Iterable<Object[]> parameters() {
-        return parameters("/blank-lines.json");
+    
+    private BasicBlockType(int precedence) {
+        this.precedence = precedence;
+    }
+    
+    @Override
+    public int precedence() {
+        return precedence;
     }
 }

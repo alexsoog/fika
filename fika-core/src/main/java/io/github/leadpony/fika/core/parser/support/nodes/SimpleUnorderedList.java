@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.helper.nodes;
+package io.github.leadpony.fika.core.parser.support.nodes;
 
-import io.github.leadpony.fika.core.nodes.Paragraph;
+import io.github.leadpony.fika.core.nodes.UnorderedList;
 
 /**
  * @author leadpony
  */
-public class SimpleParagraph extends AbstractContainerNode implements Paragraph {
+public class SimpleUnorderedList extends AbstractContainerNode implements UnorderedList {
 
-    public SimpleParagraph() {
+    public SimpleUnorderedList() {
     }
 }

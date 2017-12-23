@@ -17,12 +17,12 @@ package io.github.leadpony.fika.parsers.markdown.block;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.IdentityHashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import io.github.leadpony.fika.core.nodes.Document;
-import io.github.leadpony.fika.core.parser.helper.nodes.ContainerNode;
+import io.github.leadpony.fika.core.nodes.Text;
 
 /**
  * @author leadpony
@@ -45,10 +45,10 @@ public class BlockMatcherChain {
     }
     
     public Document close() {
-        return rootMatcher.close();
+        return (Document)rootMatcher.close();
     }
     
-    public Map<ContainerNode, String> getInlines() {
+    public Set<Text> getInlines() {
         return context.inlines;
     }
     
@@ -64,6 +64,7 @@ public class BlockMatcherChain {
         factories.add(IndentedCodeMatcher.factory());
         factories.add(FencedCodeMatcher.factory());
         factories.add(BlockQuoteMatcher.factory());
+        factories.add(ListMatcher.factory());
         Collections.sort(factories, (x, y)->x.precedence() - y.precedence());
         return factories;
     }
@@ -72,7 +73,7 @@ public class BlockMatcherChain {
 
         private final List<BlockMatcher.Factory> factories;
         private int lineNo;
-        private final Map<ContainerNode, String> inlines = new IdentityHashMap<>();
+        private final Set<Text> inlines = new HashSet<>();
         
         Context(List<BlockMatcher.Factory> factories) {
             this.factories = factories;
@@ -115,8 +116,8 @@ public class BlockMatcherChain {
         }
         
         @Override
-        public void addInline(ContainerNode container, String content) {
-            this.inlines.put(container, content);
+        public void addInline(Text text) {
+            this.inlines.add(text);
         }
     }
 }

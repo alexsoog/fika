@@ -15,7 +15,6 @@
  */
 package io.github.leadpony.fika.core.nodes;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,9 +22,19 @@ import java.util.List;
  */
 public interface Node {
     
-    default List<? extends Node> children() {
-        return Collections.emptyList();
-    }
+    boolean hasChildNodes();
+    
+    /**
+     * Returns child nodes of this node.
+     * Some types of nodes always return empty list that cannot be modified.
+     * 
+     * @return child nodes of this node.
+     */
+    List<Node> childNodes();
+    
+    Node getParentNode();
+    
+    void setParentNode(Node parentNode);
 
     void accept(Visitor visitor);
 }

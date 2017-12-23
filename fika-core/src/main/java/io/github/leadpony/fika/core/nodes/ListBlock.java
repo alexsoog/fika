@@ -15,17 +15,15 @@
  */
 package io.github.leadpony.fika.core.nodes;
 
-import java.util.Collections;
-import java.util.List;
-
 /**
  * @author leadpony
- *
  */
 public interface ListBlock extends Block {
     
-    @Override
-    default List<ListItem> children() {
-        return Collections.emptyList();
+    enum ListType {
+        ORDERED,
+        UNORDERED
     }
+    
+    ListType listType();
 }

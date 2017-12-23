@@ -13,23 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.helper.nodes;
+package io.github.leadpony.fika.parsers.markdown;
 
-import io.github.leadpony.fika.core.nodes.Heading;
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * @author leadpony
  */
-public class SimpleHeading extends AbstractContainerNode implements Heading {
-    
-    private final int level;
-    
-    public SimpleHeading(int level) {
-        this.level = level;
-    }
+@RunWith(Parameterized.class)
+public class ListItemTest extends AbstractSpecTest {
 
-    @Override
-    public int level() {
-        return level;
+    public ListItemTest(int index, String source, String expected) {
+        super(index, source, expected);
+    }
+  
+    @Parameters(name = "{0}: {1}")
+    public static Iterable<Object[]> parameters() {
+        return parameters("/list-items.json");
+    }
+    
+    @Before
+    public void setUp() {
+        //Assume.assumeTrue(index() == 242);
     }
 }

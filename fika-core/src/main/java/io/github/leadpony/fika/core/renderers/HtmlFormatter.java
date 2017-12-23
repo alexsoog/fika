@@ -15,6 +15,8 @@
  */
 package io.github.leadpony.fika.core.renderers;
 
+import java.util.Map;
+
 /**
  * @author leadpony
  *
@@ -23,11 +25,15 @@ public interface HtmlFormatter {
     
     void doctype(String type);
     
-    void startTag(String tagName, String... attributes);
+    void startTag(String tagName);
+
+    void startTag(String tagName, Map<String, Object> attributes);
 
     void endTag(String tagName);
 
-    void emptyTag(String tagName, String... attributes);
+    void emptyTag(String tagName);
+
+    void emptyTag(String tagName, Map<String, Object> attributes);
 
     void text(String text);
     

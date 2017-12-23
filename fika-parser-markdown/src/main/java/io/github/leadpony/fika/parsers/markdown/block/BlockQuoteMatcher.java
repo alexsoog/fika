@@ -19,7 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.github.leadpony.fika.core.nodes.BlockQuote;
-import io.github.leadpony.fika.core.parser.helper.nodes.SimpleBlockQuote;
+import io.github.leadpony.fika.core.parser.support.nodes.SimpleBlockQuote;
 
 /**
  * @author leadpony
@@ -34,33 +34,36 @@ public class BlockQuoteMatcher extends ContainerBlockMatcher {
     
     private BlockQuoteMatcher() {
     }
+    
+    @Override
+    public BlockType blockType() {
+        return BasicBlockType.BLOCK_QUOTE;
+    }
    
     @Override
-    public Status match(Content content) {
+    public Result match(Content content) {
         Matcher m = BLOCK_QUOTE_MARKER.matcher(content);
         if (m.find()) {
             int skip = m.group(0).length();
-            matchNext(content.subContent(skip));
-            return Status.CONTINUED;
+            super.match(content.subContent(skip));
+            return Result.CONTINUED;
         } else {
             return matchLazyContinuationLine(content);
         }
     }
 
     @Override
-    public BlockQuote close() {
-        super.close();
-        return new SimpleBlockQuote(this.children); 
+    protected BlockQuote buildNode() {
+        return new SimpleBlockQuote(); 
     }
 
     static class Factory implements BlockMatcher.Factory {
         
-        private static final int PRECEDENCE = 1;
         private static final Factory instance = new Factory();
         
         @Override
-        public int precedence() {
-            return PRECEDENCE;
+        public BlockType blockType() {
+            return BasicBlockType.BLOCK_QUOTE;
         }
 
         @Override

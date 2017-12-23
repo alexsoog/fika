@@ -13,8 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.leadpony.fika.core.parser.support.nodes;
+
+import io.github.leadpony.fika.core.nodes.BlockQuote;
+
 /**
  * @author leadpony
- *
  */
-package io.github.leadpony.fika.core.parser.helper.nodes;
+public class SimpleBlockQuote extends AbstractContainerNode implements BlockQuote {
+    
+    public SimpleBlockQuote() {
+    }
+}

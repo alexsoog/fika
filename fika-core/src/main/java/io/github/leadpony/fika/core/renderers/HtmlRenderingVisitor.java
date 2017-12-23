@@ -15,13 +15,19 @@
  */
 package io.github.leadpony.fika.core.renderers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import io.github.leadpony.fika.core.nodes.BlockQuote;
 import io.github.leadpony.fika.core.nodes.CodeBlock;
 import io.github.leadpony.fika.core.nodes.Document;
 import io.github.leadpony.fika.core.nodes.Heading;
+import io.github.leadpony.fika.core.nodes.ListItem;
+import io.github.leadpony.fika.core.nodes.OrderedList;
 import io.github.leadpony.fika.core.nodes.Paragraph;
 import io.github.leadpony.fika.core.nodes.Text;
 import io.github.leadpony.fika.core.nodes.ThematicBreak;
+import io.github.leadpony.fika.core.nodes.UnorderedList;
 import io.github.leadpony.fika.core.nodes.Visitor;
 
 /**
@@ -47,14 +53,14 @@ class HtmlRenderingVisitor implements Visitor {
     @Override
     public void visit(CodeBlock node) {
         formatter.startTag("pre");
-        String language = node.language();
+        Map<String, Object> attributes = new HashMap<>();
+        String language = node.getLanguage();
         if (language != null) {
             String classValue = "language-" + language;
-            formatter.startTag("code", "class", classValue);
-        } else {
-            formatter.startTag("code");
+            attributes.put("class", classValue);
         }
-        formatter.text(node.content());
+        formatter.startTag("code", attributes);
+        formatter.text(node.getContent());
         formatter.endTag("code");
         formatter.endTag("pre");
     }
@@ -71,6 +77,25 @@ class HtmlRenderingVisitor implements Visitor {
         visitChildren(node);
         formatter.endTag(tagName);
     }
+    
+    @Override
+    public void visit(ListItem node) {
+        formatter.startTag("li");
+        visitChildren(node);
+        formatter.endTag("li");
+    }
+
+    @Override
+    public void visit(OrderedList node) {
+        Map<String, Object> attributes = new HashMap<>();
+        int startNumber = node.startNumber();
+        if (startNumber != 1) {
+            attributes.put("start", startNumber);
+        }
+        formatter.startTag("ol", attributes);
+        visitChildren(node);
+        formatter.endTag("ol");
+    }
 
     @Override
     public void visit(Paragraph node) {
@@ -81,11 +106,18 @@ class HtmlRenderingVisitor implements Visitor {
 
     @Override
     public void visit(Text node) {
-        formatter.text(node.content());
+        formatter.text(node.getContent());
     }
 
     @Override
     public void visit(ThematicBreak node) {
         formatter.emptyTag("hr");
+    }
+
+    @Override
+    public void visit(UnorderedList node) {
+        formatter.startTag("ul");
+        visitChildren(node);
+        formatter.endTag("ul");
     }
 }

@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.helper.nodes;
-
-import io.github.leadpony.fika.core.nodes.ThematicBreak;
+package io.github.leadpony.fika.parsers.markdown.block;
 
 /**
  * @author leadpony
  */
-public class SimpleThematicBreak implements ThematicBreak {
+public interface BlockType {
+
+    /**
+     * Returns the precedence of this block type.
+     * 
+     * @return the precedence.
+     */
+    int precedence();
 }
