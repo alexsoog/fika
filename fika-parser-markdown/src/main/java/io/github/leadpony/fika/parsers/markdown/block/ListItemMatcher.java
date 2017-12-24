@@ -27,17 +27,29 @@ import io.github.leadpony.fika.core.parser.support.nodes.SimpleListItem;
 abstract class ListItemMatcher extends ContainerBlockMatcher {
     
     private final int indentSize;
+    private final boolean empty;
     private boolean loose;
     private int lastBlankLineNo;
+    private int linesNotMatched;
     
-    protected ListItemMatcher(int indentSize) {
+    protected ListItemMatcher(int indentSize, boolean empty) {
         this.indentSize = indentSize;
+        this.empty = empty;
         this.loose = false;
         this.lastBlankLineNo = -1;
+        this.linesNotMatched = 0;
     }
     
     boolean isLoose() {
         return loose;
+    }
+    
+    int indentSize() {
+        return indentSize;
+    }
+    
+    boolean startsWithEmpty() {
+        return empty;
     }
     
     abstract BlockMatcher matcherOfSameType(Content content);
@@ -52,20 +64,34 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
         final boolean isBlank = content.isBlank();
         if (isBlank) {
             this.lastBlankLineNo = lineNo();
-        } else if (lineNo() <= 1) {
-            content = contentAfterMarker(content);
-        } else if (content.hasIndent(indentSize)) {
-            content = contentAfterMarker(content);
-        } else {
-            return Result.NOT_MATCHED;
+        } else if (lineNo() > 1 && !content.hasIndent(indentSize)) {
+            // Not indented.
+            return matchLazyContinuationLine(content);
         }
-        super.match(content);
+        Result result = findAndInvokeChildMatcher(contentAfterMarker(content));
+        if (result == Result.NOT_MATCHED) {
+            if (++linesNotMatched >= 2) {
+                return Result.COMPLETED;
+            }
+        } else {
+            linesNotMatched = 0;
+        }
         return Result.CONTINUED;
     }
     
     @Override
     public boolean isInterruptible() {
         return lineNo() > 1;
+    }
+
+    @Override
+    public BlockMatcher interrupt(Content content) {
+        assert(isInterruptible());
+        int indentSize = content.countSpaces(0, this.indentSize);
+        if (indentSize < this.indentSize) {
+            return matcherOfSameType(content);
+        }
+        return null;
     }
     
     @Override
@@ -82,6 +108,9 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
     }
     
     private Content contentAfterMarker(Content content) {
+        if (content.isBlank()) {
+            return content;
+        }
         int skipSize = this.indentSize;
         if (skipSize > content.length()) {
             skipSize = content.length();
@@ -122,11 +151,13 @@ class BulletListItemMatcher extends ListItemMatcher {
         if (spaces == 0) {
             return null;
         }
-        return new BulletListItemMatcher(i + spaces, c);
+        int indentSize = i + spaces;
+        boolean empty = indentSize >= content.length();
+        return new BulletListItemMatcher(indentSize, c, empty);
     }
     
-    private BulletListItemMatcher(int indentSize, char bullet) {
-        super(indentSize);
+    private BulletListItemMatcher(int indentSize, char bullet, boolean empty) {
+        super(indentSize, empty);
         this.bullet = bullet;
     }
     
@@ -137,11 +168,6 @@ class BulletListItemMatcher extends ListItemMatcher {
             return m;
         }
         return null;
-    }
-
-    @Override
-    public BlockMatcher interrupt(Content content) {
-        return matcherOfSameType(content);
     }
 }
 
@@ -163,11 +189,13 @@ class OrderedListItemMatcher extends ListItemMatcher {
         if (spaces == 0) {
             return null;
         }
-        return new OrderedListItemMatcher(length + spaces, number, m.group(2));
+        int indentSize = length + spaces;
+        boolean empty = indentSize >= content.length();
+        return new OrderedListItemMatcher(indentSize, number, m.group(2), empty);
     }
 
-    private OrderedListItemMatcher(int indentSize, int number, String delimiter) {
-        super(indentSize);
+    private OrderedListItemMatcher(int indentSize, int number, String delimiter, boolean empty) {
+        super(indentSize, empty);
         this.number = number;
         this.delimiter = delimiter;
     }
@@ -187,10 +215,5 @@ class OrderedListItemMatcher extends ListItemMatcher {
             return m;
         }
         return null;
-    }
-
-    @Override
-    public BlockMatcher interrupt(Content content) {
-        return matcherOfSameType(content);
     }
 }

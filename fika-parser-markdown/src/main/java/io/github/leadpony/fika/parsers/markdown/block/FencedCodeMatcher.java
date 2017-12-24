@@ -115,7 +115,7 @@ class FencedCodeMatcher extends AbstractBlockMatcher {
         }
         
         @Override
-        public BlockMatcher newMatcher(Content content) {
+        public BlockMatcher newMatcher(Content content, BlockMatcher current) {
             int indentSize = content.countSpaces(0, 3);
             int i = indentSize;
             char fenceChar = content.charAt(i);

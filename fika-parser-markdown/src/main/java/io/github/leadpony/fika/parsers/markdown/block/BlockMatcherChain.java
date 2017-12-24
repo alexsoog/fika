@@ -77,7 +77,7 @@ public class BlockMatcherChain {
         
         Context(List<BlockMatcher.Factory> factories) {
             this.factories = factories;
-            this.lineNo = 1;
+            this.lineNo = 0;
         }
         
         @Override
@@ -91,7 +91,7 @@ public class BlockMatcherChain {
                 return null;
             }
             for (BlockMatcher.Factory factory: this.factories) {
-                BlockMatcher matched = factory.newMatcher(content);
+                BlockMatcher matched = factory.newMatcher(content, null);
                 if (matched != null) {
                     return matched;
                 }
@@ -100,13 +100,14 @@ public class BlockMatcherChain {
         }
 
         @Override
-        public BlockMatcher match(Content content, int precedence) {
+        public BlockMatcher match(Content content, BlockMatcher current) {
             if (content.isBlank()) {
                 return null;
             }
+            final int precedence = current.precedence();
             for (BlockMatcher.Factory factory: this.factories) {
                 if (factory.precedence() < precedence) {
-                    BlockMatcher matched = factory.newMatcher(content);
+                    BlockMatcher matched = factory.newMatcher(content, current);
                     if (matched != null) {
                         return matched;
                     }

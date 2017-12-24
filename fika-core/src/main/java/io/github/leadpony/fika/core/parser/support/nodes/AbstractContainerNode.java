@@ -27,7 +27,7 @@ import io.github.leadpony.fika.core.nodes.Node;
  */
 abstract class AbstractContainerNode extends AbstractNode {
 
-    private NodeList childNodes;
+    private final NodeList childNodes;
     
     protected AbstractContainerNode() {
         childNodes = new NodeList();
@@ -90,6 +90,7 @@ abstract class AbstractContainerNode extends AbstractNode {
                 parentNode.childNodes().remove(element);
             }
             internal.add(index, element);
+            element.setParentNode(owner());
         }
 
         @Override

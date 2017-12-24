@@ -90,7 +90,7 @@ class ThematicBreakMatcher implements BlockMatcher {
         }
 
         @Override
-        public BlockMatcher newMatcher(Content content) {
+        public BlockMatcher newMatcher(Content content, BlockMatcher current) {
             return testLine(content) ? ThematicBreakMatcher.instance : null;
         }
     }

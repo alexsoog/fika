@@ -38,6 +38,6 @@ public class ListItemTest extends AbstractSpecTest {
     
     @Before
     public void setUp() {
-        //Assume.assumeTrue(index() == 242);
+        //Assume.assumeTrue(index() == 257);
     }
 }

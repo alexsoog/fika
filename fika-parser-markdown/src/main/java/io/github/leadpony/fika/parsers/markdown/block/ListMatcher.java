@@ -44,6 +44,14 @@ public abstract class ListMatcher extends ContainerBlockMatcher {
         this.lastBlankLineNo = -1;
     }
     
+    boolean isLoose() {
+        return loose;
+    }
+    
+    boolean isTight() {
+        return !isLoose();
+    }
+    
     @Override
     public BlockType blockType() {
         return BasicBlockType.LIST;
@@ -57,11 +65,11 @@ public abstract class ListMatcher extends ContainerBlockMatcher {
     
     @Override
     public Result match(Content content) {
-        final boolean isBlank = content.isBlank();
+        boolean isBlank = content.isBlank();
         if (isBlank) {
             this.lastBlankLineNo = lineNo();
         }
-        final Result result = super.match(content);
+        Result result = findAndInvokeChildMatcher(content);
         if (result == Result.NOT_MATCHED) {
             if (!isBlank) {
                 return result;
@@ -103,7 +111,7 @@ public abstract class ListMatcher extends ContainerBlockMatcher {
     
     private List<Node> buildChildNodes() {
         List<Node> items = super.childNodes();
-        if (!loose) {
+        if (isTight()) {
             for (Node item: items) {
                 tightenListItem((ListItem)item);
             }
@@ -132,11 +140,12 @@ public abstract class ListMatcher extends ContainerBlockMatcher {
         }
 
         @Override
-        public BlockMatcher newMatcher(Content content) {
+        public BlockMatcher newMatcher(Content content, BlockMatcher current) {
+            boolean interrupting = (current != null); 
             ListMatcher matcher = null;
-            matcher = BulletListMatcher.matcher(content);
+            matcher = BulletListMatcher.matcher(content, interrupting);
             if (matcher == null) {
-                matcher = OrderedListMatcher.matcher(content);
+                matcher = OrderedListMatcher.matcher(content, interrupting);
             }
             return matcher;
         }
@@ -145,10 +154,15 @@ public abstract class ListMatcher extends ContainerBlockMatcher {
 
 class BulletListMatcher extends ListMatcher {
     
-    static BulletListMatcher matcher(Content content) {
+    static BulletListMatcher matcher(Content content, boolean interrupting) {
         BulletListItemMatcher itemMatcher = BulletListItemMatcher.matcher(content);
         if (itemMatcher == null) {
             return null;
+        }
+        if (interrupting) {
+            if (itemMatcher.startsWithEmpty()) {
+                return null;
+            }
         }
         return new BulletListMatcher(itemMatcher);
     }
@@ -167,10 +181,15 @@ class OrderedListMatcher extends ListMatcher {
     
     private final int startNumber;
     
-    static OrderedListMatcher matcher(Content content) {
+    static OrderedListMatcher matcher(Content content, boolean interrupting) {
         OrderedListItemMatcher itemMatcher = OrderedListItemMatcher.matcher(content);
         if (itemMatcher == null) {
             return null;
+        }
+        if (interrupting) {
+            if (itemMatcher.startsWithEmpty()) {
+                return null;
+            }
         }
         return new OrderedListMatcher(itemMatcher);
     }

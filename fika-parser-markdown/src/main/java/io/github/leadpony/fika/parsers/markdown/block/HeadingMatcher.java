@@ -100,7 +100,7 @@ class HeadingMatcher extends AbstractBlockMatcher {
         }
 
         @Override
-        public BlockMatcher newMatcher(Content content) {
+        public BlockMatcher newMatcher(Content content, BlockMatcher current) {
             int i = content.countSpaces(0, 3);
             int level = 0;
             for (; i < content.length(); i++) {

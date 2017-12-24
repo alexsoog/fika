@@ -45,12 +45,7 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
     
     @Override
     public Result match(Content content) {
-        if (!hasChildMatcher()) {
-            if (findChildMatcher(content) == null) {
-                return Result.NOT_MATCHED;
-            }
-        }
-        return invokeChildMatcher(childMatcher(), content);
+        return findAndInvokeChildMatcher(content);
     }
 
     @Override
@@ -66,14 +61,35 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
     protected Result matchLazyContinuationLine(Content content) {
         BlockMatcher last = lastMatcher();
         if (last.canContinue(content)) {
-            invokeChildMatcher(last, content);
+            callMatcherDirect(last, content);
             return Result.CONTINUED;
         } else {
             return Result.NOT_MATCHED;
         }
     }
     
-    protected Result invokeChildMatcher(BlockMatcher child, Content content) {
+    protected Result findAndInvokeChildMatcher(Content content) {
+        if (!hasChildMatcher()) {
+            if (findChildMatcher(content) == null) {
+                return Result.NOT_MATCHED;
+            }
+        }
+        return invokeChildMatcherAndRetry(content);
+    }
+    
+    protected Result invokeChildMatcherAndRetry(Content content) {
+        Result result = invokeChildMatcher(content);
+        if (result == Result.NOT_MATCHED) {
+            if (findChildMatcher(content) == null) {
+                return Result.NOT_MATCHED;
+            }
+            result = invokeChildMatcher(content);
+        }
+        return result;
+    }
+    
+    protected Result invokeChildMatcher(Content content) {
+        BlockMatcher child = childMatcher();
         assert(child != null);
         if (child.isInterruptible()) {
             BlockMatcher interrupter = child.interrupt(content);
@@ -82,20 +98,9 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
                 child = interrupter;
             }
         }
-        Result result = child.match(content);
-        switch (result) {
-        case COMPLETED:
+        Result result = callMatcherDirect(child, content);
+        if (result == Result.COMPLETED || result == Result.NOT_MATCHED) {
             closeCurrentChildMatcher();
-            break;
-        case NOT_MATCHED:
-            closeCurrentChildMatcher();
-            child = findChildMatcher(content);
-            if (child != null) {
-                return invokeChildMatcher(child, content);
-            }
-            break;
-        default:
-            break;
         }
         return result;
     }
@@ -106,6 +111,10 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
             openChildMatcher(matched);
         }
         return matched;
+    }
+    
+    private Result callMatcherDirect(BlockMatcher matcher, Content content) {
+        return matcher.match(content);
     }
     
     protected void openChildMatcher(BlockMatcher childMatcher) {

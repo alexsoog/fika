@@ -45,7 +45,7 @@ public class BlockQuoteMatcher extends ContainerBlockMatcher {
         Matcher m = BLOCK_QUOTE_MARKER.matcher(content);
         if (m.find()) {
             int skip = m.group(0).length();
-            super.match(content.subContent(skip));
+            findAndInvokeChildMatcher(content.subContent(skip));
             return Result.CONTINUED;
         } else {
             return matchLazyContinuationLine(content);
@@ -67,7 +67,7 @@ public class BlockQuoteMatcher extends ContainerBlockMatcher {
         }
 
         @Override
-        public BlockMatcher newMatcher(Content content) {
+        public BlockMatcher newMatcher(Content content, BlockMatcher current) {
             if (BLOCK_QUOTE_MARKER.matcher(content).find()) {
                 return new BlockQuoteMatcher();
             } else {

@@ -87,7 +87,7 @@ public interface BlockMatcher {
         
         BlockMatcher match(Content content);
 
-        BlockMatcher match(Content content, int precedence);
+        BlockMatcher match(Content content, BlockMatcher current);
         
         void addInline(Text text);
     }
@@ -100,6 +100,14 @@ public interface BlockMatcher {
             return blockType().precedence();
         }
         
-        BlockMatcher newMatcher(Content content);
+        /**
+         * Creates a new block matcher for the given content.
+         * 
+         * @param content the content of the line.
+         * @param current the matcher to be interrupted, may be {@code null}.
+         * 
+         * @return new matcher if found.
+         */
+        BlockMatcher newMatcher(Content content, BlockMatcher current);
     }
 }

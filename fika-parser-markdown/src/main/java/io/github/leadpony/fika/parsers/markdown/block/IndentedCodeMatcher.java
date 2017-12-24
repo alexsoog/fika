@@ -87,7 +87,7 @@ public class IndentedCodeMatcher extends AbstractBlockMatcher {
         }
         
         @Override
-        public BlockMatcher newMatcher(Content content) {
+        public BlockMatcher newMatcher(Content content, BlockMatcher current) {
             if (!content.hasIndent(INDENT_SIZE)) {
                 return null;
             }
