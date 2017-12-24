@@ -30,6 +30,7 @@ import org.junit.Test;
 import io.github.leadpony.fika.core.nodes.Document;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.renderers.HtmlRenderer;
+import io.github.leadpony.fika.core.util.HtmlMinifier;
 import io.github.leadpony.fika.parsers.markdown.parser.MarkdownParserFactory;
 
 /**
@@ -41,6 +42,7 @@ public abstract class AbstractSpecTest {
 
     private final int index;
     protected final Fixture fixture;
+    private final HtmlMinifier minifier = new HtmlMinifier();
     
     protected AbstractSpecTest(int index, String source, String expected) {
         this.index = index;
@@ -55,7 +57,7 @@ public abstract class AbstractSpecTest {
                 .disable(HtmlRenderer.Option.FULL_HTML)
                 .build();
         String actual = renderer.render(doc);
-        String expected = fixture.expected();
+        String expected = minifier.minify(fixture.expected());
         assertThat(wrapXml(actual)).isXmlEqualTo(wrapXml(expected));
     }
     

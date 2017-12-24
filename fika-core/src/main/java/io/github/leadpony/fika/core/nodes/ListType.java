@@ -17,8 +17,9 @@ package io.github.leadpony.fika.core.nodes;
 
 /**
  * @author leadpony
+ *
  */
-public interface ListBlock extends Block {
-    
-    ListType listType();
+public enum ListType {
+    ORDERED,
+    UNORDERED
 }

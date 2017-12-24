@@ -25,20 +25,21 @@ import org.junit.runners.Parameterized.Parameters;
  * @author leadpony
  */
 @RunWith(Parameterized.class)
-public class FencedCodeBlockTest extends AbstractSpecTest {
+public class ListTest extends AbstractSpecTest {
 
-    public FencedCodeBlockTest(int index, String source, String expected) {
+    public ListTest(int index, String source, String expected) {
         super(index, source, expected);
     }
   
     @Parameters(name = "{0}: {1}")
     public static Iterable<Object[]> parameters() {
-        return parameters("/fenced-code-blocks.json");
+        return parameters("/lists.json");
     }
-
+    
     @Before
     public void setUp() {
-        Assume.assumeFalse(index() == 90);
-        Assume.assumeFalse(index() == 107);
+        Assume.assumeFalse(index() == 271);
+        Assume.assumeFalse(index() == 272);
+        Assume.assumeFalse(index() == 278);
     }
 }

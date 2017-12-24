@@ -90,7 +90,7 @@ class HeadingMatcher extends AbstractBlockMatcher {
         }
     }
     
-    static class Factory implements BlockMatcher.Factory {
+    static class Factory implements BlockMatcherFactory {
         
         private static final Factory instance = new Factory();
         
@@ -100,7 +100,7 @@ class HeadingMatcher extends AbstractBlockMatcher {
         }
 
         @Override
-        public BlockMatcher newMatcher(Content content, BlockMatcher current) {
+        public BlockMatcher newMatcher(Content content) {
             int i = content.countSpaces(0, 3);
             int level = 0;
             for (; i < content.length(); i++) {
@@ -122,6 +122,11 @@ class HeadingMatcher extends AbstractBlockMatcher {
                 }
             }
             return new HeadingMatcher(level, extractTitle(content.subContent(i)));
+        }
+ 
+        @Override
+        public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+            return newMatcher(content);
         }
     }
 }

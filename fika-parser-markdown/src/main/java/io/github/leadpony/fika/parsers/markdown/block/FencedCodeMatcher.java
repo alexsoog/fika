@@ -105,7 +105,7 @@ class FencedCodeMatcher extends AbstractBlockMatcher {
         builder.append(content.toOriginalString()).append('\n');
     }
     
-    static class Factory implements BlockMatcher.Factory {
+    static class Factory implements BlockMatcherFactory {
 
         private static final Factory instance = new Factory();
         
@@ -115,7 +115,7 @@ class FencedCodeMatcher extends AbstractBlockMatcher {
         }
         
         @Override
-        public BlockMatcher newMatcher(Content content, BlockMatcher current) {
+        public BlockMatcher newMatcher(Content content) {
             int indentSize = content.countSpaces(0, 3);
             int i = indentSize;
             char fenceChar = content.charAt(i);
@@ -138,6 +138,11 @@ class FencedCodeMatcher extends AbstractBlockMatcher {
                 return null;
             }
             return new FencedCodeMatcher(indentSize, fenceChar, fenceLength, infoString);
+        }
+
+        @Override
+        public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+            return newMatcher(content);
         }
         
         private String extractInfoString(Content content, int offset) {

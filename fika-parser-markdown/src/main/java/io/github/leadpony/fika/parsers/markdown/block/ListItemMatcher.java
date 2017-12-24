@@ -22,6 +22,8 @@ import io.github.leadpony.fika.core.nodes.Node;
 import io.github.leadpony.fika.core.parser.support.nodes.SimpleListItem;
 
 /**
+ * Matcher for list items.
+ * 
  * @author leadpony
  */
 abstract class ListItemMatcher extends ContainerBlockMatcher {
@@ -44,15 +46,18 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
         return loose;
     }
     
+    /**
+     * Returns the indentation size of this matcher.
+     * 
+     * @return the indentation size.
+     */
     int indentSize() {
         return indentSize;
     }
     
-    boolean startsWithEmpty() {
-        return empty;
+    boolean canInterruptParagraph() {
+        return !empty;
     }
-    
-    abstract BlockMatcher matcherOfSameType(Content content);
     
     @Override
     public BlockType blockType() {
@@ -89,7 +94,7 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
         assert(isInterruptible());
         int indentSize = content.countSpaces(0, this.indentSize);
         if (indentSize < this.indentSize) {
-            return matcherOfSameType(content);
+            return interrupterOfSameType(content);
         }
         return null;
     }
@@ -130,28 +135,35 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
         }
         return spaces;
     }
+
+    abstract boolean isSameTypeAs(ListItemMatcher other);
+    
+    abstract BlockMatcher interrupterOfSameType(Content content);
 }
 
+/**
+ * @author leadpony
+ */
 class BulletListItemMatcher extends ListItemMatcher {
 
     private final char bullet;
 
     private static final String MARKERS = "+-*";
 
-    static BulletListItemMatcher matcher(Content content) {
+    static BulletListItemMatcher matcher(Content content, int maxIndent) {
         if (content.isEmpty()) {
             return null;
         }
-        int i = content.countSpaces(0, 3);
-        char c = content.charAt(i);
+        int leadingSpaces = content.countSpaces(0, maxIndent);
+        char c = content.charAt(leadingSpaces);
         if (MARKERS.indexOf(c) < 0) {
             return null;
         }
-        int spaces = countSpacesAfterMarker(content, ++i);
-        if (spaces == 0) {
+        int trailingSpaces = countSpacesAfterMarker(content, leadingSpaces + 1);
+        if (trailingSpaces == 0) {
             return null;
         }
-        int indentSize = i + spaces;
+        int indentSize = leadingSpaces + 1 + trailingSpaces;
         boolean empty = indentSize >= content.length();
         return new BulletListItemMatcher(indentSize, c, empty);
     }
@@ -162,8 +174,17 @@ class BulletListItemMatcher extends ListItemMatcher {
     }
     
     @Override
-    BlockMatcher matcherOfSameType(Content content) {
-        BulletListItemMatcher m = matcher(content);
+    boolean isSameTypeAs(ListItemMatcher other) {
+        if (other == null || !(other instanceof BulletListItemMatcher)) {
+            return false;
+        }
+        BulletListItemMatcher casted = (BulletListItemMatcher)other;
+        return this.bullet == casted.bullet;
+    }
+    
+    @Override
+    BlockMatcher interrupterOfSameType(Content content) {
+        BulletListItemMatcher m = matcher(content, indentSize() + 3);
         if (m != null && m.bullet == this.bullet) {
             return m;
         }
@@ -171,25 +192,29 @@ class BulletListItemMatcher extends ListItemMatcher {
     }
 }
 
+/**
+ * @author leadpony
+ */
 class OrderedListItemMatcher extends ListItemMatcher {
 
     private final int number;
     private final String delimiter;
     
-    private static final Pattern MARKER_PATTERN = Pattern.compile("^\\u0020{0,3}(\\d{1,9})([.)])");
+    private static final Pattern MARKER_PATTERN = Pattern.compile("^(\\d{1,9})([.)])");
     
-    static OrderedListItemMatcher matcher(Content content) {
-        Matcher m = MARKER_PATTERN.matcher(content);
+    static OrderedListItemMatcher matcher(Content content, int maxIndent) {
+        int leadingSpaces = content.countSpaces(0, maxIndent);
+        Matcher m = MARKER_PATTERN.matcher(content.subContent(leadingSpaces));
         if (!m.find()) {
             return null;
         }
         int length = m.group().length();
-        int number = Integer.parseInt(m.group(1));
-        int spaces = countSpacesAfterMarker(content, length);
-        if (spaces == 0) {
+        int trailingSpace = countSpacesAfterMarker(content, leadingSpaces + length);
+        if (trailingSpace == 0) {
             return null;
         }
-        int indentSize = length + spaces;
+        int indentSize = leadingSpaces + length + trailingSpace;
+        int number = Integer.parseInt(m.group(1));
         boolean empty = indentSize >= content.length();
         return new OrderedListItemMatcher(indentSize, number, m.group(2), empty);
     }
@@ -209,8 +234,22 @@ class OrderedListItemMatcher extends ListItemMatcher {
     }
 
     @Override
-    BlockMatcher matcherOfSameType(Content content) {
-        OrderedListItemMatcher m = matcher(content);
+    boolean isSameTypeAs(ListItemMatcher other) {
+        if (other == null || !(other instanceof OrderedListItemMatcher)) {
+            return false;
+        }
+        OrderedListItemMatcher casted = (OrderedListItemMatcher)other;
+        return this.delimiter.equals(casted.delimiter);
+    }
+
+    @Override
+    boolean canInterruptParagraph() {
+        return super.canInterruptParagraph() && number() == 1;
+    }
+
+    @Override
+    BlockMatcher interrupterOfSameType(Content content) {
+        OrderedListItemMatcher m = matcher(content, indentSize());
         if (m != null && m.delimiter.equals(this.delimiter)) {
             return m;
         }

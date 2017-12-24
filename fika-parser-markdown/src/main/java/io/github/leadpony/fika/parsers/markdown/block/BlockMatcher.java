@@ -70,8 +70,8 @@ public interface BlockMatcher {
         return null;
     }
     
-    default boolean canContinue(Content content) {
-        return false;
+    default Result continueLazily(Content content) {
+        return Result.NOT_MATCHED;
     }
     
     /**
@@ -81,33 +81,22 @@ public interface BlockMatcher {
      */
     Node close();
     
+    /**
+     * Context for block matchers.
+     */
     interface Context {
         
+        /**
+         * Return the current line number.
+         * 
+         * @return current line number, starting from one.
+         */
         int lineNo();
         
-        BlockMatcher match(Content content);
+        BlockMatcher matcher(Content content);
 
-        BlockMatcher match(Content content, BlockMatcher current);
+        BlockMatcher interrupter(Content content, BlockMatcher current);
         
         void addInline(Text text);
-    }
-
-    interface Factory {
-        
-        BlockType blockType();
-        
-        default int precedence() {
-            return blockType().precedence();
-        }
-        
-        /**
-         * Creates a new block matcher for the given content.
-         * 
-         * @param content the content of the line.
-         * @param current the matcher to be interrupted, may be {@code null}.
-         * 
-         * @return new matcher if found.
-         */
-        BlockMatcher newMatcher(Content content, BlockMatcher current);
     }
 }

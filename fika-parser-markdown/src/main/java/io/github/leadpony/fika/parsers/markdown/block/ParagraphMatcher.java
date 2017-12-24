@@ -19,6 +19,7 @@ import static io.github.leadpony.fika.parsers.markdown.base.Characters.trim;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -33,13 +34,13 @@ import io.github.leadpony.fika.core.parser.support.nodes.SimpleText;
 class ParagraphMatcher extends AbstractBlockMatcher {
     
     private final List<String> lines;
-    private int headingLevel;
+    private Supplier<Node> nodeSupplier;
     
     private static final Pattern UNDERLINE_PATTERN = Pattern.compile("\\u0020{0,3}(=+|-{2,})\\u0020*");
     
     ParagraphMatcher() {
         this.lines = new ArrayList<>();
-        this.headingLevel = 0;
+        this.nodeSupplier = null;
     }
   
     @Override
@@ -52,11 +53,7 @@ class ParagraphMatcher extends AbstractBlockMatcher {
         if (lineNo() <= 1) {
             appendLine(content);
             return Result.CONTINUED;
-        }
-        headingLevel = parseUnderline(content);
-        if (headingLevel > 0) {
-            return Result.COMPLETED;
-        } else if (content.isBlank()) {
+        } else if (content.isBlank() || this.nodeSupplier != null) {
             return Result.COMPLETED;
         }
         appendLine(content);
@@ -71,24 +68,31 @@ class ParagraphMatcher extends AbstractBlockMatcher {
     @Override
     public BlockMatcher interrupt(Content content) {
         // Handles underline before interrupted by ThematicBreakMatcher. 
-        if (parseUnderline(content) > 0) {
+        if (matchHeading(content)) {
             return null;
         }
         return super.interrupt(content);
     }
 
     @Override
-    public boolean canContinue(Content content) {
+    public Result continueLazily(Content content) {
         if (super.interrupt(content) != null) {
-            return false;
+            return Result.NOT_MATCHED;
+        } else if (content.isBlank()) {
+            return Result.NOT_MATCHED;
         }
-        return !content.isBlank();
+        return match(content);
     }
     
     @Override
     protected Node buildNode() {
-        Node node = createNode();
-        SimpleText text = new SimpleText(buildParagraphContent());
+        Node node = null;
+        if (this.nodeSupplier != null) {
+            node = this.nodeSupplier.get();
+        } else {
+            node = new SimpleParagraph(); 
+        }
+        SimpleText text = new SimpleText(buildContent());
         node.childNodes().add(text);
         context().addInline(text);
         return node;
@@ -99,23 +103,17 @@ class ParagraphMatcher extends AbstractBlockMatcher {
         this.lines.add(extracted);
     }
 
-    private int parseUnderline(Content content) {
+    private boolean matchHeading(Content content) {
         if (!UNDERLINE_PATTERN.matcher(content).matches()) {
-            return 0;
+            return false;
         }
         int index = content.countSpaces(0, 3);
         char c = content.charAt(index);
-        return (c == '=') ? 1 : 2;
+        int level = (c == '=') ? 1 : 2;
+        this.nodeSupplier = new HeadingSupplier(level);
+        return true;
     }
 
-    private Node createNode() {
-        if (this.headingLevel > 0) {
-            return new SimpleHeading(this.headingLevel);
-        } else {
-            return new SimpleParagraph();
-        }
-    }
-    
     /**
      * Builds the content of current paragraph.
      * 
@@ -124,8 +122,22 @@ class ParagraphMatcher extends AbstractBlockMatcher {
      * 
      * @return the content of the paragraph.
      */
-    private String buildParagraphContent() {
+    private String buildContent() {
         String content = lines.stream().collect(Collectors.joining("\n"));
         return trim(content);    
+    }
+    
+    private static class HeadingSupplier implements Supplier<Node> {
+        
+        private final int level;
+        
+        HeadingSupplier(int level) {
+            this.level = level;
+        }
+
+        @Override
+        public Node get() {
+            return new SimpleHeading(this.level);
+        }
     }
 }    

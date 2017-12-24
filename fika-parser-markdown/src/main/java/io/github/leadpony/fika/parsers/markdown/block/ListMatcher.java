@@ -52,6 +52,20 @@ public abstract class ListMatcher extends ContainerBlockMatcher {
         return !isLoose();
     }
     
+    boolean canInterrupt(BlockMatcher matcher) {
+        BlockType type = matcher.blockType();
+        if (type == BasicBlockType.PARAGRAPH) {
+            return firstItemMatcher.canInterruptParagraph();
+        } else if (type == BasicBlockType.LIST) {
+            return !isSameTypeAs((ListMatcher)matcher);
+        }
+        return true;
+    }
+    
+    boolean isSameTypeAs(ListMatcher other) {
+        return firstItemMatcher.isSameTypeAs(other.firstItemMatcher);
+    }
+    
     @Override
     public BlockType blockType() {
         return BasicBlockType.LIST;
@@ -79,10 +93,30 @@ public abstract class ListMatcher extends ContainerBlockMatcher {
     }
     
     @Override
+    public boolean isInterruptible() {
+        return lineNo() > 1;
+    }
+    
+    @Override
+    public BlockMatcher interrupt(Content content) {
+        if (hasChildMatcher()) {
+            ListItemMatcher child = (ListItemMatcher)childMatcher();
+            if (content.hasIndent(child.indentSize())) {
+                return null;
+            }
+        }
+        BlockMatcher matcher = context().interrupter(content, this);
+        if (matcher == null) {
+            matcher = factory().newInterrupter(content, this);
+        }
+        return matcher;
+    }
+    
+    @Override
     protected BlockMatcher findChildMatcher(Content content) {
-        BlockMatcher matched = firstItemMatcher.matcherOfSameType(content);
+        BlockMatcher matched = firstItemMatcher.interrupterOfSameType(content);
         if (matched != null) {
-            super.openChildMatcher(matched);
+            openChildMatcher(matched);
         }
         return matched;
     }
@@ -130,7 +164,7 @@ public abstract class ListMatcher extends ContainerBlockMatcher {
         }
     }
     
-    static class Factory implements BlockMatcher.Factory {
+    static class Factory implements BlockMatcherFactory {
         
         private static final Factory instance = new Factory();
         
@@ -140,31 +174,40 @@ public abstract class ListMatcher extends ContainerBlockMatcher {
         }
 
         @Override
-        public BlockMatcher newMatcher(Content content, BlockMatcher current) {
-            boolean interrupting = (current != null); 
-            ListMatcher matcher = null;
-            matcher = BulletListMatcher.matcher(content, interrupting);
+        public BlockMatcher newMatcher(Content content) {
+            return newListMatcher(content);
+        }
+
+        @Override
+        public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+            ListMatcher matcher = newListMatcher(content);
             if (matcher == null) {
-                matcher = OrderedListMatcher.matcher(content, interrupting);
+                return null;
+            }
+            return matcher.canInterrupt(current) ? matcher : null;
+        }
+        
+        private static ListMatcher newListMatcher(Content content) {
+            ListMatcher matcher = null;
+            matcher = BulletListMatcher.matcher(content);
+            if (matcher == null) {
+                matcher = OrderedListMatcher.matcher(content);
             }
             return matcher;
         }
     }
 }
 
+/**
+ * Block matcher for bullet-type lists.
+ * 
+ * @author leadpony
+ */
 class BulletListMatcher extends ListMatcher {
     
-    static BulletListMatcher matcher(Content content, boolean interrupting) {
-        BulletListItemMatcher itemMatcher = BulletListItemMatcher.matcher(content);
-        if (itemMatcher == null) {
-            return null;
-        }
-        if (interrupting) {
-            if (itemMatcher.startsWithEmpty()) {
-                return null;
-            }
-        }
-        return new BulletListMatcher(itemMatcher);
+    static BulletListMatcher matcher(Content content) {
+        BulletListItemMatcher itemMatcher = BulletListItemMatcher.matcher(content, 3);
+        return (itemMatcher != null) ? new BulletListMatcher(itemMatcher) : null;
     }
     
     private BulletListMatcher(BulletListItemMatcher itemMatcher) {
@@ -177,21 +220,18 @@ class BulletListMatcher extends ListMatcher {
     }
 }
 
+/**
+ * Block matcher for ordered item lists.
+ * 
+ * @author leadpony
+ */
 class OrderedListMatcher extends ListMatcher {
     
     private final int startNumber;
     
-    static OrderedListMatcher matcher(Content content, boolean interrupting) {
-        OrderedListItemMatcher itemMatcher = OrderedListItemMatcher.matcher(content);
-        if (itemMatcher == null) {
-            return null;
-        }
-        if (interrupting) {
-            if (itemMatcher.startsWithEmpty()) {
-                return null;
-            }
-        }
-        return new OrderedListMatcher(itemMatcher);
+    static OrderedListMatcher matcher(Content content) {
+        OrderedListItemMatcher itemMatcher = OrderedListItemMatcher.matcher(content, 3);
+        return (itemMatcher != null) ? new OrderedListMatcher(itemMatcher) : null;
     }
     
     private OrderedListMatcher(OrderedListItemMatcher itemMatcher) {

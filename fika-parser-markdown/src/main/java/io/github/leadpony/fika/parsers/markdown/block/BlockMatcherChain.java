@@ -53,12 +53,12 @@ public class BlockMatcherChain {
     }
     
     private Context createContext() {
-        List<BlockMatcher.Factory> buidlerFactories = createBlockBuilderFactries();
+        List<BlockMatcherFactory> buidlerFactories = createBlockBuilderFactries();
         return new Context(buidlerFactories);
     }
     
-    private List<BlockMatcher.Factory> createBlockBuilderFactries() {
-        List<BlockMatcher.Factory> factories = new ArrayList<>();
+    private List<BlockMatcherFactory> createBlockBuilderFactries() {
+        List<BlockMatcherFactory> factories = new ArrayList<>();
         factories.add(ThematicBreakMatcher.factory());
         factories.add(HeadingMatcher.factory());
         factories.add(IndentedCodeMatcher.factory());
@@ -71,11 +71,11 @@ public class BlockMatcherChain {
     
     private static class Context implements BlockMatcher.Context {
 
-        private final List<BlockMatcher.Factory> factories;
+        private final List<BlockMatcherFactory> factories;
         private int lineNo;
         private final Set<Text> inlines = new HashSet<>();
         
-        Context(List<BlockMatcher.Factory> factories) {
+        Context(List<BlockMatcherFactory> factories) {
             this.factories = factories;
             this.lineNo = 0;
         }
@@ -86,12 +86,12 @@ public class BlockMatcherChain {
         }
 
         @Override
-        public BlockMatcher match(Content content) {
+        public BlockMatcher matcher(Content content) {
             if (content.isBlank()) {
                 return null;
             }
-            for (BlockMatcher.Factory factory: this.factories) {
-                BlockMatcher matched = factory.newMatcher(content, null);
+            for (BlockMatcherFactory factory: this.factories) {
+                BlockMatcher matched = factory.newMatcher(content);
                 if (matched != null) {
                     return matched;
                 }
@@ -100,14 +100,14 @@ public class BlockMatcherChain {
         }
 
         @Override
-        public BlockMatcher match(Content content, BlockMatcher current) {
+        public BlockMatcher interrupter(Content content, BlockMatcher current) {
             if (content.isBlank()) {
                 return null;
             }
             final int precedence = current.precedence();
-            for (BlockMatcher.Factory factory: this.factories) {
+            for (BlockMatcherFactory factory: this.factories) {
                 if (factory.precedence() < precedence) {
-                    BlockMatcher matched = factory.newMatcher(content, current);
+                    BlockMatcher matched = factory.newInterrupter(content, current);
                     if (matched != null) {
                         return matched;
                     }

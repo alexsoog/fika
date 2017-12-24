@@ -77,7 +77,7 @@ public class IndentedCodeMatcher extends AbstractBlockMatcher {
         this.lines.add("");
     }
     
-    private static class Factory implements BlockMatcher.Factory {
+    private static class Factory implements BlockMatcherFactory {
   
         private static final Factory instance = new Factory();
         
@@ -87,7 +87,7 @@ public class IndentedCodeMatcher extends AbstractBlockMatcher {
         }
         
         @Override
-        public BlockMatcher newMatcher(Content content, BlockMatcher current) {
+        public BlockMatcher newMatcher(Content content) {
             if (!content.hasIndent(INDENT_SIZE)) {
                 return null;
             }

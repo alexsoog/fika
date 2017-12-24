@@ -60,12 +60,7 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
     
     protected Result matchLazyContinuationLine(Content content) {
         BlockMatcher last = lastMatcher();
-        if (last.canContinue(content)) {
-            callMatcherDirect(last, content);
-            return Result.CONTINUED;
-        } else {
-            return Result.NOT_MATCHED;
-        }
+        return last.continueLazily(content);
     }
     
     protected Result findAndInvokeChildMatcher(Content content) {
@@ -106,7 +101,7 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
     }
     
     protected BlockMatcher findChildMatcher(Content content) {
-        BlockMatcher matched = context().match(content);
+        BlockMatcher matched = context().matcher(content);
         if (matched != null) {
             openChildMatcher(matched);
         }

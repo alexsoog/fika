@@ -15,7 +15,6 @@
  */
 package io.github.leadpony.fika.parsers.markdown;
 
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -38,6 +37,5 @@ public class ListItemTest extends AbstractSpecTest {
     
     @Before
     public void setUp() {
-        //Assume.assumeTrue(index() == 257);
     }
 }

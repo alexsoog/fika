@@ -15,6 +15,8 @@
  */
 package io.github.leadpony.fika.parsers.markdown;
 
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -32,5 +34,10 @@ public class ThematicBreakTest extends AbstractSpecTest {
     @Parameters(name = "{0}: {1}")
     public static Iterable<Object[]> parameters() {
         return parameters("/thematic-breaks.json");
+    }
+    
+    @Before
+    public void setUp() {
+        Assume.assumeFalse(index() == 26);
     }
 }

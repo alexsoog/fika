@@ -13,12 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.nodes;
+package io.github.leadpony.fika.parsers.markdown.block;
 
 /**
+ * Factory for producing block matchers.
+ * 
  * @author leadpony
  */
-public interface ListBlock extends Block {
+public interface BlockMatcherFactory {
+
+    BlockType blockType();
     
-    ListType listType();
+    default int precedence() {
+        return blockType().precedence();
+    }
+    
+    /**
+     * Creates a new block matcher for the given content.
+     * 
+     * @param content the content of the line.
+     * 
+     * @return new matcher if found.
+     */
+    BlockMatcher newMatcher(Content content);
+    
+    default BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+        return null;
+    }
 }

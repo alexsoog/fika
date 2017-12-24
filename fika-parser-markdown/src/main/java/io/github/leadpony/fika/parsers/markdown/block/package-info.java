@@ -13,8 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
- * @author leadpony
- *
+ * Provides various kinds of block matchers.
  */
 package io.github.leadpony.fika.parsers.markdown.block;

@@ -57,7 +57,7 @@ public class BlockQuoteMatcher extends ContainerBlockMatcher {
         return new SimpleBlockQuote(); 
     }
 
-    static class Factory implements BlockMatcher.Factory {
+    static class Factory implements BlockMatcherFactory {
         
         private static final Factory instance = new Factory();
         
@@ -67,12 +67,17 @@ public class BlockQuoteMatcher extends ContainerBlockMatcher {
         }
 
         @Override
-        public BlockMatcher newMatcher(Content content, BlockMatcher current) {
+        public BlockMatcher newMatcher(Content content) {
             if (BLOCK_QUOTE_MARKER.matcher(content).find()) {
                 return new BlockQuoteMatcher();
             } else {
                 return null;
             }
+        }
+
+        @Override
+        public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+            return newMatcher(content);
         }
     }
 }

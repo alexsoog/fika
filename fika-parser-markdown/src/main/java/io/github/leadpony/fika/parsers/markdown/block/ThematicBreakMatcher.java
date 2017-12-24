@@ -80,7 +80,7 @@ class ThematicBreakMatcher implements BlockMatcher {
         return dashes >= 3;
     }
 
-    static class Factory implements BlockMatcher.Factory {
+    static class Factory implements BlockMatcherFactory {
         
         private static final Factory instance = new Factory();
         
@@ -90,8 +90,13 @@ class ThematicBreakMatcher implements BlockMatcher {
         }
 
         @Override
-        public BlockMatcher newMatcher(Content content, BlockMatcher current) {
+        public BlockMatcher newMatcher(Content content) {
             return testLine(content) ? ThematicBreakMatcher.instance : null;
+        }
+
+        @Override
+        public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+            return newMatcher(content);
         }
     }
 }

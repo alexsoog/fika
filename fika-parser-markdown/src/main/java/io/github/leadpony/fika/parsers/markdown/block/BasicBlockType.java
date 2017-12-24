@@ -20,14 +20,14 @@ package io.github.leadpony.fika.parsers.markdown.block;
  *
  */
 public enum BasicBlockType implements BlockType {
-    HEADING(100),
-    THEMATIC_BREAK(110),
-    BLOCK_QUOTE(120),
-    FENCED_CODE(130),
-    LIST(140),
-    LIST_ITEM,
+    THEMATIC_BREAK(100),
+    LIST(110),
+    HEADING(120),
+    BLOCK_QUOTE(130),
+    FENCED_CODE(140),
     PARAGRAPH(150),
     INDENTED_CODE(160),
+    LIST_ITEM,
     DOCUMENT,
     ;
 
