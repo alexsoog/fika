@@ -22,39 +22,46 @@ import io.github.leadpony.fika.core.parser.support.nodes.SimpleText;
 /**
  * @author leadpony
  */
-class HeadingMatcher extends AbstractBlockMatcher {
-
+class HeadingMatcherFactory implements BlockMatcherFactory {
+    
     private static final int MAX_LEVEL = 6;
-    
-    private final int level;
-    private final String title;
-  
-    static Factory factory() {
-        return Factory.instance;
-    }
-    
-    private HeadingMatcher(int level, String title) {
-        this.level = level;
-        this.title = title;
+
+    HeadingMatcherFactory() {
     }
 
     @Override
     public BlockType blockType() {
         return BasicBlockType.HEADING;
     }
-    
+
     @Override
-    public Result match(Content content) {
-        return Result.COMPLETED;
+    public BlockMatcher newMatcher(Content content) {
+        int i = content.countSpaces(0, 3);
+        int level = 0;
+        for (; i < content.length(); i++) {
+            if (content.charAt(i) != '#') {
+                break;
+            }
+            if (++level > MAX_LEVEL) {
+                return null;
+            }
+        }
+        if (level == 0) {
+            return null;
+        }
+        if (i < content.length()) {
+            // Checks the first letter after #.
+            char c = content.charAt(i++);
+            if (c != '\u0020' && c != '\t') {
+                return null;
+            }
+        }
+        return new HeadingMatcher(level, extractTitle(content.subContent(i)));
     }
-    
+
     @Override
-    protected Heading buildNode() {
-        SimpleHeading node = new SimpleHeading(this.level);
-        SimpleText text = new SimpleText(this.title);
-        node.childNodes().add(text);
-        context().addInline(text);
-        return node;
+    public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+        return newMatcher(content);
     }
     
     private static String extractTitle(Content content) {
@@ -89,44 +96,34 @@ class HeadingMatcher extends AbstractBlockMatcher {
             return content;
         }
     }
+
+    private static class HeadingMatcher extends AbstractBlockMatcher {
+
+        private final int level;
+        private final String title;
+      
+        private HeadingMatcher(int level, String title) {
+            this.level = level;
+            this.title = title;
+        }
     
-    static class Factory implements BlockMatcherFactory {
-        
-        private static final Factory instance = new Factory();
-        
         @Override
         public BlockType blockType() {
             return BasicBlockType.HEADING;
         }
-
+        
         @Override
-        public BlockMatcher newMatcher(Content content) {
-            int i = content.countSpaces(0, 3);
-            int level = 0;
-            for (; i < content.length(); i++) {
-                if (content.charAt(i) != '#') {
-                    break;
-                }
-                if (++level > MAX_LEVEL) {
-                    return null;
-                }
-            }
-            if (level == 0) {
-                return null;
-            }
-            if (i < content.length()) {
-                // Checks the first letter after #.
-                char c = content.charAt(i++);
-                if (c != '\u0020' && c != '\t') {
-                    return null;
-                }
-            }
-            return new HeadingMatcher(level, extractTitle(content.subContent(i)));
+        public Result match(Content content) {
+            return Result.COMPLETED;
         }
- 
+        
         @Override
-        public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
-            return newMatcher(content);
+        protected Heading buildNode() {
+            SimpleHeading node = new SimpleHeading(this.level);
+            SimpleText text = new SimpleText(this.title);
+            node.childNodes().add(text);
+            context().addInline(text);
+            return node;
         }
     }
 }

@@ -71,16 +71,25 @@ public class SimpleHtmlFormatter implements HtmlFormatter {
 
     @Override
     public void text(String text) {
-        text = text.replaceAll("&", "&amp;");
-        text = text.replaceAll("\"", "&quot;");
-        text = text.replaceAll("<", "&lt;");
-        text = text.replaceAll(">", "&gt;");
-        writer.append(text);
+        writer.append(escape(text));
     }
 
     @Override
     public void preformatted(String text) {
-        writer.append(text);
+        writer.append(escape(text));
+    }
+    
+    @Override
+    public void rawHtml(String html) {
+        writer.append(html);
+    }
+    
+    private String escape(String text) {
+        text = text.replaceAll("&", "&amp;");
+        text = text.replaceAll("\"", "&quot;");
+        text = text.replaceAll("<", "&lt;");
+        text = text.replaceAll(">", "&gt;");
+        return text;
     }
     
     private void appendAttributes(Map<String, Object> attributes) {

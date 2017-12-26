@@ -15,10 +15,7 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import io.github.leadpony.fika.core.nodes.Document;
@@ -53,30 +50,18 @@ public class BlockMatcherChain {
     }
     
     private Context createContext() {
-        List<BlockMatcherFactory> buidlerFactories = createBlockBuilderFactries();
-        return new Context(buidlerFactories);
-    }
-    
-    private List<BlockMatcherFactory> createBlockBuilderFactries() {
-        List<BlockMatcherFactory> factories = new ArrayList<>();
-        factories.add(ThematicBreakMatcher.factory());
-        factories.add(HeadingMatcher.factory());
-        factories.add(IndentedCodeMatcher.factory());
-        factories.add(FencedCodeMatcher.factory());
-        factories.add(BlockQuoteMatcher.factory());
-        factories.add(ListMatcher.factory());
-        Collections.sort(factories, (x, y)->x.precedence() - y.precedence());
-        return factories;
+        BlockMatcherFinder finder = BlockMatcherFinder.builder().build();
+        return new Context(finder);
     }
     
     private static class Context implements BlockMatcher.Context {
 
-        private final List<BlockMatcherFactory> factories;
+        private final BlockMatcherFinder finder;
         private int lineNo;
         private final Set<Text> inlines = new HashSet<>();
         
-        Context(List<BlockMatcherFactory> factories) {
-            this.factories = factories;
+        Context(BlockMatcherFinder finder) {
+            this.finder = finder;
             this.lineNo = 0;
         }
         
@@ -86,34 +71,13 @@ public class BlockMatcherChain {
         }
 
         @Override
-        public BlockMatcher matcher(Content content) {
-            if (content.isBlank()) {
-                return null;
-            }
-            for (BlockMatcherFactory factory: this.factories) {
-                BlockMatcher matched = factory.newMatcher(content);
-                if (matched != null) {
-                    return matched;
-                }
-            }
-            return new ParagraphMatcher();
+        public BlockMatcher findMatcher(Content content) {
+            return finder.findMatcher(content);
         }
 
         @Override
-        public BlockMatcher interrupter(Content content, BlockMatcher current) {
-            if (content.isBlank()) {
-                return null;
-            }
-            final int precedence = current.precedence();
-            for (BlockMatcherFactory factory: this.factories) {
-                if (factory.precedence() < precedence) {
-                    BlockMatcher matched = factory.newInterrupter(content, current);
-                    if (matched != null) {
-                        return matched;
-                    }
-                }
-            }
-            return null;
+        public BlockMatcher findInterruptingMatcher(Content content, BlockMatcher current) {
+            return finder.findInterruptingMatcher(content, current);
         }
         
         @Override

@@ -25,6 +25,7 @@ public enum BasicBlockType implements BlockType {
     HEADING(120),
     BLOCK_QUOTE(130),
     FENCED_CODE(140),
+    HTML_BLOCK(145),
     PARAGRAPH(150),
     INDENTED_CODE(160),
     LIST_ITEM,

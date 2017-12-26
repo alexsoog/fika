@@ -13,31 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.renderers;
-
-import java.util.Map;
+package io.github.leadpony.fika.core.nodes;
 
 /**
  * @author leadpony
  *
  */
-public interface HtmlFormatter {
+public interface HtmlBlock extends Block {
+
+    String getHtml();
     
-    void doctype(String type);
-    
-    void startTag(String tagName);
+    void setHtml(String html);
 
-    void startTag(String tagName, Map<String, Object> attributes);
-
-    void endTag(String tagName);
-
-    void emptyTag(String tagName);
-
-    void emptyTag(String tagName, Map<String, Object> attributes);
-
-    void text(String text);
-    
-    void preformatted(String text);
-    
-    void rawHtml(String html);
+    @Override
+    default void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
 }

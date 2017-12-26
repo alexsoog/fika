@@ -93,9 +93,9 @@ public interface BlockMatcher {
          */
         int lineNo();
         
-        BlockMatcher matcher(Content content);
+        BlockMatcher findMatcher(Content content);
 
-        BlockMatcher interrupter(Content content, BlockMatcher current);
+        BlockMatcher findInterruptingMatcher(Content content, BlockMatcher current);
         
         void addInline(Text text);
     }

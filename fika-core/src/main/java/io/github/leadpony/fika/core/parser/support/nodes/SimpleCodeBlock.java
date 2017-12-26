@@ -25,9 +25,8 @@ public class SimpleCodeBlock extends AbstractNode implements CodeBlock {
     private String content;
     private String language;
     
-    public SimpleCodeBlock(String content, String language) {
+    public SimpleCodeBlock(String content) {
         this.content = content;
-        this.language = language;
     }
     
     @Override

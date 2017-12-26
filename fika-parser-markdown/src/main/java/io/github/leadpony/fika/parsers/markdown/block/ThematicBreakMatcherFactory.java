@@ -21,15 +21,9 @@ import io.github.leadpony.fika.core.parser.support.nodes.SimpleThematicBreak;
 /**
  * @author leadpony
  */
-class ThematicBreakMatcher implements BlockMatcher {
-
-    private static final ThematicBreakMatcher instance = new ThematicBreakMatcher();
+class ThematicBreakMatcherFactory implements BlockMatcherFactory {
     
-    static Factory factory() {
-        return Factory.instance;
-    }
-    
-    private ThematicBreakMatcher() {
+    ThematicBreakMatcherFactory() {
     }
 
     @Override
@@ -38,24 +32,15 @@ class ThematicBreakMatcher implements BlockMatcher {
     }
 
     @Override
-    public void bind(Context context) {
-    }
-    
-    @Override
-    public int lineNo() {
-        return 1;
-    }
-    
-    @Override
-    public Result match(Content content) {
-        return Result.COMPLETED;
-    }
-    
-    @Override
-    public Node close() {
-        return new SimpleThematicBreak();
+    public BlockMatcher newMatcher(Content content) {
+        return testLine(content) ? ThematicBreakMatcher.instance : null;
     }
 
+    @Override
+    public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+        return newMatcher(content);
+    }
+    
     private static boolean testLine(Content content) {
         int i = content.countSpaces(0, 3);
         char lineChar = content.charAt(i);
@@ -80,23 +65,35 @@ class ThematicBreakMatcher implements BlockMatcher {
         return dashes >= 3;
     }
 
-    static class Factory implements BlockMatcherFactory {
-        
-        private static final Factory instance = new Factory();
-        
+    private static class ThematicBreakMatcher implements BlockMatcher {
+
+        private static final ThematicBreakMatcher instance = new ThematicBreakMatcher();
+    
+        private ThematicBreakMatcher() {
+        }
+    
         @Override
         public BlockType blockType() {
             return BasicBlockType.THEMATIC_BREAK;
         }
-
+    
         @Override
-        public BlockMatcher newMatcher(Content content) {
-            return testLine(content) ? ThematicBreakMatcher.instance : null;
+        public void bind(Context context) {
         }
-
+        
         @Override
-        public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
-            return newMatcher(content);
+        public int lineNo() {
+            return 1;
+        }
+        
+        @Override
+        public Result match(Content content) {
+            return Result.COMPLETED;
+        }
+        
+        @Override
+        public Node close() {
+            return new SimpleThematicBreak();
         }
     }
 }

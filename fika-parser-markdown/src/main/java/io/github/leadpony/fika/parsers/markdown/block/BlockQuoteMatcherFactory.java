@@ -24,60 +24,57 @@ import io.github.leadpony.fika.core.parser.support.nodes.SimpleBlockQuote;
 /**
  * @author leadpony
  */
-public class BlockQuoteMatcher extends ContainerBlockMatcher {
+class BlockQuoteMatcherFactory implements BlockMatcherFactory {
     
     private static final Pattern BLOCK_QUOTE_MARKER = Pattern.compile("^\\u0020{0,3}>\\u0020?");
 
-    static Factory factory() {
-        return Factory.instance;
-    }
-    
-    private BlockQuoteMatcher() {
+    BlockQuoteMatcherFactory() {
     }
     
     @Override
     public BlockType blockType() {
         return BasicBlockType.BLOCK_QUOTE;
     }
-   
+
     @Override
-    public Result match(Content content) {
-        Matcher m = BLOCK_QUOTE_MARKER.matcher(content);
-        if (m.find()) {
-            int skip = m.group(0).length();
-            findAndInvokeChildMatcher(content.subContent(skip));
-            return Result.CONTINUED;
+    public BlockMatcher newMatcher(Content content) {
+        if (BLOCK_QUOTE_MARKER.matcher(content).find()) {
+            return new BlockQuoteMatcher();
         } else {
-            return matchLazyContinuationLine(content);
+            return null;
         }
     }
 
     @Override
-    protected BlockQuote buildNode() {
-        return new SimpleBlockQuote(); 
+    public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+        return newMatcher(content);
     }
-
-    static class Factory implements BlockMatcherFactory {
-        
-        private static final Factory instance = new Factory();
-        
+    
+    private static class BlockQuoteMatcher extends ContainerBlockMatcher {
+    
+        private BlockQuoteMatcher() {
+        }
+    
         @Override
         public BlockType blockType() {
             return BasicBlockType.BLOCK_QUOTE;
         }
-
+       
         @Override
-        public BlockMatcher newMatcher(Content content) {
-            if (BLOCK_QUOTE_MARKER.matcher(content).find()) {
-                return new BlockQuoteMatcher();
+        public Result match(Content content) {
+            Matcher m = BLOCK_QUOTE_MARKER.matcher(content);
+            if (m.find()) {
+                int skip = m.group(0).length();
+                findAndInvokeChildMatcher(content.subContent(skip));
+                return Result.CONTINUED;
             } else {
-                return null;
+                return matchLazyContinuationLine(content);
             }
         }
-
+    
         @Override
-        public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
-            return newMatcher(content);
+        protected BlockQuote buildNode() {
+            return new SimpleBlockQuote(); 
         }
     }
 }

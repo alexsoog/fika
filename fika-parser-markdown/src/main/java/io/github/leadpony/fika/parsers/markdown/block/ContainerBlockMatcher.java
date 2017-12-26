@@ -101,7 +101,7 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
     }
     
     protected BlockMatcher findChildMatcher(Content content) {
-        BlockMatcher matched = context().matcher(content);
+        BlockMatcher matched = context().findMatcher(content);
         if (matched != null) {
             openChildMatcher(matched);
         }

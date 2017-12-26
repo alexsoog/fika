@@ -44,7 +44,7 @@ abstract class AbstractBlockMatcher implements BlockMatcher {
     @Override
     public BlockMatcher interrupt(Content content) {
         assert(isInterruptible());
-        return context().interrupter(content, this);
+        return context().findInterruptingMatcher(content, this);
     }
     
     @Override

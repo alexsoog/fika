@@ -36,6 +36,9 @@ public interface Visitor {
         visitChildren(node);
     }
 
+    default void visit(HtmlBlock node) {
+    }
+
     default void visit(ListItem node) {
         visitChildren(node);
     }
@@ -49,7 +52,6 @@ public interface Visitor {
     }
 
     default void visit(Text node) {
-        visitChildren(node);
     }
     
     default void visit(ThematicBreak node) {
