@@ -15,6 +15,9 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import io.github.leadpony.fika.core.nodes.Node;
 import io.github.leadpony.fika.core.parser.support.nodes.SimpleThematicBreak;
 
@@ -29,6 +32,13 @@ class ThematicBreakMatcherFactory implements BlockMatcherFactory {
     @Override
     public BlockType blockType() {
         return BasicBlockType.THEMATIC_BREAK;
+    }
+    
+    @Override
+    public Set<? extends BlockType> interruptible() {
+        return EnumSet.of(
+                BasicBlockType.PARAGRAPH,
+                BasicBlockType.LIST);
     }
 
     @Override

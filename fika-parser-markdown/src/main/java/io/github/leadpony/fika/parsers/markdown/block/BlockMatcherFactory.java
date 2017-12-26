@@ -15,6 +15,9 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
+import java.util.Collections;
+import java.util.Set;
+
 /**
  * Factory for producing block matchers.
  * 
@@ -26,6 +29,10 @@ public interface BlockMatcherFactory {
     
     default int precedence() {
         return blockType().precedence();
+    }
+    
+    default Set<? extends BlockType> interruptible() {
+        return Collections.emptySet();
     }
     
     /**

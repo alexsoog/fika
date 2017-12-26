@@ -56,7 +56,7 @@ public abstract class AbstractSpecTest {
         HtmlRenderer renderer = HtmlRenderer.builder()
                 .disable(HtmlRenderer.Option.FULL_HTML)
                 .build();
-        String actual = renderer.render(doc);
+        String actual = minifier.minify(renderer.render(doc));
         String expected = minifier.minify(fixture.expected());
         assertThat(wrapXml(actual)).isXmlEqualTo(wrapXml(expected));
     }

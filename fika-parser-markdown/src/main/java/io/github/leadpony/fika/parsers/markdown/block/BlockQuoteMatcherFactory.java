@@ -15,6 +15,8 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,6 +38,11 @@ class BlockQuoteMatcherFactory implements BlockMatcherFactory {
         return BasicBlockType.BLOCK_QUOTE;
     }
 
+    @Override
+    public Set<? extends BlockType> interruptible() {
+        return EnumSet.of(BasicBlockType.PARAGRAPH);
+    }
+    
     @Override
     public BlockMatcher newMatcher(Content content) {
         if (BLOCK_QUOTE_MARKER.matcher(content).find()) {

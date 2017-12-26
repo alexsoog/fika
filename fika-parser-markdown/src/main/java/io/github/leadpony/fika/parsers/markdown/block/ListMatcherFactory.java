@@ -15,7 +15,9 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 import io.github.leadpony.fika.core.nodes.ListItem;
 import io.github.leadpony.fika.core.nodes.Node;
@@ -31,6 +33,11 @@ class ListMatcherFactory implements BlockMatcherFactory {
     @Override
     public BlockType blockType() {
         return BasicBlockType.LIST;
+    }
+  
+    @Override
+    public Set<? extends BlockType> interruptible() {
+        return EnumSet.of(BasicBlockType.PARAGRAPH);
     }
     
     @Override

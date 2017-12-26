@@ -17,7 +17,9 @@ package io.github.leadpony.fika.parsers.markdown.block;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author leadpony
@@ -25,6 +27,7 @@ import java.util.List;
 class BlockMatcherFinder {
     
     private final List<BlockMatcherFactory> factories;
+    private final Map<BlockType, List<BlockMatcherFactory>> interrupters;
 
     static Builder builder() {
         return new Builder();
@@ -32,7 +35,8 @@ class BlockMatcherFinder {
     
     private BlockMatcherFinder(List<BlockMatcherFactory> factories) {
         this.factories = factories;
-        Collections.sort(factories, (x, y)->x.precedence() - y.precedence());
+        this.interrupters = new HashMap<>();
+        setUpMatcherFactories();
     }
     
     BlockMatcher findMatcher(Content content) {
@@ -45,23 +49,42 @@ class BlockMatcherFinder {
                 return matched;
             }
         }
-        return new ParagraphMatcher();
+        return null;
     }
     
     BlockMatcher findInterruptingMatcher(Content content, BlockMatcher current) {
         if (content.isBlank()) {
             return null;
         }
-        final int precedence = current.precedence();
-        for (BlockMatcherFactory factory: this.factories) {
-            if (factory.precedence() < precedence) {
-                BlockMatcher matched = factory.newInterrupter(content, current);
-                if (matched != null) {
-                    return matched;
-                }
+        List<BlockMatcherFactory> factories = interrupters.get(current.blockType());
+        if (factories == null) {
+            return null;
+        }
+        for (BlockMatcherFactory factory: factories) {
+            BlockMatcher matched = factory.newInterrupter(content, current);
+            if (matched != null) {
+                return matched;
             }
         }
         return null;
+    }
+    
+    private void setUpMatcherFactories() {
+        Collections.sort(this.factories, (x, y)->x.precedence() - y.precedence());
+        for (BlockMatcherFactory factory: this.factories) {
+            addInterrupter(factory);
+        }
+    }
+    
+    private void addInterrupter(BlockMatcherFactory factory) {
+        for (BlockType type: factory.interruptible()) {
+            List<BlockMatcherFactory> list = interrupters.get(type);
+            if (list == null) {
+                list = new ArrayList<>();
+                interrupters.put(type, list);
+            }
+            list.add(factory);
+        }
     }
 
     static class Builder {
@@ -71,11 +94,11 @@ class BlockMatcherFinder {
         private final List<BlockMatcherFactory> factories;
         
         private Builder() {
-            this.factories = defaultFactories;
+            this.factories = new ArrayList<>(defaultFactories);
         }
         
         BlockMatcherFinder build() {
-            return new BlockMatcherFinder(factories);
+            return new BlockMatcherFinder(this.factories);
         }
         
         private static List<BlockMatcherFactory> loadDefaultFactories() {
@@ -87,6 +110,8 @@ class BlockMatcherFinder {
                 add(new FencedCodeMatcherFactory());
                 add(new BlockQuoteMatcherFactory());
                 add(new ListMatcherFactory());
+                add(new HtmlBlockMatcherFactory());
+                add(new ParagraphMatcherFactory());
             }};
             return list;
         }

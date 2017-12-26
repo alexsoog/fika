@@ -13,37 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.block;
+package io.github.leadpony.fika.parsers.markdown;
+
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * @author leadpony
- *
  */
-public enum BasicBlockType implements BlockType {
-    THEMATIC_BREAK(100),
-    LIST(110),
-    LIST_ITEM(110),
-    HEADING(120),
-    BLOCK_QUOTE(130),
-    FENCED_CODE(140),
-    HTML_BLOCK(150),
-    INDENTED_CODE(160),
-    PARAGRAPH(180),
-    DOCUMENT,
-    ;
-
-    private final int precedence;
+@RunWith(Parameterized.class)
+public class HtmlBlockTest extends AbstractSpecTest {
     
-    private BasicBlockType() {
-        this.precedence = Integer.MAX_VALUE;
+    public HtmlBlockTest(int index, String source, String expected) {
+        super(index, source, expected);
+    }
+  
+    @Parameters(name = "{0}: {1}")
+    public static Iterable<Object[]> parameters() {
+        return parameters("/html-blocks.json");
     }
     
-    private BasicBlockType(int precedence) {
-        this.precedence = precedence;
-    }
-    
-    @Override
-    public int precedence() {
-        return precedence;
+    @Before
+    public void setUp() {
+        //Assume.assumeTrue(index() == 145);
     }
 }

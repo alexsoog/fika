@@ -49,7 +49,7 @@ public class HtmlMinifier {
             last = m.end();
         }
         if (last < html.length()) {
-            b.append(html.substring(last));
+            b.append(html.substring(last).trim());
         }
         return b.toString();
     }

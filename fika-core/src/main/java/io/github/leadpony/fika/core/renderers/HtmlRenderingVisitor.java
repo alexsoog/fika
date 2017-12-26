@@ -22,6 +22,7 @@ import io.github.leadpony.fika.core.nodes.BlockQuote;
 import io.github.leadpony.fika.core.nodes.CodeBlock;
 import io.github.leadpony.fika.core.nodes.Document;
 import io.github.leadpony.fika.core.nodes.Heading;
+import io.github.leadpony.fika.core.nodes.HtmlBlock;
 import io.github.leadpony.fika.core.nodes.ListItem;
 import io.github.leadpony.fika.core.nodes.OrderedList;
 import io.github.leadpony.fika.core.nodes.Paragraph;
@@ -76,6 +77,11 @@ class HtmlRenderingVisitor implements Visitor {
         formatter.startTag(tagName);
         visitChildren(node);
         formatter.endTag(tagName);
+    }
+    
+    @Override
+    public void visit(HtmlBlock node) {
+        formatter.rawHtml(node.getHtml());
     }
     
     @Override

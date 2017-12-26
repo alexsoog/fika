@@ -16,7 +16,9 @@
 package io.github.leadpony.fika.parsers.markdown.block;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -39,6 +41,11 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
         return BasicBlockType.HTML_BLOCK;
     }
 
+    @Override
+    public Set<? extends BlockType> interruptible() {
+        return EnumSet.of(BasicBlockType.PARAGRAPH);
+    }
+    
     @Override
     public BlockMatcher newMatcher(Content content) {
         for (Function<Content, HtmlBlockMatcher> entry: entries) {
@@ -69,7 +76,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
         }
         
         protected void appendLine(Content content) {
-            this.builder.append(content.toOriginalString());
+            this.builder.append(content.toOriginalString()).append('\n');
         }
     }
 
@@ -79,7 +86,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
                 "^<(script|pre|style)(\\u0020|>|$)", Pattern.CASE_INSENSITIVE);
         
         private static final Pattern END_PATTERN = Pattern.compile(
-                "</(script|pre|style>", Pattern.CASE_INSENSITIVE);
+                "</(script|pre|style)>", Pattern.CASE_INSENSITIVE);
     
         static HtmlBlockMatcher start(Content content) {
             if (START_PATTERN.matcher(content).find()) {

@@ -15,6 +15,9 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import io.github.leadpony.fika.core.nodes.Heading;
 import io.github.leadpony.fika.core.parser.support.nodes.SimpleHeading;
 import io.github.leadpony.fika.core.parser.support.nodes.SimpleText;
@@ -34,6 +37,11 @@ class HeadingMatcherFactory implements BlockMatcherFactory {
         return BasicBlockType.HEADING;
     }
 
+    @Override
+    public Set<? extends BlockType> interruptible() {
+        return EnumSet.of(BasicBlockType.PARAGRAPH);
+    }
+    
     @Override
     public BlockMatcher newMatcher(Content content) {
         int i = content.countSpaces(0, 3);

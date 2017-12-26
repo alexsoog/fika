@@ -17,6 +17,9 @@ package io.github.leadpony.fika.parsers.markdown.block;
 
 import static io.github.leadpony.fika.parsers.markdown.base.Characters.SPACE;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import io.github.leadpony.fika.core.nodes.CodeBlock;
 import io.github.leadpony.fika.core.nodes.Node;
 import io.github.leadpony.fika.core.parser.support.nodes.SimpleCodeBlock;
@@ -34,6 +37,11 @@ class FencedCodeMatcherFactory implements BlockMatcherFactory {
         return BasicBlockType.FENCED_CODE;
     }
     
+    @Override
+    public Set<? extends BlockType> interruptible() {
+        return EnumSet.of(BasicBlockType.PARAGRAPH);
+    }
+
     @Override
     public BlockMatcher newMatcher(Content content) {
         int indentSize = content.countSpaces(0, 3);
