@@ -13,28 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.support.nodes;
-
-import io.github.leadpony.fika.core.nodes.HtmlBlock;
+package io.github.leadpony.fika.core.nodes;
 
 /**
+ * Factory for creating various kinds of nodes.
+ * 
  * @author leadpony
  */
-public class SimpleHtmlBlock extends AbstractNode implements HtmlBlock {
+public interface NodeFactory {
 
-    private String html;
+    BlockQuote newBlockQuote();
     
-    public SimpleHtmlBlock(String html) {
-        this.html = html;
-    }
-    
-    @Override
-    public String getHtml() {
-        return html;
-    }
+    CodeBlock newCodeBlock();
 
-    @Override
-    public void setHtml(String html) {
-        this.html = html;
-    }
+    Document newDocument();
+
+    Heading newHeading(int level);
+
+    HtmlBlock newHtmlBlock();
+
+    ListBlock newLiskBlock(ListType type);
+
+    ListItem newListItem();
+
+    Paragraph newParagraph();
+
+    Text newText();
+    
+    ThematicBreak newThematicBreak();
 }

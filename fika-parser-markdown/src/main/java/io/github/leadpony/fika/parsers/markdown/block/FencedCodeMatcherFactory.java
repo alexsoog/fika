@@ -20,9 +20,8 @@ import static io.github.leadpony.fika.parsers.markdown.base.Characters.SPACE;
 import java.util.EnumSet;
 import java.util.Set;
 
+import io.github.leadpony.fika.core.nodes.Block;
 import io.github.leadpony.fika.core.nodes.CodeBlock;
-import io.github.leadpony.fika.core.nodes.Node;
-import io.github.leadpony.fika.core.parser.support.nodes.SimpleCodeBlock;
 
 /**
  * @author leadpony
@@ -112,14 +111,15 @@ class FencedCodeMatcherFactory implements BlockMatcherFactory {
         }
     
         @Override
-        protected Node buildNode() {
-            CodeBlock node = new SimpleCodeBlock(builder.toString());
+        protected Block buildBlock() {
+            CodeBlock block = nodeFactory().newCodeBlock();
+            block.setContent(builder.toString());
             String[] words = infoString.split("\\s+");
             String language = words[0];
             if (!language.isEmpty()) {
-                node.setLanguage(language);
+                block.setLanguage(language);
             }
-            return node;
+            return block;
         }
     
         private boolean testClosingFence(Content content) {

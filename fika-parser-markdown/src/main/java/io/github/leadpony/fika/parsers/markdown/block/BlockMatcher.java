@@ -15,7 +15,8 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
-import io.github.leadpony.fika.core.nodes.Node;
+import io.github.leadpony.fika.core.nodes.Block;
+import io.github.leadpony.fika.core.nodes.NodeFactory;
 import io.github.leadpony.fika.core.nodes.Text;
 
 /**
@@ -77,9 +78,9 @@ public interface BlockMatcher {
     /**
      * Closes this matcher.
      * 
-     * @return the node found by this matcher.
+     * @return the block found by this matcher.
      */
-    Node close();
+    Block close();
     
     /**
      * Context for block matchers.
@@ -96,6 +97,8 @@ public interface BlockMatcher {
         BlockMatcher findMatcher(Content content);
 
         BlockMatcher findInterruptingMatcher(Content content, BlockMatcher current);
+        
+        NodeFactory nodeFactory();
         
         void addInline(Text text);
     }

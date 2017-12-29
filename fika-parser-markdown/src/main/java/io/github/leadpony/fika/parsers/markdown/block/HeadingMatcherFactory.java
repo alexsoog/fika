@@ -19,8 +19,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import io.github.leadpony.fika.core.nodes.Heading;
-import io.github.leadpony.fika.core.parser.support.nodes.SimpleHeading;
-import io.github.leadpony.fika.core.parser.support.nodes.SimpleText;
+import io.github.leadpony.fika.core.nodes.Text;
 
 /**
  * @author leadpony
@@ -126,12 +125,13 @@ class HeadingMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        protected Heading buildNode() {
-            SimpleHeading node = new SimpleHeading(this.level);
-            SimpleText text = new SimpleText(this.title);
-            node.childNodes().add(text);
+        protected Heading buildBlock() {
+            Heading block = nodeFactory().newHeading(this.level);
+            Text text = nodeFactory().newText();
+            text.setContent(this.title);
+            block.appendChild(text);
             context().addInline(text);
-            return node;
+            return block;
         }
     }
 }

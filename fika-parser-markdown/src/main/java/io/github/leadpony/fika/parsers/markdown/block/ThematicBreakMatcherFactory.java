@@ -18,8 +18,7 @@ package io.github.leadpony.fika.parsers.markdown.block;
 import java.util.EnumSet;
 import java.util.Set;
 
-import io.github.leadpony.fika.core.nodes.Node;
-import io.github.leadpony.fika.core.parser.support.nodes.SimpleThematicBreak;
+import io.github.leadpony.fika.core.nodes.Block;
 
 /**
  * @author leadpony
@@ -75,11 +74,11 @@ class ThematicBreakMatcherFactory implements BlockMatcherFactory {
         return dashes >= 3;
     }
 
-    private static class ThematicBreakMatcher implements BlockMatcher {
+    private static class ThematicBreakMatcher extends AbstractBlockMatcher {
 
-        private static final ThematicBreakMatcher instance = new ThematicBreakMatcher();
+        static final ThematicBreakMatcher instance = new ThematicBreakMatcher();
     
-        private ThematicBreakMatcher() {
+        ThematicBreakMatcher() {
         }
     
         @Override
@@ -88,22 +87,13 @@ class ThematicBreakMatcherFactory implements BlockMatcherFactory {
         }
     
         @Override
-        public void bind(Context context) {
-        }
-        
-        @Override
-        public int lineNo() {
-            return 1;
-        }
-        
-        @Override
         public Result match(Content content) {
             return Result.COMPLETED;
         }
         
         @Override
-        public Node close() {
-            return new SimpleThematicBreak();
+        protected Block buildBlock() {
+            return nodeFactory().newThematicBreak();
         }
     }
 }

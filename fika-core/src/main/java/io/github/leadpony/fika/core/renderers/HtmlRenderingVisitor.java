@@ -94,7 +94,7 @@ class HtmlRenderingVisitor implements Visitor {
     @Override
     public void visit(OrderedList node) {
         Map<String, Object> attributes = new HashMap<>();
-        int startNumber = node.startNumber();
+        int startNumber = node.getStartNumber();
         if (startNumber != 1) {
             attributes.put("start", startNumber);
         }

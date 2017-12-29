@@ -15,26 +15,53 @@
  */
 package io.github.leadpony.fika.core.nodes;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * @author leadpony
  */
 public interface Node {
     
-    boolean hasChildNodes();
+    default boolean hasChildNodes() {
+        return firstChildNode() != null;
+    }
     
     /**
      * Returns child nodes of this node.
-     * Some types of nodes always return empty list that cannot be modified.
      * 
      * @return child nodes of this node.
      */
-    List<Node> childNodes();
+    Iterable<Node> childNodes();
     
-    Node getParentNode();
+    Node parentNode();
     
-    void setParentNode(Node parentNode);
+    Node firstChildNode();
+    
+    Node lastChildNode();
 
+    Node previousNode();
+    
+    Node nextNode();
+
+    default Node appendChild(Node child) {
+        throw new UnsupportedOperationException();
+    }
+    
+    default void appendChildren(Collection<Node> children) {
+        for (Node child: children) {
+            appendChild(child);
+        }
+    }
+    
+    default Node removeChild(Node child) {
+        throw new UnsupportedOperationException();
+    }
+    
+    default Node replaceChild(Node newChild, Node oldChild) {
+        throw new UnsupportedOperationException();
+    }
+    
     void accept(Visitor visitor);
+
+    NodeFactory factory();
 }

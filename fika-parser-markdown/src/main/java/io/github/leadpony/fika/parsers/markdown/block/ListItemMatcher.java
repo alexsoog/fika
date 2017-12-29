@@ -18,8 +18,7 @@ package io.github.leadpony.fika.parsers.markdown.block;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.github.leadpony.fika.core.nodes.Node;
-import io.github.leadpony.fika.core.parser.support.nodes.SimpleListItem;
+import io.github.leadpony.fika.core.nodes.Block;
 
 /**
  * Matcher for list items.
@@ -108,8 +107,8 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
     }
     
     @Override
-    protected Node buildNode() {
-        return new SimpleListItem();
+    protected Block buildBlock() {
+        return nodeFactory().newListItem();
     }
     
     private Content contentAfterMarker(Content content) {

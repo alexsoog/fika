@@ -15,7 +15,8 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
-import io.github.leadpony.fika.core.nodes.Node;
+import io.github.leadpony.fika.core.nodes.Block;
+import io.github.leadpony.fika.core.nodes.NodeFactory;
 
 /**
  * @author leadpony
@@ -48,13 +49,17 @@ abstract class AbstractBlockMatcher implements BlockMatcher {
     }
     
     @Override
-    public Node close() {
-        return buildNode();
+    public Block close() {
+        return buildBlock();
     }
 
     protected Context context() {
         return context;
     }
     
-    protected abstract Node buildNode();
+    protected NodeFactory nodeFactory() {
+        return context.nodeFactory();
+    }
+    
+    protected abstract Block buildBlock();
 }

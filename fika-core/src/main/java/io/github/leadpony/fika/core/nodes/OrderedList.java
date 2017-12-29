@@ -30,5 +30,12 @@ public interface OrderedList extends ListBlock {
         return ListType.ORDERED;
     }
     
-    int startNumber();
+    /**
+     * Returns the starting number of this list.
+     * 
+     * @return the starting number.
+     */
+    int getStartNumber();
+    
+    void setStartNumber(int startNumber);
 }

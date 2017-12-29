@@ -58,19 +58,13 @@ public abstract class AbstractSpecTest {
                 .build();
         String actual = minifier.minify(renderer.render(doc));
         String expected = minifier.minify(fixture.expected());
-        assertThat(wrapXml(actual)).isXmlEqualTo(wrapXml(expected));
+        assertThat(actual).isEqualTo(expected);
     }
     
     public int index() {
         return index;
     }
     
-    private static String wrapXml(String xml) {
-        StringBuilder b = new StringBuilder();
-        b.append("<_>").append(xml).append("</_>");
-        return b.toString();
-    }
-
     protected static Iterable<Object[]> parameters(String path) {
         JsonArray array = loadSpecJson(path);
         Iterator<Object[]> it = array.stream()

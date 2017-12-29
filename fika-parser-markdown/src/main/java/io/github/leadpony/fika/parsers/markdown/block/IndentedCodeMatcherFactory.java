@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.leadpony.fika.core.nodes.CodeBlock;
-import io.github.leadpony.fika.core.parser.support.nodes.SimpleCodeBlock;
 
 /**
  * @author leadpony
@@ -69,12 +68,14 @@ class IndentedCodeMatcherFactory implements BlockMatcherFactory {
         }
     
         @Override
-        protected CodeBlock buildNode() {
+        protected CodeBlock buildBlock() {
             StringBuilder builder = new StringBuilder();
             for (int i = 1; i <= lastNonBlankLineNo; ++i) {
                 builder.append(lines.get(i - 1)).append('\n');
             }
-            return new SimpleCodeBlock(builder.toString());
+            CodeBlock block = nodeFactory().newCodeBlock();
+            block.setContent(builder.toString());
+            return block;
         }
     
         private void appendLine(Content content) {

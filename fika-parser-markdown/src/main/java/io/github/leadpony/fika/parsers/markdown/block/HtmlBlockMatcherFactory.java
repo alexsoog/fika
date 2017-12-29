@@ -17,23 +17,36 @@ package io.github.leadpony.fika.parsers.markdown.block;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.github.leadpony.fika.core.nodes.Node;
-import io.github.leadpony.fika.core.parser.support.nodes.SimpleHtmlBlock;
+import io.github.leadpony.fika.core.nodes.Block;
+import io.github.leadpony.fika.core.nodes.HtmlBlock;
 
 /**
  * @author leadpony
  */
 class HtmlBlockMatcherFactory implements BlockMatcherFactory {
 
-    private final List<Function<Content, HtmlBlockMatcher>> entries = new ArrayList<>();
+    private static final List<Function<Content, HtmlBlockMatcher>> starters = new ArrayList<>();
+    private static final List<Function<Content, HtmlBlockMatcher>> interruptingStarters = new ArrayList<>();
     
-    HtmlBlockMatcherFactory() {
-        entries.add(ScriptBlockMatcher::start);
+    static {
+        interruptingStarters.add(ScriptMatcher::start);
+        interruptingStarters.add(CommentMatcher::start);
+        interruptingStarters.add(PIMatcher::start);
+        interruptingStarters.add(DtdMatcher::start);
+        interruptingStarters.add(CDataMatcher::start);
+        interruptingStarters.add(ElementMatcher::start);
+        starters.addAll(interruptingStarters);
+        starters.add(CompleteTagMatcher::start);
+    }
+    
+    public HtmlBlockMatcherFactory() {
     }
 
     @Override
@@ -48,8 +61,22 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
     
     @Override
     public BlockMatcher newMatcher(Content content) {
-        for (Function<Content, HtmlBlockMatcher> entry: entries) {
-            BlockMatcher matcher = entry.apply(content);
+        return newMatcher(content, starters);
+    }
+    
+    @Override
+    public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+        return newMatcher(content, interruptingStarters);
+    }
+
+    private BlockMatcher newMatcher(Content content, List<Function<Content, HtmlBlockMatcher>> functions) {
+        int i = content.countSpaces(0, 3);
+        if (i >= content.length() || content.charAt(i) != '<') {
+            return null;
+        }
+        content = content.subContent(i);
+        for (Function<Content, HtmlBlockMatcher> function: functions) {
+            BlockMatcher matcher = function.apply(content);
             if (matcher != null) {
                 return matcher;
             }
@@ -71,8 +98,10 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
         }
     
         @Override
-        protected Node buildNode() {
-            return new SimpleHtmlBlock(builder.toString());
+        protected Block buildBlock() {
+            HtmlBlock block =nodeFactory().newHtmlBlock();
+            block.setHtml(builder.toString());
+            return block;
         }
         
         protected void appendLine(Content content) {
@@ -80,7 +109,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
         }
     }
 
-    private static class ScriptBlockMatcher extends HtmlBlockMatcher {
+    private static class ScriptMatcher extends HtmlBlockMatcher {
     
         private static final Pattern START_PATTERN = Pattern.compile(
                 "^<(script|pre|style)(\\u0020|>|$)", Pattern.CASE_INSENSITIVE);
@@ -90,7 +119,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
     
         static HtmlBlockMatcher start(Content content) {
             if (START_PATTERN.matcher(content).find()) {
-                return new ScriptBlockMatcher();
+                return new ScriptMatcher();
             }
             return null;
         }
@@ -101,6 +130,215 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
             if (END_PATTERN.matcher(content).find()) {
                 return Result.COMPLETED;
             }
+            return Result.CONTINUED;
+        }
+    }
+
+    private static class CommentMatcher extends HtmlBlockMatcher {
+        
+        static HtmlBlockMatcher start(Content content) {
+            if (content.startsWith("<!--")) {
+                return new CommentMatcher();
+            }
+            return null;
+        }
+        
+        @Override
+        public Result match(Content content) {
+            appendLine(content);
+            return content.contains("-->") ? Result.COMPLETED : Result.CONTINUED;
+        }
+    }
+    
+    private static class PIMatcher extends HtmlBlockMatcher {
+        
+        static HtmlBlockMatcher start(Content content) {
+            if (content.startsWith("<?")) {
+                return new PIMatcher();
+            }
+            return null;
+        }
+        
+        @Override
+        public Result match(Content content) {
+            appendLine(content);
+            return content.contains("?>") ? Result.COMPLETED : Result.CONTINUED;
+        }
+    }
+
+    private static class DtdMatcher extends HtmlBlockMatcher {
+        
+        private static final Pattern START_PATTERN = Pattern.compile("^<![A-Z]");
+
+        static HtmlBlockMatcher start(Content content) {
+            if (START_PATTERN.matcher(content).find()) {
+                return new DtdMatcher();
+            }
+            return null;
+        }
+        
+        @Override
+        public Result match(Content content) {
+            appendLine(content);
+            return content.contains(">") ? Result.COMPLETED : Result.CONTINUED;
+        }
+    }
+
+    private static class CDataMatcher extends HtmlBlockMatcher {
+        
+        static HtmlBlockMatcher start(Content content) {
+            if (content.startsWith("<![CDATA[")) {
+                return new CDataMatcher();
+            }
+            return null;
+        }
+        
+        @Override
+        public Result match(Content content) {
+            appendLine(content);
+            return content.contains("]]>") ? Result.COMPLETED : Result.CONTINUED;
+        }
+    }
+
+    private static class ElementMatcher extends HtmlBlockMatcher {
+    
+        private static final Pattern START_PATTERN = Pattern.compile(
+                "^("
+                + "(<(\\w+)(\\u0020|$|>|/>))"
+                + "|"
+                + "(</(\\w+)(\\u0020|$|>))"
+                + ")"
+                );
+        
+        @SuppressWarnings("serial")
+        private static final Set<String> ELEMENTS_ALLOWED = new HashSet<String>() {{
+            add("address");
+            add("article");
+            add("aside");
+            add("base");
+            add("basefont");
+            add("blockquote");
+            add("body");
+            add("caption");
+            add("center");
+            add("col");
+            add("colgroup");
+            add("dd");
+            add("details");
+            add("dialog");
+            add("dir");
+            add("div");
+            add("dl");
+            add("dt");
+            add("fieldset");
+            add("figcaption");
+            add("figure");
+            add("footer");
+            add("form");
+            add("frame");
+            add("frameset");
+            add("h1");
+            add("h2");
+            add("h3");
+            add("h4");
+            add("h5");
+            add("h6");
+            add("head");
+            add("header");
+            add("hr");
+            add("html");
+            add("iframe");
+            add("legend");
+            add("li");
+            add("link");
+            add("main");
+            add("menu");
+            add("menuitem");
+            add("meta");
+            add("nav");
+            add("noframes");
+            add("ol");
+            add("optgroup");
+            add("option");
+            add("p");
+            add("param");
+            add("section");
+            add("source");
+            add("summary");
+            add("table");
+            add("tbody");
+            add("td");
+            add("tfoot");
+            add("th");
+            add("thead");
+            add("title");
+            add("tr");
+            add("track");
+            add("ul");
+        }};
+        
+        static HtmlBlockMatcher start(Content content) {
+            Matcher m = START_PATTERN.matcher(content);
+            if (!m.find()) {
+                return null;
+            }
+            String tag = m.group(3);
+            if (tag == null) {
+                tag = m.group(6);
+            }
+            if (ELEMENTS_ALLOWED.contains(tag.toLowerCase())) {
+                return new ElementMatcher();
+            }
+            return null;
+        }
+        
+        @Override
+        public Result match(Content content) {
+            if (content.isBlank()) {
+                return Result.COMPLETED;
+            }
+            appendLine(content);
+            return Result.CONTINUED;
+        }
+    }
+
+    private static class CompleteTagMatcher extends HtmlBlockMatcher {
+        
+        private static final Pattern START_PATTERN = Pattern.compile(
+                "^(" +
+                "(<(\\w+)(\\s*\\w+?\\s*=\\s*\".*?\")*\\s*>)|" +
+                "(</(\\w+)\\s*>)" +        
+                ")\\u0020*$"
+                );
+        
+        @SuppressWarnings("serial")
+        private static final Set<String> ELEMENTS_NOT_ALLOWED = new HashSet<String>() {{
+            add("script");
+            add("pre");
+            add("style");
+        }};
+        
+        static HtmlBlockMatcher start(Content content) {
+            Matcher m = START_PATTERN.matcher(content);
+            if (!m.find()) {
+                return null;
+            }
+            String tag = m.group(3);
+            if (tag == null) {
+                tag = m.group(6);
+            }
+            if (!ELEMENTS_NOT_ALLOWED.contains(tag.toLowerCase())) {
+                return new CompleteTagMatcher();
+            }
+            return null;
+        }
+        
+        @Override
+        public Result match(Content content) {
+            if (content.isBlank()) {
+                return Result.COMPLETED;
+            }
+            appendLine(content);
             return Result.CONTINUED;
         }
     }

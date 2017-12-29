@@ -19,12 +19,17 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
+import io.github.leadpony.fika.core.nodes.Block;
 import io.github.leadpony.fika.core.nodes.ListItem;
+import io.github.leadpony.fika.core.nodes.ListType;
 import io.github.leadpony.fika.core.nodes.Node;
+import io.github.leadpony.fika.core.nodes.OrderedList;
 import io.github.leadpony.fika.core.nodes.Paragraph;
-import io.github.leadpony.fika.core.parser.support.nodes.SimpleOrderedList;
-import io.github.leadpony.fika.core.parser.support.nodes.SimpleUnorderedList;
 
+/**
+ * 
+ * @author leadpony
+ */
 class ListMatcherFactory implements BlockMatcherFactory {
     
     ListMatcherFactory() {
@@ -190,13 +195,14 @@ class ListMatcherFactory implements BlockMatcherFactory {
         }
         
         private void tightenListItem(ListItem item) {
-            List<Node> children = item.childNodes();
-            for (int i = 0; i < children.size(); ++i) {
-                Node child = children.get(i);
+            Node child = item.firstChildNode();
+            while (child != null) {
                 if (child instanceof Paragraph) {
-                    Node text = child.childNodes().get(0);
-                    children.set(i, text);
+                    Node text = child.firstChildNode();
+                    item.replaceChild(text, child);
+                    child = text;
                 }
+                child = child.nextNode();
             }
         }
     }
@@ -213,8 +219,8 @@ class ListMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        protected Node buildNode() {
-            return new SimpleUnorderedList();
+        protected Block buildBlock() {
+            return nodeFactory().newLiskBlock(ListType.UNORDERED);
         }
     }
 
@@ -238,8 +244,10 @@ class ListMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        protected Node buildNode() {
-            return new SimpleOrderedList(startNumber);
+        protected Block buildBlock() {
+            OrderedList block = (OrderedList)nodeFactory().newLiskBlock(ListType.ORDERED);
+            block.setStartNumber(startNumber);
+            return block;
         }
     }
 
@@ -248,5 +256,3 @@ class ListMatcherFactory implements BlockMatcherFactory {
         return (itemMatcher != null) ? new OrderedListMatcher(itemMatcher) : null;
     }
 }
-
-

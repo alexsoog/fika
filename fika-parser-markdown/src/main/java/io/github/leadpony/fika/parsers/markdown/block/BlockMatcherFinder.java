@@ -15,6 +15,8 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
+import static java.util.Comparator.comparing;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -70,7 +72,7 @@ class BlockMatcherFinder {
     }
     
     private void setUpMatcherFactories() {
-        Collections.sort(this.factories, (x, y)->x.precedence() - y.precedence());
+        Collections.sort(this.factories, comparing(BlockMatcherFactory::precedence));
         for (BlockMatcherFactory factory: this.factories) {
             addInterrupter(factory);
         }

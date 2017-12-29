@@ -18,6 +18,7 @@ package io.github.leadpony.fika.parsers.markdown.block;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.leadpony.fika.core.nodes.Block;
 import io.github.leadpony.fika.core.nodes.Node;
 
 /**
@@ -49,13 +50,13 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
     }
 
     @Override
-    public final Node close() {
+    public final Block close() {
         if (hasChildMatcher()) {
             closeCurrentChildMatcher();
         }
-        Node node = buildNode();
-        node.childNodes().addAll(childNodes());
-        return node;
+        Block block = buildBlock();
+        block.appendChildren(childNodes());
+        return block;
     }
     
     protected Result matchLazyContinuationLine(Content content) {

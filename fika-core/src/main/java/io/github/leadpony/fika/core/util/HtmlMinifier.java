@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  */
 public class HtmlMinifier {
     
-    private static final Pattern TAG_PATTERN = Pattern.compile("<.*?>|</.*?>|<.*?/>");
+    private static final Pattern TAG_PATTERN = Pattern.compile("<[^>]+>");
 
     public String minify(String html) {
         StringBuilder b = new StringBuilder();

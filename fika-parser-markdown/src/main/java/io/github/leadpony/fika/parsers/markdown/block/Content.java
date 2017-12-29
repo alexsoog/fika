@@ -84,11 +84,45 @@ class Content implements CharSequence {
         }
     }
     
-    /* */
+    /* String */
     
     boolean isEmpty() {
         return length == 0;
     }
+    
+    boolean contains(CharSequence s) {
+        if (s.length() == 0) {
+            return true;
+        }
+        char first = s.charAt(0);
+        int end = length - s.length() + 1;
+        for (int i = 0; i < end; ++i) {
+            if (charAt(i) == first) {
+                int j = 1;
+                while (j < s.length()) {
+                    if (charAt(i + j) != s.charAt(j)) {
+                        break;
+                    }
+                    ++j;
+                }
+                if (j >= s.length()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    boolean startsWith(String prefix) {
+        for (int i = 0; i < prefix.length(); ++i) {
+            if (i >= length || charAt(i) != prefix.charAt(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /* */
     
     boolean isBlank() {
         if (isEmpty()) {
@@ -200,7 +234,7 @@ class Content implements CharSequence {
         return subContent(beginIndex, length());
     }
     
-    public String toOriginalString() {
+    String toOriginalString() {
         return restoreTabs(line, tabs, beginIndex, endIndex);
     }
     

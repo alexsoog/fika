@@ -21,7 +21,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.github.leadpony.fika.core.nodes.BlockQuote;
-import io.github.leadpony.fika.core.parser.support.nodes.SimpleBlockQuote;
 
 /**
  * @author leadpony
@@ -80,8 +79,8 @@ class BlockQuoteMatcherFactory implements BlockMatcherFactory {
         }
     
         @Override
-        protected BlockQuote buildNode() {
-            return new SimpleBlockQuote(); 
+        protected BlockQuote buildBlock() {
+            return nodeFactory().newBlockQuote();
         }
     }
 }

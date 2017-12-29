@@ -19,14 +19,11 @@ import static io.github.leadpony.fika.parsers.markdown.base.Characters.trim;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import io.github.leadpony.fika.core.nodes.Node;
-import io.github.leadpony.fika.core.parser.support.nodes.SimpleHeading;
-import io.github.leadpony.fika.core.parser.support.nodes.SimpleParagraph;
-import io.github.leadpony.fika.core.parser.support.nodes.SimpleText;
+import io.github.leadpony.fika.core.nodes.Block;
+import io.github.leadpony.fika.core.nodes.Text;
 
 /**
  * @author leadpony
@@ -43,16 +40,21 @@ class ParagraphMatcherFactory implements BlockMatcherFactory {
         return new ParagraphMatcher();
     }
     
+    @FunctionalInterface
+    private static interface BlockProvider {
+        Block provide(BlockMatcher.Context context);
+    }
+    
     private static class ParagraphMatcher extends AbstractBlockMatcher {
         
         private final List<String> lines;
-        private Supplier<Node> nodeSupplier;
+        private BlockProvider blockProvider;
         
         private static final Pattern UNDERLINE_PATTERN = Pattern.compile("\\u0020{0,3}(=+|-{2,})\\u0020*");
         
         ParagraphMatcher() {
             this.lines = new ArrayList<>();
-            this.nodeSupplier = null;
+            this.blockProvider = null;
         }
       
         @Override
@@ -65,7 +67,7 @@ class ParagraphMatcherFactory implements BlockMatcherFactory {
             if (lineNo() <= 1) {
                 appendLine(content);
                 return Result.CONTINUED;
-            } else if (content.isBlank() || this.nodeSupplier != null) {
+            } else if (content.isBlank() || this.blockProvider != null) {
                 return Result.COMPLETED;
             }
             appendLine(content);
@@ -97,17 +99,18 @@ class ParagraphMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        protected Node buildNode() {
-            Node node = null;
-            if (this.nodeSupplier != null) {
-                node = this.nodeSupplier.get();
+        protected Block buildBlock() {
+            Block block = null;
+            if (this.blockProvider != null) {
+                block = this.blockProvider.provide(context());
             } else {
-                node = new SimpleParagraph(); 
+                block = nodeFactory().newParagraph();
             }
-            SimpleText text = new SimpleText(buildContent());
-            node.childNodes().add(text);
+            Text text = nodeFactory().newText();
+            text.setContent(buildContent());
+            block.appendChild(text);
             context().addInline(text);
-            return node;
+            return block;
         }
         
         private void appendLine(Content content) {
@@ -122,7 +125,7 @@ class ParagraphMatcherFactory implements BlockMatcherFactory {
             int index = content.countSpaces(0, 3);
             char c = content.charAt(index);
             int level = (c == '=') ? 1 : 2;
-            this.nodeSupplier = new HeadingSupplier(level);
+            this.blockProvider = HeadingProvider.of(level);
             return true;
         }
     
@@ -140,17 +143,26 @@ class ParagraphMatcherFactory implements BlockMatcherFactory {
         }
     }    
 
-    private static class HeadingSupplier implements Supplier<Node> {
+    private static class HeadingProvider implements BlockProvider {
         
-        private final int level;
+        static final HeadingProvider instances[] = {
+            new HeadingProvider(1),
+            new HeadingProvider(2)
+        };
         
-        HeadingSupplier(int level) {
+        final int level;
+        
+        static BlockProvider of(int level) {
+            return instances[level - 1];
+        }
+        
+        private HeadingProvider(int level) {
             this.level = level;
         }
     
         @Override
-        public Node get() {
-            return new SimpleHeading(this.level);
+        public Block provide(BlockMatcher.Context context) {
+            return context.nodeFactory().newHeading(this.level);
         }
     }
 }

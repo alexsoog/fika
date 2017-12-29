@@ -19,7 +19,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.github.leadpony.fika.core.nodes.Document;
+import io.github.leadpony.fika.core.nodes.NodeFactory;
 import io.github.leadpony.fika.core.nodes.Text;
+import io.github.leadpony.fika.core.parser.support.nodes.DefaultNodeFactory;
 
 /**
  * @author leadpony
@@ -58,6 +60,7 @@ public class BlockMatcherChain {
 
         private final BlockMatcherFinder finder;
         private int lineNo;
+        private final NodeFactory nodeFactory = new DefaultNodeFactory();
         private final Set<Text> inlines = new HashSet<>();
         
         Context(BlockMatcherFinder finder) {
@@ -78,6 +81,11 @@ public class BlockMatcherChain {
         @Override
         public BlockMatcher findInterruptingMatcher(Content content, BlockMatcher current) {
             return finder.findInterruptingMatcher(content, current);
+        }
+    
+        @Override
+        public NodeFactory nodeFactory() {
+            return nodeFactory;
         }
         
         @Override
