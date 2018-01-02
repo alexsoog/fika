@@ -39,10 +39,6 @@ public interface BlockMatcher {
      */
     void bind(Context context);
     
-    default int precedence() {
-        return blockType().precedence();
-    }
-    
     default boolean hasChildMatcher() {
         return false;
     }
@@ -61,17 +57,17 @@ public interface BlockMatcher {
     
     int lineNo();
 
-    Result match(Content content);
+    Result match(BlockInputSequence content);
 
     default boolean isInterruptible() {
         return false;
     }
     
-    default BlockMatcher interrupt(Content content) {
+    default BlockMatcher interrupt(BlockInputSequence content) {
         return null;
     }
     
-    default Result continueLazily(Content content) {
+    default Result continueLazily(BlockInputSequence content) {
         return Result.NOT_MATCHED;
     }
     
@@ -94,9 +90,9 @@ public interface BlockMatcher {
          */
         int lineNo();
         
-        BlockMatcher findMatcher(Content content);
+        BlockMatcher findMatcher(BlockInputSequence content);
 
-        BlockMatcher findInterruptingMatcher(Content content, BlockMatcher current);
+        BlockMatcher findInterruptingMatcher(BlockInputSequence content, BlockMatcher current);
         
         NodeFactory nodeFactory();
         

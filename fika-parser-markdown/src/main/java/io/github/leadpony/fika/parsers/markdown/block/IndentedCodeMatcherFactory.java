@@ -33,8 +33,8 @@ class IndentedCodeMatcherFactory implements BlockMatcherFactory {
     }
     
     @Override
-    public BlockMatcher newMatcher(Content content) {
-        if (!content.hasIndent(INDENT_SIZE)) {
+    public BlockMatcher newMatcher(BlockInputSequence content) {
+        if (!content.hasLeadingSpaces(INDENT_SIZE)) {
             return null;
         }
         return new IndentedCodeMatcher();
@@ -56,8 +56,8 @@ class IndentedCodeMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        public Result match(Content content) {
-            if (lineNo() <= 1 || content.hasIndent(INDENT_SIZE)) {
+        public Result match(BlockInputSequence content) {
+            if (lineNo() <= 1 || content.hasLeadingSpaces(INDENT_SIZE)) {
                 appendLine(content);
                 return Result.CONTINUED;
             } else if (content.isBlank()) {
@@ -78,9 +78,9 @@ class IndentedCodeMatcherFactory implements BlockMatcherFactory {
             return block;
         }
     
-        private void appendLine(Content content) {
+        private void appendLine(BlockInputSequence content) {
             content = content.subContent(INDENT_SIZE);
-            this.lines.add(content.toOriginalString());
+            this.lines.add(content.toSourceString());
             if (!content.isBlank()) {
                 this.lastNonBlankLineNo = lineNo();
             }

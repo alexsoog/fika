@@ -19,7 +19,7 @@ package io.github.leadpony.fika.core.nodes;
  * @author leadpony
  *
  */
-public interface BlockQuote extends ContainerBlock {
+public interface BlockQuote extends Block {
 
     @Override
     default void accept(Visitor visitor) {

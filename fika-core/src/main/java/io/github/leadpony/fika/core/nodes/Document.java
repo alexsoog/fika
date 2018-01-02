@@ -19,7 +19,7 @@ package io.github.leadpony.fika.core.nodes;
  * @author leadpony
  *
  */
-public interface Document extends ContainerBlock {
+public interface Document extends Block {
 
     @Override
     default void accept(Visitor visitor) {

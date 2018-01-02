@@ -41,17 +41,17 @@ class ThematicBreakMatcherFactory implements BlockMatcherFactory {
     }
 
     @Override
-    public BlockMatcher newMatcher(Content content) {
+    public BlockMatcher newMatcher(BlockInputSequence content) {
         return testLine(content) ? ThematicBreakMatcher.instance : null;
     }
 
     @Override
-    public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+    public BlockMatcher newInterrupter(BlockInputSequence content, BlockMatcher current) {
         return newMatcher(content);
     }
     
-    private static boolean testLine(Content content) {
-        int i = content.countSpaces(0, 3);
+    private static boolean testLine(BlockInputSequence content) {
+        int i = content.countLeadingSpaces(0, 3);
         char lineChar = content.charAt(i);
         if (lineChar != '-' && lineChar != '_' && lineChar != '*') {
             return false;
@@ -59,7 +59,7 @@ class ThematicBreakMatcherFactory implements BlockMatcherFactory {
         return testLine(content, i + 1, lineChar);
     }
 
-    private static boolean testLine(Content content, int offset, char lineChar) {
+    private static boolean testLine(BlockInputSequence content, int offset, char lineChar) {
         int dashes = 1;
         for (int i = offset; i < content.length(); ++i) {
             char c = content.charAt(i);
@@ -87,7 +87,7 @@ class ThematicBreakMatcherFactory implements BlockMatcherFactory {
         }
     
         @Override
-        public Result match(Content content) {
+        public Result match(BlockInputSequence content) {
             return Result.COMPLETED;
         }
         

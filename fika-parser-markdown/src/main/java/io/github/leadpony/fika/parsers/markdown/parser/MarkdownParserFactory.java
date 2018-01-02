@@ -17,17 +17,25 @@ package io.github.leadpony.fika.parsers.markdown.parser;
 
 import java.io.Reader;
 
+import io.github.leadpony.fika.core.nodes.NodeFactory;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserFactory;
+import io.github.leadpony.fika.core.parser.support.nodes.DefaultNodeFactory;
 
 /**
  * @author leadpony
  *
  */
 public class MarkdownParserFactory implements ParserFactory {
+    
+    private final NodeFactory nodeFactory;
+    
+    public MarkdownParserFactory() {
+        this.nodeFactory = new DefaultNodeFactory();
+    }
 
     @Override
     public Parser newParser(Reader reader) {
-        return new MarkdownParser(reader);
+        return new MarkdownParser(reader, this.nodeFactory);
     }
 }

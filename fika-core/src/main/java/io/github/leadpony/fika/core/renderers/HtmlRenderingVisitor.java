@@ -20,9 +20,13 @@ import java.util.Map;
 
 import io.github.leadpony.fika.core.nodes.BlockQuote;
 import io.github.leadpony.fika.core.nodes.CodeBlock;
+import io.github.leadpony.fika.core.nodes.CodeSpan;
 import io.github.leadpony.fika.core.nodes.Document;
+import io.github.leadpony.fika.core.nodes.Emphasis;
 import io.github.leadpony.fika.core.nodes.Heading;
 import io.github.leadpony.fika.core.nodes.HtmlBlock;
+import io.github.leadpony.fika.core.nodes.HtmlInline;
+import io.github.leadpony.fika.core.nodes.Link;
 import io.github.leadpony.fika.core.nodes.ListItem;
 import io.github.leadpony.fika.core.nodes.OrderedList;
 import io.github.leadpony.fika.core.nodes.Paragraph;
@@ -54,7 +58,7 @@ class HtmlRenderingVisitor implements Visitor {
     @Override
     public void visit(CodeBlock node) {
         formatter.startTag("pre");
-        Map<String, Object> attributes = new HashMap<>();
+        Map<String, String> attributes = new HashMap<>();
         String language = node.getLanguage();
         if (language != null) {
             String classValue = "language-" + language;
@@ -67,13 +71,28 @@ class HtmlRenderingVisitor implements Visitor {
     }
     
     @Override
+    public void visit(CodeSpan node) {
+        formatter.startTag("code");
+        formatter.text(node.getContent());
+        formatter.endTag("code");
+    }
+    
+    @Override
     public void visit(Document node) {
         visitChildren(node);
     }
 
     @Override
+    public void visit(Emphasis node) {
+        String tagName = (node.getStrength() > 1) ? "strong" : "em";
+        formatter.startTag(tagName);
+        visitChildren(node);
+        formatter.endTag(tagName);
+    }
+
+    @Override
     public void visit(Heading node) {
-        String tagName = HEADINGS[node.level() - 1];
+        String tagName = HEADINGS[node.getLevel() - 1];
         formatter.startTag(tagName);
         visitChildren(node);
         formatter.endTag(tagName);
@@ -85,6 +104,20 @@ class HtmlRenderingVisitor implements Visitor {
     }
     
     @Override
+    public void visit(HtmlInline node) {
+        formatter.rawHtml(node.getHtml());
+    }
+
+    @Override
+    public void visit(Link node) {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("href", node.getDestination());
+        formatter.startTag("a", attributes);
+        visitChildren(node);
+        formatter.endTag("a");
+    }
+
+    @Override
     public void visit(ListItem node) {
         formatter.startTag("li");
         visitChildren(node);
@@ -93,10 +126,10 @@ class HtmlRenderingVisitor implements Visitor {
 
     @Override
     public void visit(OrderedList node) {
-        Map<String, Object> attributes = new HashMap<>();
+        Map<String, String> attributes = new HashMap<>();
         int startNumber = node.getStartNumber();
         if (startNumber != 1) {
-            attributes.put("start", startNumber);
+            attributes.put("start", String.valueOf(startNumber));
         }
         formatter.startTag("ol", attributes);
         visitChildren(node);

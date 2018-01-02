@@ -43,7 +43,7 @@ class BlockQuoteMatcherFactory implements BlockMatcherFactory {
     }
     
     @Override
-    public BlockMatcher newMatcher(Content content) {
+    public BlockMatcher newMatcher(BlockInputSequence content) {
         if (BLOCK_QUOTE_MARKER.matcher(content).find()) {
             return new BlockQuoteMatcher();
         } else {
@@ -52,7 +52,7 @@ class BlockQuoteMatcherFactory implements BlockMatcherFactory {
     }
 
     @Override
-    public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+    public BlockMatcher newInterrupter(BlockInputSequence content, BlockMatcher current) {
         return newMatcher(content);
     }
     
@@ -67,7 +67,7 @@ class BlockQuoteMatcherFactory implements BlockMatcherFactory {
         }
        
         @Override
-        public Result match(Content content) {
+        public Result match(BlockInputSequence content) {
             Matcher m = BLOCK_QUOTE_MARKER.matcher(content);
             if (m.find()) {
                 int skip = m.group(0).length();

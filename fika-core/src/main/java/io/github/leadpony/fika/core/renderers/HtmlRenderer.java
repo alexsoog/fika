@@ -52,7 +52,7 @@ public class HtmlRenderer implements Renderer {
     }
     
     protected HtmlFormatter createFormatter(Writer writer) {
-        return new SimpleHtmlFormatter(writer);
+        return new MinimalHtmlFormatter(writer);
     }
     
     public static enum Option {

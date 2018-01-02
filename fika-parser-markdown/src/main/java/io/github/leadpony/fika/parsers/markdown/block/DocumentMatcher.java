@@ -31,7 +31,7 @@ class DocumentMatcher extends ContainerBlockMatcher {
     }
     
     @Override
-    public Result match(Content content) {
+    public Result match(BlockInputSequence content) {
         super.match(content);
         return Result.CONTINUED;
     }

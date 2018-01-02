@@ -27,13 +27,13 @@ public interface HtmlFormatter {
     
     void startTag(String tagName);
 
-    void startTag(String tagName, Map<String, Object> attributes);
+    void startTag(String tagName, Map<String, String> attributes);
 
     void endTag(String tagName);
 
     void emptyTag(String tagName);
 
-    void emptyTag(String tagName, Map<String, Object> attributes);
+    void emptyTag(String tagName, Map<String, String> attributes);
 
     void text(String text);
     

@@ -22,12 +22,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.github.leadpony.fika.parsers.markdown.base.InputSequence;
+
 /**
  * Content in a line.
  * 
  * @author leadpony
  */
-class Content implements CharSequence {
+class BlockInputSequence implements InputSequence {
     
     private final String line;
     private final List<Integer> tabs;
@@ -35,22 +37,17 @@ class Content implements CharSequence {
     private final int endIndex;
     private final int length;
     
-    /**
-     * A line containing no characters, or a line containing only spaces (U+0020) 
-     * or tabs (U+0009), is called a blank line.
-     */
-    private static final Pattern BLANK_PATTERN = Pattern.compile("\\u0020*");
     private static final Pattern TAB_PATTERN = Pattern.compile("\\t");
     
     private static final String[] EXPANDED_TAB = { "    ", "   ", "  ", " " }; 
    
-    static Content of(String line) {
+    static BlockInputSequence of(String line) {
         List<Integer> tabs = new ArrayList<>();
         String expaned = expandTabs(line, tabs);
-        return new Content(expaned, tabs, 0, expaned.length());
+        return new BlockInputSequence(expaned, tabs, 0, expaned.length());
     }
     
-    private Content(String line, List<Integer> tabs, int beginIndex, int endIndex) {
+    private BlockInputSequence(String line, List<Integer> tabs, int beginIndex, int endIndex) {
         this.line = line;
         this.tabs = tabs;
         this.beginIndex = beginIndex;
@@ -84,61 +81,30 @@ class Content implements CharSequence {
         }
     }
     
-    /* String */
+    /* String-like interface */
     
-    boolean isEmpty() {
-        return length == 0;
-    }
-    
-    boolean contains(CharSequence s) {
-        if (s.length() == 0) {
-            return true;
+    @Override
+    public String substring(int beginIndex, int endIndex) {
+        if (beginIndex < 0 || endIndex < 0 || beginIndex > endIndex || endIndex > length) {
+            throw new IndexOutOfBoundsException();
         }
-        char first = s.charAt(0);
-        int end = length - s.length() + 1;
-        for (int i = 0; i < end; ++i) {
-            if (charAt(i) == first) {
-                int j = 1;
-                while (j < s.length()) {
-                    if (charAt(i + j) != s.charAt(j)) {
-                        break;
-                    }
-                    ++j;
-                }
-                if (j >= s.length()) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    
-    boolean startsWith(String prefix) {
-        for (int i = 0; i < prefix.length(); ++i) {
-            if (i >= length || charAt(i) != prefix.charAt(i)) {
-                return false;
-            }
-        }
-        return true;
+        int newBeginIndex = this.beginIndex + beginIndex;
+        int newEndIndex = this.beginIndex + endIndex;
+        return this.line.substring(newBeginIndex, newEndIndex);
     }
     
     /* */
     
-    boolean isBlank() {
-        if (isEmpty()) {
-            return true;
-        }
-        return BLANK_PATTERN.matcher(this).matches();
-    }
-
-    Content subContent(int beginIndex) {
+    @Override
+    public BlockInputSequence subContent(int beginIndex) {
         if (beginIndex == 0) {
             return this;
         }
-        return subContent(beginIndex, length);
+        return subContent(beginIndex, length());
     }
 
-    Content subContent(int beginIndex, int endIndex) {
+    @Override
+    public BlockInputSequence subContent(int beginIndex, int endIndex) {
         if (beginIndex < 0 || endIndex < 0 || beginIndex > endIndex || endIndex > length) {
             throw new IndexOutOfBoundsException();
         }
@@ -147,25 +113,10 @@ class Content implements CharSequence {
         }
         int newBeginIndex = this.beginIndex + beginIndex;
         int newEndIndex = this.beginIndex + endIndex;
-        return new Content(this.line, this.tabs, newBeginIndex, newEndIndex);
+        return new BlockInputSequence(this.line, this.tabs, newBeginIndex, newEndIndex);
     }
     
-    boolean hasIndent(int size) {
-        int spaces = 0;
-        for (int i = 0; i < length; i++) {
-            char c = charAt(i);
-            if (c == SPACE) {
-                if (++spaces >= size) {
-                    return true;
-                }
-            } else {
-                break;
-            }
-        }
-        return false;
-    }
-    
-    Content removeIndentUpTo(int size) {
+    BlockInputSequence removeIndentUpTo(int size) {
         int i = 0;
         while (i < size) {
             if (charAt(i) != SPACE) {
@@ -176,7 +127,7 @@ class Content implements CharSequence {
         return subContent(i);
     }
     
-    Content trimSpaces() {
+    BlockInputSequence trimSpaces() {
         int i = 0;
         while (i < length) {
             char c = charAt(i);
@@ -198,7 +149,7 @@ class Content implements CharSequence {
         return subContent(beginIndex, endIndex);
     }
     
-    Content trimLeadingSpaces() {
+    BlockInputSequence trimLeadingSpaces() {
         int i = 0;
         while (i < length) {
             char c = charAt(i);
@@ -210,31 +161,13 @@ class Content implements CharSequence {
         return subContent(i, length);
     }
     
-    int countSpaces(int offset) {
-        return countSpaces(offset, length - offset);
-    }
-    
-    int countSpaces(int offset, int max) {
-        int end = offset + max;
-        if (end > length) {
-            end = length;
-        }
-        int i = offset;
-        while (i < end) {
-            if (charAt(i) != SPACE) {
-                break;
-            }
-            ++i;
-        }
-        return i - offset;
-    }
-    
-    Content trimSmallIndent() {
-        int beginIndex = countSpaces(0, 3);
+    BlockInputSequence trimSmallIndent() {
+        int beginIndex = countLeadingSpaces(0, 3);
         return subContent(beginIndex, length());
     }
     
-    String toOriginalString() {
+    @Override
+    public String toSourceString() {
         return restoreTabs(line, tabs, beginIndex, endIndex);
     }
     

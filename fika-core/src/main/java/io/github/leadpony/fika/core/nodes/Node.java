@@ -61,6 +61,21 @@ public interface Node {
         throw new UnsupportedOperationException();
     }
     
+    default Node insertChildBefore(Node newChild, Node nextChild) {
+        throw new UnsupportedOperationException();
+    }
+    
+    default Node insertChildAfter(Node newChild, Node previousChild) {
+        throw new UnsupportedOperationException();
+    }
+
+    default void unlink() {
+        Node parent = parentNode();
+        if (parent != null) {
+            parent.removeChild(this);
+        }
+    }
+    
     void accept(Visitor visitor);
 
     NodeFactory factory();

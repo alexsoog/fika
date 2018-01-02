@@ -45,7 +45,7 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
     }
     
     @Override
-    public Result match(Content content) {
+    public Result match(BlockInputSequence content) {
         return findAndInvokeChildMatcher(content);
     }
 
@@ -59,12 +59,12 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
         return block;
     }
     
-    protected Result matchLazyContinuationLine(Content content) {
+    protected Result matchLazyContinuationLine(BlockInputSequence content) {
         BlockMatcher last = lastMatcher();
         return last.continueLazily(content);
     }
     
-    protected Result findAndInvokeChildMatcher(Content content) {
+    protected Result findAndInvokeChildMatcher(BlockInputSequence content) {
         if (!hasChildMatcher()) {
             if (findChildMatcher(content) == null) {
                 return Result.NOT_MATCHED;
@@ -73,7 +73,7 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
         return invokeChildMatcherAndRetry(content);
     }
     
-    protected Result invokeChildMatcherAndRetry(Content content) {
+    protected Result invokeChildMatcherAndRetry(BlockInputSequence content) {
         Result result = invokeChildMatcher(content);
         if (result == Result.NOT_MATCHED) {
             if (findChildMatcher(content) == null) {
@@ -84,7 +84,7 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
         return result;
     }
     
-    protected Result invokeChildMatcher(Content content) {
+    protected Result invokeChildMatcher(BlockInputSequence content) {
         BlockMatcher child = childMatcher();
         assert(child != null);
         if (child.isInterruptible()) {
@@ -101,7 +101,7 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
         return result;
     }
     
-    protected BlockMatcher findChildMatcher(Content content) {
+    protected BlockMatcher findChildMatcher(BlockInputSequence content) {
         BlockMatcher matched = context().findMatcher(content);
         if (matched != null) {
             openChildMatcher(matched);
@@ -109,7 +109,7 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
         return matched;
     }
     
-    private Result callMatcherDirect(BlockMatcher matcher, Content content) {
+    private Result callMatcherDirect(BlockMatcher matcher, BlockInputSequence content) {
         return matcher.match(content);
     }
     

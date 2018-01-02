@@ -38,12 +38,12 @@ abstract class AbstractBlockMatcher implements BlockMatcher {
     }
     
     @Override
-    public Result match(Content content) {
+    public Result match(BlockInputSequence content) {
         return Result.NOT_MATCHED;
     }
     
     @Override
-    public BlockMatcher interrupt(Content content) {
+    public BlockMatcher interrupt(BlockInputSequence content) {
         assert(isInterruptible());
         return context().findInterruptingMatcher(content, this);
     }

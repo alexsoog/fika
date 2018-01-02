@@ -21,7 +21,6 @@ import java.util.Set;
 import io.github.leadpony.fika.core.nodes.Document;
 import io.github.leadpony.fika.core.nodes.NodeFactory;
 import io.github.leadpony.fika.core.nodes.Text;
-import io.github.leadpony.fika.core.parser.support.nodes.DefaultNodeFactory;
 
 /**
  * @author leadpony
@@ -31,14 +30,14 @@ public class BlockMatcherChain {
     private final Context context;
     private final DocumentMatcher rootMatcher;
     
-    public BlockMatcherChain() {
-        this.context = createContext();
+    public BlockMatcherChain(NodeFactory nodeFactory) {
+        this.context = createContext(nodeFactory);
         this.rootMatcher = new DocumentMatcher();
         this.rootMatcher.bind(this.context);
     }
     
     public void match(String line) {
-        Content content = Content.of(line);
+        BlockInputSequence content = BlockInputSequence.of(line);
         context.lineNo++;
         rootMatcher.match(content);
     }
@@ -51,19 +50,20 @@ public class BlockMatcherChain {
         return context.inlines;
     }
     
-    private Context createContext() {
+    private Context createContext(NodeFactory nodeFactory) {
         BlockMatcherFinder finder = BlockMatcherFinder.builder().build();
-        return new Context(finder);
+        return new Context(nodeFactory, finder);
     }
     
     private static class Context implements BlockMatcher.Context {
 
+        private final NodeFactory nodeFactory;
         private final BlockMatcherFinder finder;
         private int lineNo;
-        private final NodeFactory nodeFactory = new DefaultNodeFactory();
         private final Set<Text> inlines = new HashSet<>();
         
-        Context(BlockMatcherFinder finder) {
+        Context(NodeFactory nodeFactory, BlockMatcherFinder finder) {
+            this.nodeFactory = nodeFactory;
             this.finder = finder;
             this.lineNo = 0;
         }
@@ -74,12 +74,12 @@ public class BlockMatcherChain {
         }
 
         @Override
-        public BlockMatcher findMatcher(Content content) {
+        public BlockMatcher findMatcher(BlockInputSequence content) {
             return finder.findMatcher(content);
         }
 
         @Override
-        public BlockMatcher findInterruptingMatcher(Content content, BlockMatcher current) {
+        public BlockMatcher findInterruptingMatcher(BlockInputSequence content, BlockMatcher current) {
             return finder.findInterruptingMatcher(content, current);
         }
     

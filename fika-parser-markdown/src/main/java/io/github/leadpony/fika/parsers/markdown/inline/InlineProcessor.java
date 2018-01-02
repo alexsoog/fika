@@ -15,26 +15,14 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline;
 
-import static io.github.leadpony.fika.parsers.markdown.base.Characters.unescape;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import io.github.leadpony.fika.core.nodes.Text;
 
 /**
  * @author leadpony
  */
-public class InlineProcessor {
+public interface InlineProcessor {
     
-    private final Pattern DELIMITER_PATTERN = Pattern.compile("[\\*_]+");
+    void installHandler(InlineHandler handler);
     
-    public void process(Text text) {
-        text.setContent(unescape(text.getContent()));
-    }
-    
-    private DelimiterStack buildDelimiterStack(String content) {
-        Matcher m = DELIMITER_PATTERN.matcher(content);
-        return null;
-    }
+    void processInlines(Text text);
 }

@@ -26,7 +26,7 @@ import io.github.leadpony.fika.core.nodes.Document;
 public class FullHtmlRenderingVisitor extends HtmlRenderingVisitor {
     
     @SuppressWarnings("serial")
-    private static final Map<String, Object> charset = new HashMap<String, Object>() {{
+    private static final Map<String, String> charset = new HashMap<String, String>() {{
         put("charset", "UTF-8");
     }};
 

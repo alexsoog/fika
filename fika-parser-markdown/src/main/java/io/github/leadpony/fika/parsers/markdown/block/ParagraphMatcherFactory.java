@@ -36,7 +36,7 @@ class ParagraphMatcherFactory implements BlockMatcherFactory {
     }
 
     @Override
-    public BlockMatcher newMatcher(Content content) {
+    public BlockMatcher newMatcher(BlockInputSequence content) {
         return new ParagraphMatcher();
     }
     
@@ -63,7 +63,7 @@ class ParagraphMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        public Result match(Content content) {
+        public Result match(BlockInputSequence content) {
             if (lineNo() <= 1) {
                 appendLine(content);
                 return Result.CONTINUED;
@@ -80,7 +80,7 @@ class ParagraphMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        public BlockMatcher interrupt(Content content) {
+        public BlockMatcher interrupt(BlockInputSequence content) {
             // Handles underline before interrupted by ThematicBreakMatcher. 
             if (matchHeading(content)) {
                 return null;
@@ -89,7 +89,7 @@ class ParagraphMatcherFactory implements BlockMatcherFactory {
         }
     
         @Override
-        public Result continueLazily(Content content) {
+        public Result continueLazily(BlockInputSequence content) {
             if (super.interrupt(content) != null) {
                 return Result.NOT_MATCHED;
             } else if (content.isBlank()) {
@@ -113,16 +113,16 @@ class ParagraphMatcherFactory implements BlockMatcherFactory {
             return block;
         }
         
-        private void appendLine(Content content) {
-            String extracted = content.trimLeadingSpaces().toOriginalString();
+        private void appendLine(BlockInputSequence content) {
+            String extracted = content.trimLeadingSpaces().toSourceString();
             this.lines.add(extracted);
         }
     
-        private boolean matchHeading(Content content) {
+        private boolean matchHeading(BlockInputSequence content) {
             if (!UNDERLINE_PATTERN.matcher(content).matches()) {
                 return false;
             }
-            int index = content.countSpaces(0, 3);
+            int index = content.countLeadingSpaces(0, 3);
             char c = content.charAt(index);
             int level = (c == '=') ? 1 : 2;
             this.blockProvider = HeadingProvider.of(level);

@@ -32,8 +32,8 @@ import io.github.leadpony.fika.core.nodes.HtmlBlock;
  */
 class HtmlBlockMatcherFactory implements BlockMatcherFactory {
 
-    private static final List<Function<Content, HtmlBlockMatcher>> starters = new ArrayList<>();
-    private static final List<Function<Content, HtmlBlockMatcher>> interruptingStarters = new ArrayList<>();
+    private static final List<Function<BlockInputSequence, HtmlBlockMatcher>> starters = new ArrayList<>();
+    private static final List<Function<BlockInputSequence, HtmlBlockMatcher>> interruptingStarters = new ArrayList<>();
     
     static {
         interruptingStarters.add(ScriptMatcher::start);
@@ -60,22 +60,22 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
     }
     
     @Override
-    public BlockMatcher newMatcher(Content content) {
+    public BlockMatcher newMatcher(BlockInputSequence content) {
         return newMatcher(content, starters);
     }
     
     @Override
-    public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+    public BlockMatcher newInterrupter(BlockInputSequence content, BlockMatcher current) {
         return newMatcher(content, interruptingStarters);
     }
 
-    private BlockMatcher newMatcher(Content content, List<Function<Content, HtmlBlockMatcher>> functions) {
-        int i = content.countSpaces(0, 3);
+    private BlockMatcher newMatcher(BlockInputSequence content, List<Function<BlockInputSequence, HtmlBlockMatcher>> functions) {
+        int i = content.countLeadingSpaces(0, 3);
         if (i >= content.length() || content.charAt(i) != '<') {
             return null;
         }
         content = content.subContent(i);
-        for (Function<Content, HtmlBlockMatcher> function: functions) {
+        for (Function<BlockInputSequence, HtmlBlockMatcher> function: functions) {
             BlockMatcher matcher = function.apply(content);
             if (matcher != null) {
                 return matcher;
@@ -99,13 +99,13 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
     
         @Override
         protected Block buildBlock() {
-            HtmlBlock block =nodeFactory().newHtmlBlock();
+            HtmlBlock block = nodeFactory().newHtmlBlock();
             block.setHtml(builder.toString());
             return block;
         }
         
-        protected void appendLine(Content content) {
-            this.builder.append(content.toOriginalString()).append('\n');
+        protected void appendLine(BlockInputSequence content) {
+            this.builder.append(content.toSourceString()).append('\n');
         }
     }
 
@@ -117,7 +117,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
         private static final Pattern END_PATTERN = Pattern.compile(
                 "</(script|pre|style)>", Pattern.CASE_INSENSITIVE);
     
-        static HtmlBlockMatcher start(Content content) {
+        static HtmlBlockMatcher start(BlockInputSequence content) {
             if (START_PATTERN.matcher(content).find()) {
                 return new ScriptMatcher();
             }
@@ -125,7 +125,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        public Result match(Content content) {
+        public Result match(BlockInputSequence content) {
             appendLine(content);
             if (END_PATTERN.matcher(content).find()) {
                 return Result.COMPLETED;
@@ -136,7 +136,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
 
     private static class CommentMatcher extends HtmlBlockMatcher {
         
-        static HtmlBlockMatcher start(Content content) {
+        static HtmlBlockMatcher start(BlockInputSequence content) {
             if (content.startsWith("<!--")) {
                 return new CommentMatcher();
             }
@@ -144,7 +144,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        public Result match(Content content) {
+        public Result match(BlockInputSequence content) {
             appendLine(content);
             return content.contains("-->") ? Result.COMPLETED : Result.CONTINUED;
         }
@@ -152,7 +152,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
     
     private static class PIMatcher extends HtmlBlockMatcher {
         
-        static HtmlBlockMatcher start(Content content) {
+        static HtmlBlockMatcher start(BlockInputSequence content) {
             if (content.startsWith("<?")) {
                 return new PIMatcher();
             }
@@ -160,7 +160,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        public Result match(Content content) {
+        public Result match(BlockInputSequence content) {
             appendLine(content);
             return content.contains("?>") ? Result.COMPLETED : Result.CONTINUED;
         }
@@ -170,7 +170,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
         
         private static final Pattern START_PATTERN = Pattern.compile("^<![A-Z]");
 
-        static HtmlBlockMatcher start(Content content) {
+        static HtmlBlockMatcher start(BlockInputSequence content) {
             if (START_PATTERN.matcher(content).find()) {
                 return new DtdMatcher();
             }
@@ -178,7 +178,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        public Result match(Content content) {
+        public Result match(BlockInputSequence content) {
             appendLine(content);
             return content.contains(">") ? Result.COMPLETED : Result.CONTINUED;
         }
@@ -186,7 +186,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
 
     private static class CDataMatcher extends HtmlBlockMatcher {
         
-        static HtmlBlockMatcher start(Content content) {
+        static HtmlBlockMatcher start(BlockInputSequence content) {
             if (content.startsWith("<![CDATA[")) {
                 return new CDataMatcher();
             }
@@ -194,7 +194,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        public Result match(Content content) {
+        public Result match(BlockInputSequence content) {
             appendLine(content);
             return content.contains("]]>") ? Result.COMPLETED : Result.CONTINUED;
         }
@@ -277,7 +277,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
             add("ul");
         }};
         
-        static HtmlBlockMatcher start(Content content) {
+        static HtmlBlockMatcher start(BlockInputSequence content) {
             Matcher m = START_PATTERN.matcher(content);
             if (!m.find()) {
                 return null;
@@ -293,7 +293,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        public Result match(Content content) {
+        public Result match(BlockInputSequence content) {
             if (content.isBlank()) {
                 return Result.COMPLETED;
             }
@@ -318,7 +318,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
             add("style");
         }};
         
-        static HtmlBlockMatcher start(Content content) {
+        static HtmlBlockMatcher start(BlockInputSequence content) {
             Matcher m = START_PATTERN.matcher(content);
             if (!m.find()) {
                 return null;
@@ -334,7 +334,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        public Result match(Content content) {
+        public Result match(BlockInputSequence content) {
             if (content.isBlank()) {
                 return Result.COMPLETED;
             }

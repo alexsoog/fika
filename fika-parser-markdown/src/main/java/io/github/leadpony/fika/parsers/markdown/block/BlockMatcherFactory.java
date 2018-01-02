@@ -42,9 +42,9 @@ public interface BlockMatcherFactory {
      * 
      * @return new matcher if found.
      */
-    BlockMatcher newMatcher(Content content);
+    BlockMatcher newMatcher(BlockInputSequence content);
     
-    default BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+    default BlockMatcher newInterrupter(BlockInputSequence content, BlockMatcher current) {
         return null;
     }
 }

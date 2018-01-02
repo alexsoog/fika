@@ -22,7 +22,9 @@ package io.github.leadpony.fika.core.nodes;
  */
 public interface Heading extends Block {
 
-    int level();
+    int getLevel();
+    
+    void setLevel(int level);
 
     @Override
     default void accept(Visitor visitor) {

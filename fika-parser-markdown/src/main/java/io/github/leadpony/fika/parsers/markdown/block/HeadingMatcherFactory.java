@@ -42,8 +42,8 @@ class HeadingMatcherFactory implements BlockMatcherFactory {
     }
     
     @Override
-    public BlockMatcher newMatcher(Content content) {
-        int i = content.countSpaces(0, 3);
+    public BlockMatcher newMatcher(BlockInputSequence content) {
+        int i = content.countLeadingSpaces(0, 3);
         int level = 0;
         for (; i < content.length(); i++) {
             if (content.charAt(i) != '#') {
@@ -67,17 +67,17 @@ class HeadingMatcherFactory implements BlockMatcherFactory {
     }
 
     @Override
-    public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+    public BlockMatcher newInterrupter(BlockInputSequence content, BlockMatcher current) {
         return newMatcher(content);
     }
     
-    private static String extractTitle(Content content) {
+    private static String extractTitle(BlockInputSequence content) {
         content = content.trimSpaces();
         content = trimClosingSequenceOfHash(content);
-        return content.trimSpaces().toOriginalString();
+        return content.trimSpaces().toSourceString();
     }
     
-    private static Content trimClosingSequenceOfHash(Content content) {
+    private static BlockInputSequence trimClosingSequenceOfHash(BlockInputSequence content) {
         if (content.length() == 0) {
             return content;
         }
@@ -120,7 +120,7 @@ class HeadingMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        public Result match(Content content) {
+        public Result match(BlockInputSequence content) {
             return Result.COMPLETED;
         }
         

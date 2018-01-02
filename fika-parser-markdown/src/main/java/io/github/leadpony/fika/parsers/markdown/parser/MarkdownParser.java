@@ -21,11 +21,14 @@ import java.io.Reader;
 import java.util.Set;
 
 import io.github.leadpony.fika.core.nodes.Document;
+import io.github.leadpony.fika.core.nodes.NodeFactory;
 import io.github.leadpony.fika.core.nodes.Text;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserException;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherChain;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineProcessor;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerFactory;
+import io.github.leadpony.fika.parsers.markdown.inline.DefaultInlineProcessor;
+import io.github.leadpony.fika.parsers.markdown.inline.handlers.InlineHandlerFactoryRegistry;
 
 /**
  * @author leadpony
@@ -33,11 +36,13 @@ import io.github.leadpony.fika.parsers.markdown.inline.InlineProcessor;
 class MarkdownParser implements Parser {
     
     private final Reader reader;
-    private final InlineProcessor inlineProcessor;
+    private final BlockMatcherChain blockMatcherChain;
+    private final DefaultInlineProcessor inlineProcessor;
     
-    public MarkdownParser(Reader reader) {
+    public MarkdownParser(Reader reader, NodeFactory nodeFactory) {
         this.reader = reader;
-        this.inlineProcessor = new InlineProcessor();
+        this.blockMatcherChain = createBlockMatcherChain(nodeFactory);
+        this.inlineProcessor = createInlineProcessor(nodeFactory);
     }
 
     @Override
@@ -50,7 +55,7 @@ class MarkdownParser implements Parser {
     }
     
     private Document parseBlocks() throws IOException {
-        BlockMatcherChain chain = new BlockMatcherChain();
+        BlockMatcherChain chain = this.blockMatcherChain;
         BufferedReader reader = new BufferedReader(this.reader);
         String line = null;
         while ((line = reader.readLine()) != null) {
@@ -68,7 +73,20 @@ class MarkdownParser implements Parser {
     }
     
     private void processInline(Text text) {
-        inlineProcessor.process(text);
+        inlineProcessor.processInlines(text);
+    }
+    
+    private BlockMatcherChain createBlockMatcherChain(NodeFactory nodeFactory) {
+        return new BlockMatcherChain(nodeFactory);
+    }
+    
+    private DefaultInlineProcessor createInlineProcessor(NodeFactory nodeFactory) {
+        InlineHandlerFactoryRegistry registry = InlineHandlerFactoryRegistry.get();
+        DefaultInlineProcessor processor = new DefaultInlineProcessor(nodeFactory);
+        registry.factories().stream()
+                .map(InlineHandlerFactory::newHandler)
+                .forEach(processor::installHandler);
+        return processor;
     }
 }
 

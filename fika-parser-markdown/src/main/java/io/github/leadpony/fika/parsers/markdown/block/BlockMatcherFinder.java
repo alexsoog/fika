@@ -41,7 +41,7 @@ class BlockMatcherFinder {
         setUpMatcherFactories();
     }
     
-    BlockMatcher findMatcher(Content content) {
+    BlockMatcher findMatcher(BlockInputSequence content) {
         if (content.isBlank()) {
             return null;
         }
@@ -54,7 +54,7 @@ class BlockMatcherFinder {
         return null;
     }
     
-    BlockMatcher findInterruptingMatcher(Content content, BlockMatcher current) {
+    BlockMatcher findInterruptingMatcher(BlockInputSequence content, BlockMatcher current) {
         if (content.isBlank()) {
             return null;
         }

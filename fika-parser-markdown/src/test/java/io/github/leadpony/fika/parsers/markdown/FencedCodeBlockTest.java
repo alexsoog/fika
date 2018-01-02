@@ -38,8 +38,5 @@ public class FencedCodeBlockTest extends AbstractSpecTest {
 
     @Before
     public void setUp() {
-        Assume.assumeFalse(index() == 90);
-        Assume.assumeFalse(index() == 107);
-        Assume.assumeFalse(index() == 114);
     }
 }

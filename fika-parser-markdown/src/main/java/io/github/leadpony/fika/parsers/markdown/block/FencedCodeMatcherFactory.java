@@ -42,8 +42,8 @@ class FencedCodeMatcherFactory implements BlockMatcherFactory {
     }
 
     @Override
-    public BlockMatcher newMatcher(Content content) {
-        int indentSize = content.countSpaces(0, 3);
+    public BlockMatcher newMatcher(BlockInputSequence content) {
+        int indentSize = content.countLeadingSpaces(0, 3);
         int i = indentSize;
         char fenceChar = content.charAt(i);
         if (fenceChar != '`' && fenceChar != '~') {
@@ -68,12 +68,12 @@ class FencedCodeMatcherFactory implements BlockMatcherFactory {
     }
 
     @Override
-    public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+    public BlockMatcher newInterrupter(BlockInputSequence content, BlockMatcher current) {
         return newMatcher(content);
     }
     
-    private String extractInfoString(Content content, int offset) {
-        return content.subContent(offset).trimSpaces().toOriginalString();
+    private String extractInfoString(BlockInputSequence content, int offset) {
+        return content.subContent(offset).trimSpaces().toSourceString();
     }
     
     private static class FencedCodeMatcher extends AbstractBlockMatcher {
@@ -99,7 +99,7 @@ class FencedCodeMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        public Result match(Content content) {
+        public Result match(BlockInputSequence content) {
             if (lineNo() <= 1) {
                 return Result.CONTINUED;
             }
@@ -122,8 +122,8 @@ class FencedCodeMatcherFactory implements BlockMatcherFactory {
             return block;
         }
     
-        private boolean testClosingFence(Content content) {
-            int i = content.countSpaces(0, 3);
+        private boolean testClosingFence(BlockInputSequence content) {
+            int i = content.countLeadingSpaces(0, 3);
             if (i >= content.length()) {
                 return false;
             }
@@ -154,11 +154,11 @@ class FencedCodeMatcherFactory implements BlockMatcherFactory {
             return true;
         }
         
-        private void appendLine(Content content) {
+        private void appendLine(BlockInputSequence content) {
             if (indentSize > 0) {
                 content = content.removeIndentUpTo(indentSize);
             }
-            builder.append(content.toOriginalString()).append('\n');
+            builder.append(content.toSourceString()).append('\n');
         }
     }
 }

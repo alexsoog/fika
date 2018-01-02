@@ -21,13 +21,12 @@ import java.util.Map;
 
 /**
  * @author leadpony
- *
  */
-public class SimpleHtmlFormatter implements HtmlFormatter {
+public class MinimalHtmlFormatter implements HtmlFormatter {
     
     private final PrintWriter writer;
     
-    public SimpleHtmlFormatter(Writer writer) {
+    public MinimalHtmlFormatter(Writer writer) {
         this.writer = new PrintWriter(writer);
     }
 
@@ -42,7 +41,7 @@ public class SimpleHtmlFormatter implements HtmlFormatter {
     }
     
     @Override
-    public void startTag(String tagName, Map<String, Object> attributes) {
+    public void startTag(String tagName, Map<String, String> attributes) {
         writer.append("<").append(tagName);
         if (!attributes.isEmpty()) {
             appendAttributes(attributes);
@@ -61,7 +60,7 @@ public class SimpleHtmlFormatter implements HtmlFormatter {
     }
 
     @Override
-    public void emptyTag(String tagName, Map<String, Object> attributes) {
+    public void emptyTag(String tagName, Map<String, String> attributes) {
         writer.append("<").append(tagName);
         if (!attributes.isEmpty()) {
             appendAttributes(attributes);
@@ -92,11 +91,13 @@ public class SimpleHtmlFormatter implements HtmlFormatter {
         return text;
     }
     
-    private void appendAttributes(Map<String, Object> attributes) {
-        for (Map.Entry<String, Object> entry: attributes.entrySet()) {
+    private void appendAttributes(Map<String, String> attributes) {
+        for (Map.Entry<String, String> entry: attributes.entrySet()) {
+            String key = entry.getKey();
+            String value = escape(entry.getValue());
             writer.append(" ")
-                  .append(entry.getKey()).append("=\"")
-                  .append(entry.getValue().toString()).append("\"");
+                  .append(key).append("=\"")
+                  .append(value).append("\"");
         }
     }
 }

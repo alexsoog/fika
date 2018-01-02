@@ -17,9 +17,13 @@ package io.github.leadpony.fika.core.parser.support.nodes;
 
 import io.github.leadpony.fika.core.nodes.BlockQuote;
 import io.github.leadpony.fika.core.nodes.CodeBlock;
+import io.github.leadpony.fika.core.nodes.CodeSpan;
 import io.github.leadpony.fika.core.nodes.Document;
+import io.github.leadpony.fika.core.nodes.Emphasis;
 import io.github.leadpony.fika.core.nodes.Heading;
 import io.github.leadpony.fika.core.nodes.HtmlBlock;
+import io.github.leadpony.fika.core.nodes.HtmlInline;
+import io.github.leadpony.fika.core.nodes.Link;
 import io.github.leadpony.fika.core.nodes.ListBlock;
 import io.github.leadpony.fika.core.nodes.ListItem;
 import io.github.leadpony.fika.core.nodes.ListType;
@@ -49,10 +53,20 @@ public class DefaultNodeFactory implements NodeFactory {
     public CodeBlock newCodeBlock() {
         return new CodeBlockImpl(this);
     }
+    
+    @Override
+    public CodeSpan newCodeSpan() {
+        return new CodeSpanImpl(this);
+    }
 
     @Override
     public Document newDocument() {
         return new DocumentImpl(this);
+    }
+
+    @Override
+    public Emphasis newEmphasis(int strength) {
+        return new EmphasisImpl(this, strength);
     }
 
     @Override
@@ -63,6 +77,16 @@ public class DefaultNodeFactory implements NodeFactory {
     @Override
     public HtmlBlock newHtmlBlock() {
         return new HtmlBlockImpl(this);
+    }
+    
+    @Override
+    public HtmlInline newHtmlInline() {
+        return new HtmlInlineImpl(this);
+    }
+
+    @Override
+    public Link newLink() {
+        return new LinkImpl(this);
     }
 
     @Override
@@ -138,6 +162,30 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
     
+    private static class CodeSpanImpl extends BaseNode implements CodeSpan {
+
+        String content;
+        
+        CodeSpanImpl(NodeFactory factory) {
+            super(factory);
+        }
+
+        @Override
+        public String getContent() {
+            return content;
+        }
+        
+        @Override
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+        @Override
+        public String toString() {
+            return content;
+        }
+    }
+
     private static class DocumentImpl extends ContainerNode implements Document {
         
         DocumentImpl(NodeFactory factory) {
@@ -145,9 +193,29 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
   
+    private static class EmphasisImpl extends ContainerNode implements Emphasis {
+        
+        private int strength;
+        
+        EmphasisImpl(NodeFactory factory, int strength) {
+            super(factory);
+            this.strength = strength;
+        }
+        
+        @Override
+        public int getStrength() {
+            return strength;
+        }
+        
+        @Override
+        public void setStrength(int strength) {
+            this.strength = strength;
+        }
+    }
+
     private static class HeadingImpl extends ContainerNode implements Heading {
         
-        final int level;
+        private int level;
         
         HeadingImpl(NodeFactory factory, int level) {
             super(factory);
@@ -155,35 +223,50 @@ public class DefaultNodeFactory implements NodeFactory {
         }
 
         @Override
-        public int level() {
+        public int getLevel() {
             return level;
         }
+        
+        @Override
+        public void setLevel(int level) {
+            this.level = level;
+        }
     }
-
-    private static class HtmlBlockImpl extends BaseNode implements HtmlBlock {
-
-        String html;
+    
+    private static class HtmlBlockImpl extends AbstractHtmlNode implements HtmlBlock {
         
         HtmlBlockImpl(NodeFactory factory) {
             super(factory);
         }
+    }
 
-        @Override
-        public String getHtml() {
-            return html;
-        }
-
-        @Override
-        public void setHtml(String html) {
-            this.html = html;
-        }
+    private static class HtmlInlineImpl extends AbstractHtmlNode implements HtmlInline {
         
-        @Override
-        public String toString() {
-            return getHtml();
+        HtmlInlineImpl(NodeFactory factory) {
+            super(factory);
         }
     }
-   
+
+    private static class LinkImpl extends ContainerNode implements Link {
+        
+        private String url;
+        
+        LinkImpl(NodeFactory factory) {
+            super(factory);
+            this.url = "";
+        }
+
+        @Override
+        public String getDestination() {
+            return url;
+        }
+
+        @Override
+        public void setDestination(String url) {
+            this.url = url;
+        }
+    }
+
     private static class ListItemImpl extends ContainerNode implements ListItem {
         
         ListItemImpl(NodeFactory factory) {

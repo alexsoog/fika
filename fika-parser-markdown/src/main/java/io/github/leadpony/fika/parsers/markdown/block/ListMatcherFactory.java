@@ -46,12 +46,12 @@ class ListMatcherFactory implements BlockMatcherFactory {
     }
     
     @Override
-    public BlockMatcher newMatcher(Content content) {
+    public BlockMatcher newMatcher(BlockInputSequence content) {
         return newListMatcher(content);
     }
     
     @Override
-    public BlockMatcher newInterrupter(Content content, BlockMatcher current) {
+    public BlockMatcher newInterrupter(BlockInputSequence content, BlockMatcher current) {
         ListMatcher matcher = newListMatcher(content);
         if (matcher == null) {
             return null;
@@ -59,7 +59,7 @@ class ListMatcherFactory implements BlockMatcherFactory {
         return matcher.canInterrupt(current) ? matcher : null;
     }
     
-    private ListMatcher newListMatcher(Content content) {
+    private ListMatcher newListMatcher(BlockInputSequence content) {
         ListMatcher matcher = null;
         matcher = newBulletListMatcher(content);
         if (matcher == null) {
@@ -119,7 +119,7 @@ class ListMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        public Result match(Content content) {
+        public Result match(BlockInputSequence content) {
             boolean isBlank = content.isBlank();
             if (isBlank) {
                 this.lastBlankLineNo = lineNo();
@@ -139,10 +139,10 @@ class ListMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        public BlockMatcher interrupt(Content content) {
+        public BlockMatcher interrupt(BlockInputSequence content) {
             if (hasChildMatcher()) {
                 ListItemMatcher child = (ListItemMatcher)childMatcher();
-                if (content.hasIndent(child.indentSize())) {
+                if (content.hasLeadingSpaces(child.indentSize())) {
                     return null;
                 }
             }
@@ -154,7 +154,7 @@ class ListMatcherFactory implements BlockMatcherFactory {
         }
         
         @Override
-        protected BlockMatcher findChildMatcher(Content content) {
+        protected BlockMatcher findChildMatcher(BlockInputSequence content) {
             BlockMatcher matched = firstItemMatcher.interrupterOfSameType(content);
             if (matched != null) {
                 openChildMatcher(matched);
@@ -224,7 +224,7 @@ class ListMatcherFactory implements BlockMatcherFactory {
         }
     }
 
-    private BulletListMatcher newBulletListMatcher(Content content) {
+    private BulletListMatcher newBulletListMatcher(BlockInputSequence content) {
         BulletListItemMatcher itemMatcher = BulletListItemMatcher.matcher(content, 3);
         return (itemMatcher != null) ? new BulletListMatcher(itemMatcher) : null;
     }
@@ -251,7 +251,7 @@ class ListMatcherFactory implements BlockMatcherFactory {
         }
     }
 
-    private OrderedListMatcher newOrderedListMatcher(Content content) {
+    private OrderedListMatcher newOrderedListMatcher(BlockInputSequence content) {
         OrderedListItemMatcher itemMatcher = OrderedListItemMatcher.matcher(content, 3);
         return (itemMatcher != null) ? new OrderedListMatcher(itemMatcher) : null;
     }

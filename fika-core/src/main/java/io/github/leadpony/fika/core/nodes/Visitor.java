@@ -28,7 +28,14 @@ public interface Visitor {
         visitChildren(node);
     }
 
+    default void visit(CodeSpan node) {
+    }
+
     default void visit(Document node) {
+        visitChildren(node);
+    }
+
+    default void visit(Emphasis node) {
         visitChildren(node);
     }
 
@@ -37,6 +44,13 @@ public interface Visitor {
     }
 
     default void visit(HtmlBlock node) {
+    }
+
+    default void visit(HtmlInline node) {
+    }
+
+    default void visit(Link node) {
+        visitChildren(node);
     }
 
     default void visit(ListItem node) {

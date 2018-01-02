@@ -65,11 +65,25 @@ public abstract class ContainerNode extends BaseNode {
                 validateNode(oldChild, "oldChild")
         );
     }
+    
+    @Override
+    public Node insertChildBefore(Node newChild, Node nextChild) {
+        return insertChildBefore(
+                validateNode(newChild, "newChild"),
+                validateNode(nextChild, "nextChild")
+        );
+    }
+    
+    @Override
+    public Node insertChildAfter(Node newChild, Node previousChild) {
+        return insertChildAfter(
+                validateNode(newChild, "newChild"),
+                validateNode(previousChild, "previousChild")
+        );
+    }
 
     private BaseNode appendChild(BaseNode child) {
-        if (child.parentNode() != null) {
-            child.parentNode().removeChild(child);
-        }
+        child.unlink();
         final BaseNode lastChild = lastChildNode;
         child.previousNode = lastChild;
         child.nextNode = null;
@@ -109,9 +123,7 @@ public abstract class ContainerNode extends BaseNode {
         if (oldChild.parentNode() != this) {
             throw new IllegalArgumentException();
         }
-        if (newChild.parentNode() != null) {
-            newChild.parentNode().removeChild(newChild);
-        }
+        newChild.unlink();
         final BaseNode previous = oldChild.previousNode;
         final BaseNode next = oldChild.nextNode;
         if (previous != null) {
@@ -132,6 +144,46 @@ public abstract class ContainerNode extends BaseNode {
         return resetNode(oldChild);
     }
     
+    private BaseNode insertChildBefore(BaseNode newChild, BaseNode nextChild) {
+        if (!hasChild(nextChild)) {
+            throw new IllegalArgumentException();
+        }
+        newChild.unlink();
+        final BaseNode previousChild = nextChild.previousNode;
+        if (previousChild != null) {
+            previousNode.nextNode = newChild;
+        } else {
+            firstChildNode = newChild;
+        }
+        nextChild.previousNode = newChild;
+        newChild.parentNode = this;
+        newChild.previousNode = previousChild;
+        newChild.nextNode = nextChild;
+        return newChild;
+    }
+    
+    private BaseNode insertChildAfter(BaseNode newChild, BaseNode previousChild) {
+        if (!hasChild(previousChild)) {
+            throw new IllegalArgumentException();
+        }
+        newChild.unlink();
+        final BaseNode nextChild = previousChild.nextNode;
+        if (nextChild != null) {
+            nextChild.previousNode = newChild;
+        } else {
+            lastChildNode = newChild;
+        }
+        previousChild.nextNode = newChild;
+        newChild.parentNode = this;
+        newChild.previousNode = previousChild;
+        newChild.nextNode = nextChild;
+        return newChild;
+    }
+    
+    private boolean hasChild(BaseNode child) {
+        return child.parentNode() == this;
+    }
+
     private BaseNode resetNode(BaseNode node) {
         node.previousNode = null;
         node.nextNode = null;

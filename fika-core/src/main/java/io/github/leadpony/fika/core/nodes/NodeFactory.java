@@ -22,15 +22,28 @@ package io.github.leadpony.fika.core.nodes;
  */
 public interface NodeFactory {
 
+    /**
+     * Creates a new block quote.
+     * 
+     * @return newly created node.
+     */
     BlockQuote newBlockQuote();
     
     CodeBlock newCodeBlock();
 
+    CodeSpan newCodeSpan();
+
     Document newDocument();
+
+    Emphasis newEmphasis(int strength);
 
     Heading newHeading(int level);
 
     HtmlBlock newHtmlBlock();
+    
+    HtmlInline newHtmlInline();
+    
+    Link newLink();
 
     ListBlock newLiskBlock(ListType type);
 
