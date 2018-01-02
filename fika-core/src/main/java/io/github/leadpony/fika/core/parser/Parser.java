@@ -15,7 +15,7 @@
  */
 package io.github.leadpony.fika.core.parser;
 
-import io.github.leadpony.fika.core.nodes.Document;
+import io.github.leadpony.fika.core.model.Document;
 
 /**
  * @author leadpony

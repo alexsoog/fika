@@ -24,8 +24,8 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.github.leadpony.fika.core.nodes.Block;
-import io.github.leadpony.fika.core.nodes.HtmlBlock;
+import io.github.leadpony.fika.core.model.Block;
+import io.github.leadpony.fika.core.model.HtmlBlock;
 
 /**
  * @author leadpony

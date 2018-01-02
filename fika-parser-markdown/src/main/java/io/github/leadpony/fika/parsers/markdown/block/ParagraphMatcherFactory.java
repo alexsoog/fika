@@ -15,15 +15,15 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
-import static io.github.leadpony.fika.parsers.markdown.base.Characters.trim;
+import static io.github.leadpony.fika.parsers.markdown.common.Characters.trim;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import io.github.leadpony.fika.core.nodes.Block;
-import io.github.leadpony.fika.core.nodes.Text;
+import io.github.leadpony.fika.core.model.Block;
+import io.github.leadpony.fika.core.model.Text;
 
 /**
  * @author leadpony

@@ -19,12 +19,12 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
-import io.github.leadpony.fika.core.nodes.Block;
-import io.github.leadpony.fika.core.nodes.ListItem;
-import io.github.leadpony.fika.core.nodes.ListType;
-import io.github.leadpony.fika.core.nodes.Node;
-import io.github.leadpony.fika.core.nodes.OrderedList;
-import io.github.leadpony.fika.core.nodes.Paragraph;
+import io.github.leadpony.fika.core.model.Block;
+import io.github.leadpony.fika.core.model.ListItem;
+import io.github.leadpony.fika.core.model.ListType;
+import io.github.leadpony.fika.core.model.Node;
+import io.github.leadpony.fika.core.model.OrderedList;
+import io.github.leadpony.fika.core.model.Paragraph;
 
 /**
  * 

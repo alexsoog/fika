@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.github.leadpony.fika.core.nodes.BlockQuote;
+import io.github.leadpony.fika.core.model.BlockQuote;
 
 /**
  * @author leadpony

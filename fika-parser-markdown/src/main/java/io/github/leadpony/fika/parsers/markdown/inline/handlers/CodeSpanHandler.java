@@ -17,8 +17,8 @@ package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
 import java.util.regex.Pattern;
 
-import io.github.leadpony.fika.core.nodes.CodeSpan;
-import io.github.leadpony.fika.parsers.markdown.base.InputSequence;
+import io.github.leadpony.fika.core.model.CodeSpan;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 
 /**

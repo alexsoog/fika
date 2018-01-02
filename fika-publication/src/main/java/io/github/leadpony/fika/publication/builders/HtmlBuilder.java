@@ -16,7 +16,6 @@
 package io.github.leadpony.fika.publication.builders;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,7 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import io.github.leadpony.fika.core.nodes.Document;
+import io.github.leadpony.fika.core.model.Document;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserFactory;
 import io.github.leadpony.fika.publication.project.PageSource;

@@ -18,9 +18,9 @@ package io.github.leadpony.fika.parsers.markdown.block;
 import java.util.HashSet;
 import java.util.Set;
 
-import io.github.leadpony.fika.core.nodes.Document;
-import io.github.leadpony.fika.core.nodes.NodeFactory;
-import io.github.leadpony.fika.core.nodes.Text;
+import io.github.leadpony.fika.core.model.Document;
+import io.github.leadpony.fika.core.model.NodeFactory;
+import io.github.leadpony.fika.core.model.Text;
 
 /**
  * @author leadpony

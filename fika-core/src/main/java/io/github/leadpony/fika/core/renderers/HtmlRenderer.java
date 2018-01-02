@@ -20,7 +20,7 @@ import java.io.Writer;
 import java.util.EnumSet;
 import java.util.Set;
 
-import io.github.leadpony.fika.core.nodes.Document;
+import io.github.leadpony.fika.core.model.Document;
 
 /**
  * @author leadpony

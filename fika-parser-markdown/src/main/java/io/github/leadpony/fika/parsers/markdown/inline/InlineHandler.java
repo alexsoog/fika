@@ -15,9 +15,9 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline;
 
-import io.github.leadpony.fika.core.nodes.Node;
-import io.github.leadpony.fika.core.nodes.NodeFactory;
-import io.github.leadpony.fika.parsers.markdown.base.InputSequence;
+import io.github.leadpony.fika.core.model.Node;
+import io.github.leadpony.fika.core.model.NodeFactory;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * The interface for handling inline nodes. 

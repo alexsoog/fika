@@ -18,8 +18,8 @@ package io.github.leadpony.fika.parsers.markdown.block;
 import java.util.EnumSet;
 import java.util.Set;
 
-import io.github.leadpony.fika.core.nodes.Heading;
-import io.github.leadpony.fika.core.nodes.Text;
+import io.github.leadpony.fika.core.model.Heading;
+import io.github.leadpony.fika.core.model.Text;
 
 /**
  * @author leadpony

@@ -18,7 +18,7 @@ package io.github.leadpony.fika.parsers.markdown.block;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.leadpony.fika.core.nodes.CodeBlock;
+import io.github.leadpony.fika.core.model.CodeBlock;
 
 /**
  * @author leadpony

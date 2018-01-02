@@ -18,10 +18,10 @@ package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.github.leadpony.fika.core.nodes.Link;
-import io.github.leadpony.fika.core.nodes.Text;
-import io.github.leadpony.fika.parsers.markdown.base.InputSequence;
-import io.github.leadpony.fika.parsers.markdown.base.Urls;
+import io.github.leadpony.fika.core.model.Link;
+import io.github.leadpony.fika.core.model.Text;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
+import io.github.leadpony.fika.parsers.markdown.common.Urls;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 
 /**

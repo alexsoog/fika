@@ -15,13 +15,13 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
-import static io.github.leadpony.fika.parsers.markdown.base.Characters.SPACE;
+import static io.github.leadpony.fika.parsers.markdown.common.Characters.SPACE;
 
 import java.util.EnumSet;
 import java.util.Set;
 
-import io.github.leadpony.fika.core.nodes.Block;
-import io.github.leadpony.fika.core.nodes.CodeBlock;
+import io.github.leadpony.fika.core.model.Block;
+import io.github.leadpony.fika.core.model.CodeBlock;
 
 /**
  * @author leadpony

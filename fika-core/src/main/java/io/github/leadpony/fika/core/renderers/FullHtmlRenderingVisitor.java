@@ -18,7 +18,7 @@ package io.github.leadpony.fika.core.renderers;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.github.leadpony.fika.core.nodes.Document;
+import io.github.leadpony.fika.core.model.Document;
 
 /**
  * @author leadpony

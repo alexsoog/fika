@@ -15,9 +15,9 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
-import io.github.leadpony.fika.core.nodes.Block;
-import io.github.leadpony.fika.core.nodes.NodeFactory;
-import io.github.leadpony.fika.core.nodes.Text;
+import io.github.leadpony.fika.core.model.Block;
+import io.github.leadpony.fika.core.model.NodeFactory;
+import io.github.leadpony.fika.core.model.Text;
 
 /**
  * @author leadpony

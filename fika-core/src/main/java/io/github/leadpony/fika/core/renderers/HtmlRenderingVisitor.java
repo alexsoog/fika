@@ -18,22 +18,22 @@ package io.github.leadpony.fika.core.renderers;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.github.leadpony.fika.core.nodes.BlockQuote;
-import io.github.leadpony.fika.core.nodes.CodeBlock;
-import io.github.leadpony.fika.core.nodes.CodeSpan;
-import io.github.leadpony.fika.core.nodes.Document;
-import io.github.leadpony.fika.core.nodes.Emphasis;
-import io.github.leadpony.fika.core.nodes.Heading;
-import io.github.leadpony.fika.core.nodes.HtmlBlock;
-import io.github.leadpony.fika.core.nodes.HtmlInline;
-import io.github.leadpony.fika.core.nodes.Link;
-import io.github.leadpony.fika.core.nodes.ListItem;
-import io.github.leadpony.fika.core.nodes.OrderedList;
-import io.github.leadpony.fika.core.nodes.Paragraph;
-import io.github.leadpony.fika.core.nodes.Text;
-import io.github.leadpony.fika.core.nodes.ThematicBreak;
-import io.github.leadpony.fika.core.nodes.UnorderedList;
-import io.github.leadpony.fika.core.nodes.Visitor;
+import io.github.leadpony.fika.core.model.BlockQuote;
+import io.github.leadpony.fika.core.model.CodeBlock;
+import io.github.leadpony.fika.core.model.CodeSpan;
+import io.github.leadpony.fika.core.model.Document;
+import io.github.leadpony.fika.core.model.Emphasis;
+import io.github.leadpony.fika.core.model.Heading;
+import io.github.leadpony.fika.core.model.HtmlBlock;
+import io.github.leadpony.fika.core.model.HtmlInline;
+import io.github.leadpony.fika.core.model.Link;
+import io.github.leadpony.fika.core.model.ListItem;
+import io.github.leadpony.fika.core.model.OrderedList;
+import io.github.leadpony.fika.core.model.Paragraph;
+import io.github.leadpony.fika.core.model.Text;
+import io.github.leadpony.fika.core.model.ThematicBreak;
+import io.github.leadpony.fika.core.model.UnorderedList;
+import io.github.leadpony.fika.core.model.Visitor;
 
 /**
  * @author leadpony

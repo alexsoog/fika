@@ -18,8 +18,8 @@ package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.github.leadpony.fika.core.nodes.HtmlInline;
-import io.github.leadpony.fika.parsers.markdown.base.InputSequence;
+import io.github.leadpony.fika.core.model.HtmlInline;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 
 /**

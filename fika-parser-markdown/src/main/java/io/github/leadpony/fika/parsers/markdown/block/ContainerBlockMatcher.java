@@ -18,8 +18,8 @@ package io.github.leadpony.fika.parsers.markdown.block;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.leadpony.fika.core.nodes.Block;
-import io.github.leadpony.fika.core.nodes.Node;
+import io.github.leadpony.fika.core.model.Block;
+import io.github.leadpony.fika.core.model.Node;
 
 /**
  * Matcher for container blocks such as documents, block quotes, and lists.

@@ -15,11 +15,11 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline;
 
-import static io.github.leadpony.fika.parsers.markdown.base.Characters.unescape;
+import static io.github.leadpony.fika.parsers.markdown.common.Characters.unescape;
 
-import io.github.leadpony.fika.core.nodes.Node;
-import io.github.leadpony.fika.core.nodes.NodeFactory;
-import io.github.leadpony.fika.core.nodes.Text;
+import io.github.leadpony.fika.core.model.Node;
+import io.github.leadpony.fika.core.model.NodeFactory;
+import io.github.leadpony.fika.core.model.Text;
 
 /**
  * Default implementation of {@link InlineProcessor}.

@@ -17,10 +17,10 @@ package io.github.leadpony.fika.parsers.markdown.parser;
 
 import java.io.Reader;
 
-import io.github.leadpony.fika.core.nodes.NodeFactory;
+import io.github.leadpony.fika.core.model.NodeFactory;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserFactory;
-import io.github.leadpony.fika.core.parser.support.nodes.DefaultNodeFactory;
+import io.github.leadpony.fika.core.parser.support.model.DefaultNodeFactory;
 
 /**
  * @author leadpony

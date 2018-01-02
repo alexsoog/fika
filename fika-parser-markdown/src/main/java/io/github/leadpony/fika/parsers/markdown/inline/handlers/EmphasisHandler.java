@@ -15,11 +15,11 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
-import static io.github.leadpony.fika.parsers.markdown.base.Characters.isPunctuation;
-import static io.github.leadpony.fika.parsers.markdown.base.Characters.isUnicodeWhitespace;
+import static io.github.leadpony.fika.parsers.markdown.common.Characters.isPunctuation;
+import static io.github.leadpony.fika.parsers.markdown.common.Characters.isUnicodeWhitespace;
 
-import io.github.leadpony.fika.core.nodes.Node;
-import io.github.leadpony.fika.core.nodes.Text;
+import io.github.leadpony.fika.core.model.Node;
+import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.DelimiterRun;
 

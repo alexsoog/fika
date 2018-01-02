@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Set;
 
-import io.github.leadpony.fika.core.nodes.Document;
-import io.github.leadpony.fika.core.nodes.NodeFactory;
-import io.github.leadpony.fika.core.nodes.Text;
+import io.github.leadpony.fika.core.model.Document;
+import io.github.leadpony.fika.core.model.NodeFactory;
+import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserException;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherChain;

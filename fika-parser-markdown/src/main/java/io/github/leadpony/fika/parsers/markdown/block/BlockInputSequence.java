@@ -15,14 +15,14 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
-import static io.github.leadpony.fika.parsers.markdown.base.Characters.SPACE;
+import static io.github.leadpony.fika.parsers.markdown.common.Characters.SPACE;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.github.leadpony.fika.parsers.markdown.base.InputSequence;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * Content in a line.

@@ -18,7 +18,7 @@ package io.github.leadpony.fika.parsers.markdown.inline;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.leadpony.fika.parsers.markdown.base.InputSequence;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * @author leadpony

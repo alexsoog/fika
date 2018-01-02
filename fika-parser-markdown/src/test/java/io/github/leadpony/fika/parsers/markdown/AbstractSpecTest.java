@@ -27,7 +27,7 @@ import javax.json.JsonReader;
 
 import org.junit.Test;
 
-import io.github.leadpony.fika.core.nodes.Document;
+import io.github.leadpony.fika.core.model.Document;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.renderers.HtmlRenderer;
 import io.github.leadpony.fika.core.util.HtmlMinifier;

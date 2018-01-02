@@ -18,7 +18,7 @@ package io.github.leadpony.fika.parsers.markdown.block;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.github.leadpony.fika.core.nodes.Block;
+import io.github.leadpony.fika.core.model.Block;
 
 /**
  * Matcher for list items.
