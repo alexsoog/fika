@@ -15,12 +15,13 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
-import static io.github.leadpony.fika.parsers.markdown.common.Characters.isPunctuation;
+import static io.github.leadpony.fika.parsers.markdown.common.Characters.isUnicodePunctuation;
 import static io.github.leadpony.fika.parsers.markdown.common.Characters.isUnicodeWhitespace;
 
 import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
+import io.github.leadpony.fika.parsers.markdown.inline.Delimiter;
 import io.github.leadpony.fika.parsers.markdown.inline.DelimiterRun;
 
 /**
@@ -50,9 +51,9 @@ abstract class EmphasisHandler extends AbstractInlineHandler {
         final int preceding = extractPrecedingChar(input, currentIndex);
         final int following = extractFollowingChar(input, currentIndex, length);
         
-        DelimiterRun run = buildDelimiterRun(text, preceding, following);
-        appendNode(text);
-        appendDelimiterRun(run);
+        Delimiter run = buildDelimiterRun(text, preceding, following);
+        getAppender().appendNode(text);
+        getDelimiterStack().add(run);
         return length;
     }
     
@@ -69,7 +70,7 @@ abstract class EmphasisHandler extends AbstractInlineHandler {
     }
     
     private Text buildTextNode(String input, int start, int length) {
-        Text newNode = nodeFactory().newText();
+        Text newNode = getNodeFactory().newText();
         newNode.setContent(input.substring(start, start + length));
         return newNode;
     }
@@ -106,8 +107,8 @@ abstract class EmphasisHandler extends AbstractInlineHandler {
     protected static boolean calculateLeftFlanking(int preceding, int following) {
         if (following < 0 || isUnicodeWhitespace(following)) {
             return false;
-        } else if (isPunctuation(following)) {
-            return (preceding < 0 || isUnicodeWhitespace(preceding) || isPunctuation(preceding));
+        } else if (isUnicodePunctuation(following)) {
+            return (preceding < 0 || isUnicodeWhitespace(preceding) || isUnicodePunctuation(preceding));
         } else {
             return true;
         }
@@ -129,16 +130,16 @@ abstract class EmphasisHandler extends AbstractInlineHandler {
     protected static boolean calculateRightFlanking(int preceding, int following) {
         if (preceding < 0 || isUnicodeWhitespace(preceding)) {
             return false;
-        } else if (isPunctuation(preceding)) {
-            return (following < 0 || isUnicodeWhitespace(following) || isPunctuation(following));
+        } else if (isUnicodePunctuation(preceding)) {
+            return (following < 0 || isUnicodeWhitespace(following) || isUnicodePunctuation(following));
         } else {
             return true;
         }
     }
    
-    protected abstract DelimiterRun buildDelimiterRun(Text text, int preceding, int following);
+    protected abstract Delimiter buildDelimiterRun(Text text, int preceding, int following);
     
-    protected DelimiterRun createDelimiterRun(Text text, boolean opener, boolean closer) {
+    protected Delimiter createDelimiterRun(Text text, boolean opener, boolean closer) {
         return new EmphasisDelimiterRun(text, opener, closer);
     }
     
@@ -149,18 +150,62 @@ abstract class EmphasisHandler extends AbstractInlineHandler {
      */
     class EmphasisDelimiterRun extends DelimiterRun {
         
-        public EmphasisDelimiterRun(Text text, boolean opener, boolean closer) {
+        private final String delimiter;
+        private int length;
+        
+        EmphasisDelimiterRun(Text text, boolean opener, boolean closer) {
             super(text, opener, closer);
+            String content = text.getContent();
+            this.delimiter = content.substring(0, 1);
+            this.length = content.length();
+        }
+        
+        @Override
+        public String delimiter() {
+            return delimiter;
+        }
+        
+        @Override
+        public int length() {
+            return length;
         }
         
         @Override
         public int maxLengthToPair() {
             return MAX_LENGTH_TO_PAIR;
         }
+    
+        /**
+         * {@inheritDoc}
+         * 
+         * Note that a delimiter run that can be both opener and closer
+         * cannot form pair if the sum of the lengths of the delimiter runs
+         * containing the opening and closing delimiters is a multiple of 3.
+         */
+        @Override
+        public boolean canBePairedWith(Delimiter closer) {
+            if (!super.canBePairedWith(closer)) {
+                return false;
+            }
+            if (canBeCloser() || closer.canBeOpener()) {
+                int sumOfLengths = length() + ((DelimiterRun)closer).length();
+                return sumOfLengths % 3 != 0;
+            }
+            return true;
+        }
+        
+        @Override
+        protected int removeDelimiters(int length) {
+            String content = text().getContent();
+            content = content.substring(0, content.length() - length);
+            text().setContent(content);
+            this.length = content.length();
+            return this.length;
+        }
         
         @Override
         protected Node buildWrapNode(int lengthPaired) {
-            return nodeFactory().newEmphasis(lengthPaired);
+            return getNodeFactory().newEmphasis(lengthPaired);
         }
     }
 }
@@ -175,7 +220,7 @@ class AsteriskEmphasisHandler extends EmphasisHandler {
     }
     
     @Override
-    protected DelimiterRun buildDelimiterRun(Text text, int preceding, int following) {
+    protected Delimiter buildDelimiterRun(Text text, int preceding, int following) {
         boolean opener = calculateLeftFlanking(preceding, following);
         boolean closer = calculateRightFlanking(preceding, following);
         return createDelimiterRun(text, opener, closer);
@@ -192,11 +237,11 @@ class UnderscoreEmphasisHandler extends EmphasisHandler {
     }
 
     @Override
-    protected DelimiterRun buildDelimiterRun(Text text, int preceding, int following) {
+    protected Delimiter buildDelimiterRun(Text text, int preceding, int following) {
         boolean leftFlanking = calculateLeftFlanking(preceding, following);
         boolean rightFlanking = calculateRightFlanking(preceding, following);
-        boolean opener = leftFlanking && (!rightFlanking || isPunctuation(preceding));
-        boolean closer = rightFlanking && (!leftFlanking || isPunctuation(following));
+        boolean opener = leftFlanking && (!rightFlanking || isUnicodePunctuation(preceding));
+        boolean closer = rightFlanking && (!leftFlanking || isUnicodePunctuation(following));
         return createDelimiterRun(text, opener, closer);
     }
 }

@@ -16,6 +16,7 @@
 package io.github.leadpony.fika.parsers.markdown.block;
 
 import static io.github.leadpony.fika.parsers.markdown.common.Characters.SPACE;
+import static io.github.leadpony.fika.parsers.markdown.common.Strings.unescape;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -114,6 +115,7 @@ class FencedCodeMatcherFactory implements BlockMatcherFactory {
         protected Block buildBlock() {
             CodeBlock block = nodeFactory().newCodeBlock();
             block.setContent(builder.toString());
+            String infoString = unescape(this.infoString);
             String[] words = infoString.split("\\s+");
             String language = words[0];
             if (!language.isEmpty()) {

@@ -37,6 +37,8 @@ public interface NodeFactory {
 
     Emphasis newEmphasis(int strength);
 
+    HardLineBreak newHardLineBreak();
+
     Heading newHeading(int level);
 
     HtmlBlock newHtmlBlock();

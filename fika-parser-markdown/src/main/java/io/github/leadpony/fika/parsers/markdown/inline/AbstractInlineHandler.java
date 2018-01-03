@@ -15,7 +15,6 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline;
 
-import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.NodeFactory;
 
 /**
@@ -36,15 +35,15 @@ public abstract class AbstractInlineHandler implements InlineHandler {
         return context;
     }
     
-    protected NodeFactory nodeFactory() {
-        return context.nodeFactory();
+    protected NodeFactory getNodeFactory() {
+        return context.getNodeFactory();
     }
     
-    protected void appendNode(Node newNode) {
-        context.appendNode(newNode);
+    protected InlineAppender getAppender() {
+        return context.getAppender();
     }
     
-    protected void appendDelimiterRun(DelimiterRun delimiterRun) {
-        context.appendDelimiterRun(delimiterRun);
+    protected DelimiterStack getDelimiterStack() {
+        return context.getDelimiterStack();
     }
 }

@@ -39,28 +39,29 @@ class CodeSpanHandler extends AbstractInlineHandler {
     }
 
     @Override
-    public int handleContent(InputSequence seq) {
-        final int backticks = seq.countLeading(BACKTICK);
+    public int handleContent(InputSequence input) {
+        final int backticks = input.countLeading(BACKTICK);
         final int start = backticks;
         int i = start;
         for (;;) {
-            i = seq.indexOf(BACKTICK, i);
+            i = input.indexOf(BACKTICK, i);
             if (i < 0) {
                 break;
             }
-            int found = seq.countLeading(BACKTICK, i);
+            int found = input.countLeading(BACKTICK, i);
             if (found == backticks) {
-                appendNode(buildNode(seq, start, i));
+                getAppender().appendNode(buildNode(input, start, i));
                 return i + backticks;
             }
             i += found;
         }
+        getAppender().appendContent(backticks);
         return backticks;
     }
     
-    private CodeSpan buildNode(InputSequence seq, int start, int end) {
-        CodeSpan newNode = nodeFactory().newCodeSpan();
-        String code = normalizeCode(seq.substring(start, end));
+    private CodeSpan buildNode(InputSequence input, int start, int end) {
+        CodeSpan newNode = getNodeFactory().newCodeSpan();
+        String code = normalizeCode(input.substring(start, end));
         newNode.setContent(code);
         return newNode;
     }

@@ -21,10 +21,10 @@ import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerFactory;
 /**
  * @author leadpony
  */
-public class AsteriskEmphasisHandlerFactory implements InlineHandlerFactory {
+public class ImageHandlerFactory implements InlineHandlerFactory {
 
     @Override
     public InlineHandler newHandler() {
-        return new UnderscoreEmphasisHandler();
+        return new ImageHandler();
     }
 }

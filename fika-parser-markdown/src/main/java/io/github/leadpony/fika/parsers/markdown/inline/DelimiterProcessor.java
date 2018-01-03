@@ -22,16 +22,16 @@ import java.util.Map;
 /**
  * @author leadpony
  */
-class DelimiterRunProcessor {
+class DelimiterProcessor {
     
-    private LinkedStack<DelimiterRun> stack;
+    private DelimiterStack stack;
     /*
      * Note that we process delimiter runs INCLUDING the bottom.
      */
-    private DelimiterRun stackBottom;
-    private final Map<Character, DelimiterRun> openersBottom = new HashMap<>();
+    private Delimiter stackBottom;
+    private final Map<String, Delimiter> openersBottom = new HashMap<>();
 
-    void processDelimiters(LinkedStack<DelimiterRun> stack) {
+    void processDelimiters(DelimiterStack stack) {
         this.stack = stack;
         this.stackBottom = stack.getFirst();
         this.openersBottom.clear();
@@ -40,18 +40,18 @@ class DelimiterRunProcessor {
     }
     
     private void pairAll() {
-        Iterator<DelimiterRun> it = stack.iterator();
+        Iterator<Delimiter> it = stack.iterator();
         while (it.hasNext()) {
-            DelimiterRun current = it.next();
+            Delimiter current = it.next();
             if (current.canBeCloser()) {
                 processCloser(current);
             }
         }
     }
     
-    private void processCloser(DelimiterRun closer) {
+    private void processCloser(Delimiter closer) {
         for (;;) {
-            DelimiterRun opener = findOpener(closer);
+            Delimiter opener = findOpener(closer);
             if (opener == null) {
                 break;
             }
@@ -66,19 +66,20 @@ class DelimiterRunProcessor {
         }
     }
     
-    private DelimiterRun findOpener(DelimiterRun closer) {
-        final DelimiterRun bottom = getOpenersBottom(closer.delimiter());
-        DelimiterRun nextBottom = closer;
-        Iterator<DelimiterRun> it = stack.descendingIterator(closer);
-        // skips the closer.
+    private Delimiter findOpener(Delimiter closer) {
+        final Delimiter bottom = getOpenersBottom(closer.delimiter());
+        Delimiter nextBottom = closer;
+        Iterator<Delimiter> it = stack.descendingIterator(closer);
+        // Skips the closer.
         it.next();
         while (it.hasNext()) {
-            DelimiterRun current = it.next();
-            if (current.canBePairedWith(closer)) {
-                if (shouldPair(current, closer)) {
-                    return current;
+            Delimiter current = it.next();
+            if (current.isSameTypeAs(closer) && current.canBeOpener()) {
+                Delimiter opener = current;
+                if (opener.canBePairedWith(closer)) {
+                    return opener;
                 } else {
-                    nextBottom = current;
+                    nextBottom = opener;
                 }
             }
             if (current == bottom) {
@@ -92,40 +93,21 @@ class DelimiterRunProcessor {
         return null;
     }
     
-    /**
-     * Checks if opener and closer should be paired.
-     * 
-     * Note that a delimiter run that can be both opener and closer
-     * cannot form pair if the sum of the lengths of the delimiter runs
-     * containing the opening and closing delimiters is a multiple of 3.
-     *  
-     * @param opener the opening delimiter run.
-     * @param closer the closing delimiter run.
-     * @return true if delimiter runs should be paired.
-     */
-    private boolean shouldPair(DelimiterRun opener, DelimiterRun closer) {
-        if (opener.canBeCloser() || closer.canBeOpener()) {
-            int sumOfLengths = opener.length() + closer.length();
-            return sumOfLengths % 3 != 0;
-        }
-        return true;
-    }
-    
-    private void makePair(DelimiterRun opener, DelimiterRun closer) {
+    private void makePair(Delimiter opener, Delimiter closer) {
         opener.makePairWith(closer);
         removeDelimitersBeween(opener, closer);
     }
     
-    private void removeEmptyRun(DelimiterRun run) {
+    private void removeEmptyRun(Delimiter run) {
         run.text().unlink();
         stack.remove(run);
     }
 
-    private void removeDelimitersBeween(DelimiterRun opener, DelimiterRun closer) {
-        Iterator<DelimiterRun> it = stack.iterator(opener);
+    private void removeDelimitersBeween(Delimiter opener, Delimiter closer) {
+        Iterator<Delimiter> it = stack.iterator(opener);
         it.next();
         while (it.hasNext()) {
-            DelimiterRun current = it.next();
+            Delimiter current = it.next();
             if (current == closer) {
                 break;
             } else {
@@ -134,15 +116,15 @@ class DelimiterRunProcessor {
         }
     }
     
-    private DelimiterRun getOpenersBottom(char delimiter) {
-        DelimiterRun bottom = this.openersBottom.get(delimiter);
+    private Delimiter getOpenersBottom(String delimiter) {
+        Delimiter bottom = this.openersBottom.get(delimiter);
         if (bottom == null) {
             bottom = this.stackBottom;
         }
         return bottom;
     }
     
-    private void updateOpenersBottom(char delimiter, DelimiterRun newBottom) {
+    private void updateOpenersBottom(String delimiter, Delimiter newBottom) {
         this.openersBottom.put(delimiter, newBottom);
     }
 }

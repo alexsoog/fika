@@ -38,6 +38,5 @@ public class AtxHeadingTest extends AbstractSpecTest {
     
     @Before
     public void setUp() {
-        Assume.assumeFalse(index() == 36);
     }
 }

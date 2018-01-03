@@ -15,16 +15,30 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerFactory;
+import io.github.leadpony.fika.core.model.Text;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * @author leadpony
  */
-public class AsteriskEmphasisHandlerFactory implements InlineHandlerFactory {
+public class ImageHandler extends LinkHandler {
 
+    private static final char TRIGGER_LETTER = '!';
+    private static final String OPENING_CONTENT = "![";
+    
     @Override
-    public InlineHandler newHandler() {
-        return new UnderscoreEmphasisHandler();
+    public char[] triggerLetters() {
+        return new char[] { TRIGGER_LETTER };
+    }
+    
+    @Override
+    public int handleContent(InputSequence input) {
+        if (input.length() < 2 || input.charAt(1) != '[') {
+            return 0;
+        }
+        Text text = buildNode(OPENING_CONTENT);
+        getAppender().appendNode(text);
+        getDelimiterStack().add(new LinkDelimiterRun(text));
+        return OPENING_CONTENT.length();
     }
 }

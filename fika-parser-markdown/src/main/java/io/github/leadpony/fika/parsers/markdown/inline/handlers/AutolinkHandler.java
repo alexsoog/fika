@@ -56,13 +56,13 @@ class AutolinkHandler extends AbstractInlineHandler {
         Matcher m = URL_PATTERN.matcher(input);
         if (m.lookingAt()) {
             end = m.end();
-            appendNode(buildUriAutoLink(input.substring(1, end - 1)));
+            getAppender().appendNode(buildUriAutoLink(input.substring(1, end - 1)));
             return end;
         } else {
             m = EMAIL_PATTERN.matcher(input);
             if (m.lookingAt()) {
                 end = m.end();
-                appendNode(buildEmailAutoLink(input.substring(1, end - 1)));
+                getAppender().appendNode(buildEmailAutoLink(input.substring(1, end - 1)));
             }
         }
         return end;
@@ -78,9 +78,9 @@ class AutolinkHandler extends AbstractInlineHandler {
     }
 
     private Link buildAutoLink(String url, String label) {
-        Link newNode = nodeFactory().newLink();
+        Link newNode = getNodeFactory().newLink();
         newNode.setDestination(Urls.encode(url));
-        Text text = nodeFactory().newText();
+        Text text = getNodeFactory().newText();
         text.setContent(label);
         newNode.appendChild(text);
         return newNode;

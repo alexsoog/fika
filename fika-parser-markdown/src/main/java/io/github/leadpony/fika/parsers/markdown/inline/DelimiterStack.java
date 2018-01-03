@@ -20,15 +20,17 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
+ * Delimiter stack.
+ * 
  * @author leadpony
  */
-public class LinkedStack<T extends LinkedStack.Entry> extends AbstractCollection<T> {
+public class DelimiterStack extends AbstractCollection<Delimiter> {
 
     private Entry first;
     private Entry last;
     private int size;
     
-    public LinkedStack() {
+    public DelimiterStack() {
         this.first = null;
         this.last = null;
         this.size = 0;
@@ -37,7 +39,7 @@ public class LinkedStack<T extends LinkedStack.Entry> extends AbstractCollection
     /* Collection interface */
     
     @Override
-    public boolean add(T e) {
+    public boolean add(Delimiter e) {
         if (e == null) {
             throw new NullPointerException();
         }
@@ -62,14 +64,16 @@ public class LinkedStack<T extends LinkedStack.Entry> extends AbstractCollection
     }
     
     @Override
-    public Iterator<T> iterator() {
-        return new AscendingIterator<T>(this.first);
+    public Iterator<Delimiter> iterator() {
+        return new AscendingIterator<Delimiter>(this.first);
     }
     
     @Override
     public boolean remove(Object o) {
         if (o == null) {
             throw new NullPointerException();
+        } else if (!(o instanceof Entry)) {
+            throw new ClassCastException();
         }
         Entry entry = (Entry)o;
         final Entry previous = entry.previous;
@@ -96,32 +100,28 @@ public class LinkedStack<T extends LinkedStack.Entry> extends AbstractCollection
         return size;
     }
     
-    @SuppressWarnings("unchecked")
-    public T getFirst() {
-        return (T)first;
+    public Delimiter getFirst() {
+        return (Delimiter)first;
     }
 
-    @SuppressWarnings("unchecked")
-    public T getLast() {
-        return (T)last;
+    public Delimiter getLast() {
+        return (Delimiter)last;
     }
     
-    public Iterator<T> iterator(T first) {
-        return new AscendingIterator<T>(first);
+    public Iterator<Delimiter> iterator(Delimiter first) {
+        return new AscendingIterator<Delimiter>(first);
     }
 
-    public Iterator<T> descendingIterator() {
-        return new DescendingIterator<T>(this.last);
+    public Iterator<Delimiter> descendingIterator() {
+        return new DescendingIterator<Delimiter>(this.last);
     }
     
-    public Iterator<T> descendingIterator(T first) {
-        return new DescendingIterator<T>(first);
+    public Iterator<Delimiter> descendingIterator(Delimiter first) {
+        return new DescendingIterator<Delimiter>(first);
     }
     
     public static class Entry {
-        @SuppressWarnings("unused")
         private Entry previous;
-        @SuppressWarnings("unused")
         private Entry next;
     }
     

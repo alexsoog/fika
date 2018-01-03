@@ -38,6 +38,5 @@ public class RawHtmlTest extends AbstractSpecTest {
 
     @Before
     public void setUp() {
-        //Assume.assumeTrue(index() == 604);
     }
 }

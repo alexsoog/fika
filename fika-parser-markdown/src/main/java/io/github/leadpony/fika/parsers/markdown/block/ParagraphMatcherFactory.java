@@ -15,7 +15,7 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
-import static io.github.leadpony.fika.parsers.markdown.common.Characters.trim;
+import static io.github.leadpony.fika.parsers.markdown.common.Strings.trimWhitespace;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,7 +139,7 @@ class ParagraphMatcherFactory implements BlockMatcherFactory {
          */
         private String buildContent() {
             String content = lines.stream().collect(Collectors.joining("\n"));
-            return trim(content);    
+            return trimWhitespace(content);    
         }
     }    
 

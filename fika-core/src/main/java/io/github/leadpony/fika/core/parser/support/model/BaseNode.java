@@ -69,6 +69,11 @@ public abstract class BaseNode implements Node {
         return factory;
     }
     
+    @Override
+    public String toString() {
+        return "";
+    }
+    
     protected BaseNode validateNode(Node node, String name) {
         if (node == null) {
             throw new NullPointerException(name + " must not be null.");

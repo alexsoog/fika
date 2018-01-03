@@ -23,6 +23,7 @@ import io.github.leadpony.fika.core.model.CodeBlock;
 import io.github.leadpony.fika.core.model.CodeSpan;
 import io.github.leadpony.fika.core.model.Document;
 import io.github.leadpony.fika.core.model.Emphasis;
+import io.github.leadpony.fika.core.model.HardLineBreak;
 import io.github.leadpony.fika.core.model.Heading;
 import io.github.leadpony.fika.core.model.HtmlBlock;
 import io.github.leadpony.fika.core.model.HtmlInline;
@@ -89,6 +90,11 @@ class HtmlRenderingVisitor implements Visitor {
         visitChildren(node);
         formatter.endTag(tagName);
     }
+    
+    @Override
+    public void visit(HardLineBreak node) {
+        formatter.emptyTag("br");
+    }
 
     @Override
     public void visit(Heading node) {
@@ -110,8 +116,12 @@ class HtmlRenderingVisitor implements Visitor {
 
     @Override
     public void visit(Link node) {
+        String title = node.getTitle();
         Map<String, String> attributes = new HashMap<>();
         attributes.put("href", node.getDestination());
+        if (title != null) {
+            attributes.put("title", title);
+        }
         formatter.startTag("a", attributes);
         visitChildren(node);
         formatter.endTag("a");

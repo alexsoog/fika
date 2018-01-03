@@ -20,6 +20,7 @@ import io.github.leadpony.fika.core.model.CodeBlock;
 import io.github.leadpony.fika.core.model.CodeSpan;
 import io.github.leadpony.fika.core.model.Document;
 import io.github.leadpony.fika.core.model.Emphasis;
+import io.github.leadpony.fika.core.model.HardLineBreak;
 import io.github.leadpony.fika.core.model.Heading;
 import io.github.leadpony.fika.core.model.HtmlBlock;
 import io.github.leadpony.fika.core.model.HtmlInline;
@@ -67,6 +68,11 @@ public class DefaultNodeFactory implements NodeFactory {
     @Override
     public Emphasis newEmphasis(int strength) {
         return new EmphasisImpl(this, strength);
+    }
+
+    @Override
+    public HardLineBreak newHardLineBreak() {
+        return new HardLineBreakImpl(this);
     }
 
     @Override
@@ -212,6 +218,13 @@ public class DefaultNodeFactory implements NodeFactory {
             this.strength = strength;
         }
     }
+    
+    private static class HardLineBreakImpl extends AbstractHtmlNode implements HardLineBreak {
+        
+        HardLineBreakImpl(NodeFactory factory) {
+            super(factory);
+        }
+    }
 
     private static class HeadingImpl extends ContainerNode implements Heading {
         
@@ -250,10 +263,12 @@ public class DefaultNodeFactory implements NodeFactory {
     private static class LinkImpl extends ContainerNode implements Link {
         
         private String url;
+        private String title;
         
         LinkImpl(NodeFactory factory) {
             super(factory);
             this.url = "";
+            this.title = null;
         }
 
         @Override
@@ -264,6 +279,23 @@ public class DefaultNodeFactory implements NodeFactory {
         @Override
         public void setDestination(String url) {
             this.url = url;
+        }
+
+        @Override
+        public String getTitle() {
+            return title;
+        }
+
+        @Override
+        public void setTitle(String title) {
+            this.title = title;
+        }
+        
+        @Override
+        public String toString() {
+            StringBuilder b = new StringBuilder();
+            b.append("(link ").append(super.toString()).append(")");
+            return b.toString();
         }
     }
 

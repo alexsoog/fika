@@ -24,7 +24,6 @@ import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 
 /**
  * @author leadpony
- *
  */
 public class RawHtmlHandler extends AbstractInlineHandler {
 
@@ -97,14 +96,14 @@ public class RawHtmlHandler extends AbstractInlineHandler {
     public int handleContent(InputSequence input) {
         Matcher m = RAW_HTML_PATTERN.matcher(input);
         if (m.lookingAt()) {
-            appendNode(buildNode(m.group()));
+            getAppender().appendNode(buildNode(m.group()));
             return m.end();
         }
         return 0;
     }
     
     private HtmlInline buildNode(String html) {
-        HtmlInline newNode = nodeFactory().newHtmlInline();
+        HtmlInline newNode = getNodeFactory().newHtmlInline();
         newNode.setHtml(html);
         return newNode;
     }

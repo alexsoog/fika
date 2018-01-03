@@ -23,6 +23,10 @@ public interface Link extends Inline {
     String getDestination();
     
     void setDestination(String url);
+    
+    String getTitle();
+    
+    void setTitle(String title);
 
     @Override
     default void accept(Visitor visitor) {

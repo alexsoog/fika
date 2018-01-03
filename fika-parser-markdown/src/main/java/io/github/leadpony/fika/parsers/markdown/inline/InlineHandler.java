@@ -15,7 +15,6 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline;
 
-import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.NodeFactory;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
@@ -26,6 +25,11 @@ import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
  */
 public interface InlineHandler {
 
+    /**
+     * Returns the letters which will trigger this handler.
+     * 
+     * @return triggering letters of this handler.
+     */
     char[] triggerLetters();
     
     void bind(Context context);
@@ -54,10 +58,10 @@ public interface InlineHandler {
          * 
          * @return the instance of {@link NodeFactory}.
          */
-        NodeFactory nodeFactory();
-
-        Context appendNode(Node newNode);
+        NodeFactory getNodeFactory();
         
-        Context appendDelimiterRun(DelimiterRun delimiterRun);
+        InlineAppender getAppender();
+        
+        DelimiterStack getDelimiterStack();
     }
 }

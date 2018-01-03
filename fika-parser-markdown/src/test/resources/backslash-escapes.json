@@ -1,0 +1,106 @@
+[
+  {
+    "end_line": 5393,
+    "section": "Backslash escapes",
+    "html": "<p>!&quot;#$%&amp;'()*+,-./:;&lt;=&gt;?@[\\]^_`{|}~</p>\n",
+    "markdown": "\\!\\\"\\#\\$\\%\\&\\'\\(\\)\\*\\+\\,\\-\\.\\/\\:\\;\\<\\=\\>\\?\\@\\[\\\\\\]\\^\\_\\`\\{\\|\\}\\~\n",
+    "example": 289,
+    "start_line": 5389
+  },
+  {
+    "end_line": 5403,
+    "section": "Backslash escapes",
+    "html": "<p>\\\t\\A\\a\\ \\3\\φ\\«</p>\n",
+    "markdown": "\\\t\\A\\a\\ \\3\\φ\\«\n",
+    "example": 290,
+    "start_line": 5399
+  },
+  {
+    "end_line": 5427,
+    "section": "Backslash escapes",
+    "html": "<p>*not emphasized*\n&lt;br/&gt; not a tag\n[not a link](/foo)\n`not code`\n1. not a list\n* not a list\n# not a heading\n[foo]: /url &quot;not a reference&quot;</p>\n",
+    "markdown": "\\*not emphasized*\n\\<br/> not a tag\n\\[not a link](/foo)\n\\`not code`\n1\\. not a list\n\\* not a list\n\\# not a heading\n\\[foo]: /url \"not a reference\"\n",
+    "example": 291,
+    "start_line": 5409
+  },
+  {
+    "end_line": 5436,
+    "section": "Backslash escapes",
+    "html": "<p>\\<em>emphasis</em></p>\n",
+    "markdown": "\\\\*emphasis*\n",
+    "example": 292,
+    "start_line": 5432
+  },
+  {
+    "end_line": 5447,
+    "section": "Backslash escapes",
+    "html": "<p>foo<br />\nbar</p>\n",
+    "markdown": "foo\\\nbar\n",
+    "example": 293,
+    "start_line": 5441
+  },
+  {
+    "end_line": 5457,
+    "section": "Backslash escapes",
+    "html": "<p><code>\\[\\`</code></p>\n",
+    "markdown": "`` \\[\\` ``\n",
+    "example": 294,
+    "start_line": 5453
+  },
+  {
+    "end_line": 5465,
+    "section": "Backslash escapes",
+    "html": "<pre><code>\\[\\]\n</code></pre>\n",
+    "markdown": "    \\[\\]\n",
+    "example": 295,
+    "start_line": 5460
+  },
+  {
+    "end_line": 5475,
+    "section": "Backslash escapes",
+    "html": "<pre><code>\\[\\]\n</code></pre>\n",
+    "markdown": "~~~\n\\[\\]\n~~~\n",
+    "example": 296,
+    "start_line": 5468
+  },
+  {
+    "end_line": 5482,
+    "section": "Backslash escapes",
+    "html": "<p><a href=\"http://example.com?find=%5C*\">http://example.com?find=\\*</a></p>\n",
+    "markdown": "<http://example.com?find=\\*>\n",
+    "example": 297,
+    "start_line": 5478
+  },
+  {
+    "end_line": 5489,
+    "section": "Backslash escapes",
+    "html": "<a href=\"/bar\\/)\">\n",
+    "markdown": "<a href=\"/bar\\/)\">\n",
+    "example": 298,
+    "start_line": 5485
+  },
+  {
+    "end_line": 5499,
+    "section": "Backslash escapes",
+    "html": "<p><a href=\"/bar*\" title=\"ti*tle\">foo</a></p>\n",
+    "markdown": "[foo](/bar\\* \"ti\\*tle\")\n",
+    "example": 299,
+    "start_line": 5495
+  },
+  {
+    "end_line": 5508,
+    "section": "Backslash escapes",
+    "html": "<p><a href=\"/bar*\" title=\"ti*tle\">foo</a></p>\n",
+    "markdown": "[foo]\n\n[foo]: /bar\\* \"ti\\*tle\"\n",
+    "example": 300,
+    "start_line": 5502
+  },
+  {
+    "end_line": 5518,
+    "section": "Backslash escapes",
+    "html": "<pre><code class=\"language-foo+bar\">foo\n</code></pre>\n",
+    "markdown": "``` foo\\+bar\nfoo\n```\n",
+    "example": 301,
+    "start_line": 5511
+  }
+]

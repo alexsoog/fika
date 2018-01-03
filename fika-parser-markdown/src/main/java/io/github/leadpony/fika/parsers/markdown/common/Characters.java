@@ -16,18 +16,17 @@
 package io.github.leadpony.fika.parsers.markdown.common;
 
 import java.util.BitSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * Characters defined in CommonMark spec.
+ * Characters defined in CommonMark specification.
  * 
  * @author leadpony
  */
 public final class Characters {
     
     public static final char SPACE = '\u0020';
-    public static final char[] ASCII_PUNCTUATIONS = {
+
+    private static final char[] ASCII_PUNCTUATIONS = {
         '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',',
         '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\',
         ']', '^', '_', '`', '{', '|', '}', '~'
@@ -39,25 +38,32 @@ public final class Characters {
             set(ch);
         }
     }};
-    private static final Pattern BACKSLASH_ESCAPE = Pattern.compile("\\\\(\\p{Punct})");
     
-    private static final Pattern LEADING_TRAILING_WHITESPACE = Pattern.compile("^\\s+|\\s+$");
-   
-    public static String unescape(String input) {
-        Matcher m = BACKSLASH_ESCAPE.matcher(input);
-        return m.replaceAll("$1");
+    public static boolean isWhitespace(int c) {
+        return c == '\u0020' || 
+               c == '\t' || 
+               c == '\r' || 
+               c == '\n' || 
+               c == '\f' ||
+               c == '\u000b';
     }
     
-    public static String trim(String input) {
-        Matcher m = LEADING_TRAILING_WHITESPACE.matcher(input);
-        return m.replaceAll("");
-    }
-    
-    public static boolean isPunctuation(int ch) {
-        if (ASCII_PUNCTUATION_SET.get(ch)) {
+    public static boolean isUnicodeWhitespace(int c) {
+        if (c == '\t' || c == '\r' || c == '\n' || c == '\f') {
             return true;
         }
-        switch (Character.getType(ch)) {
+        return (Character.getType(c) == Character.SPACE_SEPARATOR);
+    }
+
+    public static boolean isPunctuation(int c) {
+        return ASCII_PUNCTUATION_SET.get(c);
+    }
+    
+    public static boolean isUnicodePunctuation(int c) {
+        if (isPunctuation(c)) {
+            return true;
+        }
+        switch (Character.getType(c)) {
         case Character.CONNECTOR_PUNCTUATION: /* Pc */
         case Character.DASH_PUNCTUATION: /* Pd */
         case Character.END_PUNCTUATION: /* Pe */
@@ -68,13 +74,6 @@ public final class Characters {
             return true;
         }
         return false;
-    }
-    
-    public static boolean isUnicodeWhitespace(int ch) {
-        if (ch == '\t' || ch == '\r' || ch == '\n' || ch == '\f') {
-            return true;
-        }
-        return (Character.getType(ch) == Character.SPACE_SEPARATOR);
     }
 
     private Characters() {

@@ -21,30 +21,51 @@ import io.github.leadpony.fika.core.model.Text;
 /**
  * @author leadpony
  */
-public abstract class DelimiterRun extends LinkedStack.Entry {
-    
-    private final Text text;
-    private final char delimiter;
+public abstract class DelimiterRun extends Delimiter {
+
     private final boolean opener;
     private final boolean closer;
     private int length;
     
-    public DelimiterRun(Text text, boolean opener, boolean closer) {
-        this.text = text;
-        this.delimiter = text.getContent().charAt(0);
+    /**
+     * Constructs this delimiter run.
+     * 
+     * @param text
+     * @param opener
+     * @param closer
+     */
+    protected DelimiterRun(Text text, boolean opener, boolean closer) {
+        super(text);
         this.opener = opener;
         this.closer = closer;
         this.length = text.getContent().length();
     }
+
+    @Override
+    public boolean isEmpty() {
+        return length() == 0;
+    }
+   
+    @Override
+    public boolean canBeOpener() {
+        return opener;
+    }
     
-    public Text text() {
-        return text;
+    @Override
+    public boolean canBeCloser() {
+        return closer;
+    }
+   
+    @Override
+    public boolean isSameTypeAs(Delimiter other) {
+        return delimiter().equals(other.delimiter());
+    }
+    
+    @Override
+    public Node makePairWith(Delimiter closer) {
+        return makePairWith((DelimiterRun)closer);
     }
 
-    public char delimiter() {
-        return delimiter;
-    }
-    
     /**
      * Returns the run length of this delimiter run.
      * 
@@ -63,32 +84,7 @@ public abstract class DelimiterRun extends LinkedStack.Entry {
         return length();
     }
     
-    public boolean isEmpty() {
-        return length() == 0;
-    }
-
-    public boolean canBeOpener() {
-        return opener;
-    }
-    
-    public boolean canBeCloser() {
-        return closer;
-    }
-    
-    /**
-     * Tests whether this delimiter run can be paired with specified delimiter run.
-     * 
-     * @param closer the delimiter run to be paired.
-     * @return true if this delimiter run can be paired.
-     */
-    public boolean canBePairedWith(DelimiterRun closer) {
-        if (this.delimiter != closer.delimiter) {
-            return false;
-        }
-        return canBeOpener() && closer.canBeCloser();
-    }
-    
-    public Node makePairWith(DelimiterRun closer) {
+    private Node makePairWith(DelimiterRun closer) {
         int length = Math.min(length(), closer.length());
         int maxLength = Math.min(maxLengthToPair(), closer.maxLengthToPair());
         if (length > maxLength) {
@@ -98,32 +94,12 @@ public abstract class DelimiterRun extends LinkedStack.Entry {
         wrapNodes(wrapper, text(), closer.text());
         // Inserts wrapper immediate after the opener.
         text().parentNode().insertChildAfter(wrapper, text());
-        shorten(length);
-        closer.shorten(length);
+        removeDelimiters(length);
+        closer.removeDelimiters(length);
         return wrapper;
     }
-    
-    @Override
-    public String toString() {
-        return text.toString();
-    }
-    
-    private static void wrapNodes(Node wrapper, Text opener, Text closer) {
-        Node current = opener.nextNode();
-        while (current != closer) {
-            Node next = current.nextNode();
-            wrapper.appendChild(current);
-            current = next;
-        }
-    }
-    
-    private int shorten(int length) {
-        String content = this.text.getContent();
-        content = content.substring(0, content.length() - length);
-        this.text.setContent(content);
-        this.length = content.length();
-        return this.length;
-    }
-    
-    protected abstract Node buildWrapNode(int length); 
+
+    protected abstract int removeDelimiters(int length);
+
+    protected abstract Node buildWrapNode(int length);
 }

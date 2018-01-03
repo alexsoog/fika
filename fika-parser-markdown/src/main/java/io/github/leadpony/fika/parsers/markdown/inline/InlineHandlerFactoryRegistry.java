@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.inline.handlers;
+package io.github.leadpony.fika.parsers.markdown.inline;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerFactory;
+import java.util.ServiceLoader;
 
 /**
  * @author leadpony
@@ -35,19 +35,19 @@ public class InlineHandlerFactoryRegistry {
     
     private InlineHandlerFactoryRegistry() {
         this.factories = new ArrayList<>();
-        addDefaultFactories();
+        loadDefaultFactories();
     }
     
     public List<InlineHandlerFactory> factories() {
         return factories;
     }
     
-    private void addDefaultFactories() {
-        add(new AutoLinkHandlerFactory());
-        add(new CodeSpanHandlerFactory());
-        add(new RawHtmlHandlerFactory());
-        add(new AsteriskEmphasisHandlerFactory());
-        add(new UnderscoreEmphasisHandlerFactory());
+    private void loadDefaultFactories() {
+        ServiceLoader<InlineHandlerFactory> loader = ServiceLoader.load(InlineHandlerFactory.class);
+        Iterator<InlineHandlerFactory> it = loader.iterator();
+        while (it.hasNext()) {
+            add(it.next());
+        }
     }
 
     private void add(InlineHandlerFactory factory) {

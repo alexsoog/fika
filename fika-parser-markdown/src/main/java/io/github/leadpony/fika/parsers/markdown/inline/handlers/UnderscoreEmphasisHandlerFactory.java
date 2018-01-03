@@ -21,7 +21,7 @@ import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerFactory;
 /**
  * @author leadpony
  */
-class UnderscoreEmphasisHandlerFactory implements InlineHandlerFactory {
+public class UnderscoreEmphasisHandlerFactory implements InlineHandlerFactory {
 
     @Override
     public InlineHandler newHandler() {

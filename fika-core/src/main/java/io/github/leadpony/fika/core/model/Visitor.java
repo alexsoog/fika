@@ -38,6 +38,9 @@ public interface Visitor {
     default void visit(Emphasis node) {
         visitChildren(node);
     }
+    
+    default void visit(HardLineBreak node) {
+    }
 
     default void visit(Heading node) {
         visitChildren(node);

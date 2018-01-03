@@ -15,7 +15,7 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline;
 
-import static io.github.leadpony.fika.parsers.markdown.common.Characters.unescape;
+import static io.github.leadpony.fika.parsers.markdown.common.Characters.isPunctuation;
 
 import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.NodeFactory;
@@ -26,18 +26,30 @@ import io.github.leadpony.fika.core.model.Text;
  * 
  * @author leadpony
  */
-public class DefaultInlineProcessor implements InlineProcessor {
+public class DefaultInlineProcessor 
+    implements InlineProcessor, InlineHandler.Context, InlineAppender {
     
     private static final int MAX_TRIGGER_CODE = 127;
     
     private final InlineHandler[] handlers;
-    private final Context context;
-    private final DelimiterRunProcessor delimiterProcessor;
+    private final DelimiterProcessor delimiterProcessor = new DelimiterProcessor();
+  
+    private final NodeFactory nodeFactory;
+    private final DelimiterStack delimiterStack = new DelimiterStack();
+
+    private Text firstText;
+    private Node parentNode;
+    private Node nextSibling;
+    
+    private String input;
+    private int currentIndex;
+    
+    private int appendedNodeCount;
+    private StringBuilder textBuffer = null;
     
     public DefaultInlineProcessor(NodeFactory nodeFactory) {
+        this.nodeFactory = nodeFactory;
         this.handlers = new InlineHandler[MAX_TRIGGER_CODE + 1];
-        this.context = createContext(nodeFactory);
-        this.delimiterProcessor = new DelimiterRunProcessor();
     }
     
     /**
@@ -58,147 +70,156 @@ public class DefaultInlineProcessor implements InlineProcessor {
                 handlers[letter] = newHandler;
             }
         }
-        newHandler.bind(context);
+        newHandler.bind(this);
     }
     
     @Override
     public void processInlines(Text text) {
-        resetProcessor();
-        parseText(text);
+        resetProcessor(text);
+        parseInlines();
         processDelimiters();
-        text.setContent(unescape(text.getContent()));
     }
     
-    private void resetProcessor() {
+    /* InlinerHandler.Context interface */
+
+    @Override
+    public NodeFactory getNodeFactory() {
+        return nodeFactory;
+    }
+  
+    @Override
+    public InlineAppender getAppender() {
+        return this;
+    }
+        
+    @Override
+    public DelimiterStack getDelimiterStack() {
+        return delimiterStack;
     }
     
-    private void parseText(Text text) {
-        context.assign(text);
-        final String input = text.getContent();
+    /* InlineAppender interface */
+
+    @Override
+    public void appendNode(Node newNode) {
+        if (newNode == null) {
+            throw new NullPointerException();
+        }
+        flushTextBuffer();
+        appendOrInsertNode(newNode);
+    }
+    
+    @Override
+    public final void appendContent(char c) {
+        this.textBuffer.append(c);
+    }
+    
+    @Override
+    public final void appendContent(String s) {
+        this.textBuffer.append(s);
+    }
+
+    @Override
+    public final void appendContent(int length) {
+        int beginIndex = currentIndex;
+        int endIndex = beginIndex + length;
+        String s = input.substring(beginIndex, endIndex);
+        appendContent(s);
+    }
+
+    /* helper methods */
+    
+    private void resetProcessor(Text text) {
+        this.firstText = text;
+        this.parentNode = text.parentNode();
+        this.nextSibling = text.nextNode();
+        this.input = text.getContent();
+        this.currentIndex = 0;
+        this.appendedNodeCount = 0;
+        this.textBuffer = new StringBuilder(text.getContent().length());
+    }
+    
+    private void parseInlines() {
+        final String input = this.input;
         final int length = input.length();
         int index = 0;
         while (index < length) {
             char c = input.charAt(index);
-            if (c < MAX_TRIGGER_CODE) {
+            int consumed = 0;
+            if (c == '\\') {
+                consumed = handleBackslashEscape(input, index);
+            } else if (c < MAX_TRIGGER_CODE) {
                 InlineHandler handler = this.handlers[c];
                 if (handler != null) {
-                    int consumed = invokeHandler(handler, index);
-                    if (consumed > 0) {
-                        index += consumed;
-                        continue;
-                    }
+                    consumed = invokeHandler(handler, index);
                 }
             }
-            index++;
+            if (consumed > 0) {
+                index += consumed;
+            } else {
+                appendContent(c);
+                index++;
+            }
         }
-        context.appendTailText();
+        flushTextBuffer();
     }
     
     private int invokeHandler(InlineHandler handler, int index) {
-        context.index = index;
-        final int currentCount = context.appendedNodeCount;
-        int consumed = handler.handleContent(context.input, index);
+        this.currentIndex = index;
+        int consumed = handler.handleContent(this.input, index);
         if (consumed > 0) {
             int newIndex = index + consumed;
-            if (context.appendedNodeCount > currentCount) {
-                context.textOffset = newIndex;
-            }
-            context.index = index;
+            this.currentIndex = newIndex;
         }
         return consumed;
     }
     
-    private Context createContext(NodeFactory nodeFactory) {
-        return new Context(nodeFactory);
+    private int handleBackslashEscape(String input, int index) {
+        this.currentIndex = index;
+        if (index + 1 < input.length()) {
+            char c = input.charAt(index + 1);
+            if (c == '\n') {
+                appendNode(getNodeFactory().newHardLineBreak());
+                return 2;
+            } else if (isPunctuation(c)) {
+                appendContent(c);
+                return 2;
+            }
+        }
+        return 0;
+    }
+    
+    private void appendOrInsertNode(Node child) {
+        if (nextSibling == null) {
+            parentNode.appendChild(child);
+        } else {
+            parentNode.insertChildBefore(child, nextSibling);
+        }
+        this.appendedNodeCount++;
+    }
+  
+    private void flushTextBuffer() {
+        String content = "";
+        if (textBuffer.length() > 0) {
+            content = textBuffer.toString();
+            textBuffer.setLength(0);
+        }
+        if (appendedNodeCount == 0) {
+            if (content.isEmpty()) {
+                firstText.unlink();
+            } else {
+                firstText.setContent(content);
+            }
+        } else {
+            Text text = getNodeFactory().newText();
+            text.setContent(content);
+            appendOrInsertNode(text);
+        }
     }
     
     private void processDelimiters() {
-        LinkedStack<DelimiterRun> delimiterStack = context.delimiterStack;
+        DelimiterStack delimiterStack = getDelimiterStack();
         if (delimiterStack.size() > 0) {
-            delimiterProcessor.processDelimiters(delimiterStack);
-        }
-    }
-    
-    private static class Context implements InlineHandler.Context {
-        
-        private final NodeFactory nodeFactory;
-        private final LinkedStack<DelimiterRun> delimiterStack = new LinkedStack<>();
-
-        private Node parentNode;
-        private Node nextSibling;
-        private Text firstText;
-        private int appendedNodeCount;
-        private int textOffset;
-        private String input;
-        private int index;
-        
-        Context(NodeFactory nodeFactory) {
-            this.nodeFactory = nodeFactory;
-        }
-        
-        Context assign(Text text) {
-            this.parentNode = text.parentNode();
-            this.nextSibling = text.nextNode();
-            this.firstText = text;
-            this.textOffset = 0;
-            this.input = text.getContent();
-            this.index = 0;
-            this.delimiterStack.clear();
-            return this;
-        }
-        
-        void appendTailText() {
-            if (textOffset == 0) {
-                return;
-            } else if (textOffset < input.length()) {
-                appendText(input.length());
-            }
-        }
-        
-        /* InlineHandler.Context interface */
-        
-        @Override
-        public NodeFactory nodeFactory() {
-            return nodeFactory;
-        }
-        
-        @Override
-        public Context appendNode(Node newNode) {
-            if (newNode == null) {
-                throw new NullPointerException();
-            }
-            if (index == 0) {
-                firstText.unlink();
-            } else if (index > textOffset) {
-                if (textOffset == 0) {
-                    firstText.setContent(input.substring(0, index));
-                } else {
-                    appendText(index);
-                }
-            }
-            appendOrInsertNode(newNode);
-            return this;
-        }
-        
-        @Override
-        public Context appendDelimiterRun(DelimiterRun delimiterRun) {
-            this.delimiterStack.add(delimiterRun);
-            return this;
-        }
-        
-        private void appendText(int endIndex) {
-            Text text = nodeFactory().newText();
-            text.setContent(input.substring(textOffset, endIndex));
-            appendOrInsertNode(text);
-        }
-        
-        private void appendOrInsertNode(Node child) {
-            if (nextSibling == null) {
-                parentNode.appendChild(child);
-            } else {
-                parentNode.insertChildBefore(child, nextSibling);
-            }
-            ++this.appendedNodeCount;
+            this.delimiterProcessor.processDelimiters(delimiterStack);
         }
     }
 }

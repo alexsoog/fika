@@ -21,7 +21,7 @@ import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerFactory;
 /**
  * @author leadpony
  */
-class RawHtmlHandlerFactory implements InlineHandlerFactory {
+public class RawHtmlHandlerFactory implements InlineHandlerFactory {
 
     @Override
     public InlineHandler newHandler() {

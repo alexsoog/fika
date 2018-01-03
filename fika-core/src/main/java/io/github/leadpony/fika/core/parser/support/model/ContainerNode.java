@@ -81,6 +81,15 @@ public abstract class ContainerNode extends BaseNode {
                 validateNode(previousChild, "previousChild")
         );
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder b = new StringBuilder();
+        for (Node child: childNodes()) {
+            b.append(child.toString());
+        }
+        return b.toString();
+    }
 
     private BaseNode appendChild(BaseNode child) {
         child.unlink();

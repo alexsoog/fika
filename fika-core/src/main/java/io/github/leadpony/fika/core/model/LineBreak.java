@@ -13,18 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.inline.handlers;
-
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerFactory;
+package io.github.leadpony.fika.core.model;
 
 /**
  * @author leadpony
  */
-public class AsteriskEmphasisHandlerFactory implements InlineHandlerFactory {
-
-    @Override
-    public InlineHandler newHandler() {
-        return new UnderscoreEmphasisHandler();
-    }
+public interface LineBreak extends Node {
 }

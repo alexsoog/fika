@@ -25,19 +25,19 @@ import org.junit.runners.Parameterized.Parameters;
  * @author leadpony
  */
 @RunWith(Parameterized.class)
-public class ListTest extends AbstractSpecTest {
+public class BackslashEscapeTest extends AbstractSpecTest {
 
-    public ListTest(int index, String source, String expected) {
+    public BackslashEscapeTest(int index, String source, String expected) {
         super(index, source, expected);
     }
   
     @Parameters(name = "{0}: {1}")
     public static Iterable<Object[]> parameters() {
-        return parameters("/lists.json");
+        return parameters("/backslash-escapes.json");
     }
-    
+
     @Before
     public void setUp() {
-        Assume.assumeFalse(index() == 278);
+        //Assume.assumeTrue(index() == 291);
     }
 }

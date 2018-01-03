@@ -27,8 +27,8 @@ import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserException;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherChain;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerFactory;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerFactoryRegistry;
 import io.github.leadpony.fika.parsers.markdown.inline.DefaultInlineProcessor;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.InlineHandlerFactoryRegistry;
 
 /**
  * @author leadpony
