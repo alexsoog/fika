@@ -16,12 +16,12 @@
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
 import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerFactory;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
 
 /**
  * @author leadpony
  */
-public class RawHtmlHandlerFactory implements InlineHandlerFactory {
+public class RawHtmlHandlerProvider implements InlineHandlerProvider {
 
     @Override
     public InlineHandler newHandler() {

@@ -26,8 +26,8 @@ import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserException;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherChain;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerFactory;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerFactoryRegistry;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProviderRegistry;
 import io.github.leadpony.fika.parsers.markdown.inline.DefaultInlineProcessor;
 
 /**
@@ -81,10 +81,10 @@ class MarkdownParser implements Parser {
     }
     
     private DefaultInlineProcessor createInlineProcessor(NodeFactory nodeFactory) {
-        InlineHandlerFactoryRegistry registry = InlineHandlerFactoryRegistry.get();
+        InlineHandlerProviderRegistry registry = InlineHandlerProviderRegistry.get();
         DefaultInlineProcessor processor = new DefaultInlineProcessor(nodeFactory);
-        registry.factories().stream()
-                .map(InlineHandlerFactory::newHandler)
+        registry.providers().stream()
+                .map(InlineHandlerProvider::newHandler)
                 .forEach(processor::installHandler);
         return processor;
     }

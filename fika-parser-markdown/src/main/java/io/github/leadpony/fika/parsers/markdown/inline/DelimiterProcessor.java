@@ -22,18 +22,15 @@ import java.util.Map;
 /**
  * @author leadpony
  */
-class DelimiterProcessor {
+public class DelimiterProcessor {
     
     private DelimiterStack stack;
-    /*
-     * Note that we process delimiter runs INCLUDING the bottom.
-     */
     private Delimiter stackBottom;
     private final Map<String, Delimiter> openersBottom = new HashMap<>();
 
-    void processDelimiters(DelimiterStack stack) {
+    public void processDelimiters(DelimiterStack stack, Delimiter bottom) {
         this.stack = stack;
-        this.stackBottom = stack.getFirst();
+        this.stackBottom = bottom;
         this.openersBottom.clear();
         pairAll();
         stack.clear();
@@ -68,26 +65,26 @@ class DelimiterProcessor {
     
     private Delimiter findOpener(Delimiter closer) {
         final Delimiter bottom = getOpenersBottom(closer.delimiter());
-        Delimiter nextBottom = closer;
+        Delimiter previous = closer.previous();
+        Delimiter newBottom = previous;
         Iterator<Delimiter> it = stack.descendingIterator(closer);
         // Skips the closer.
         it.next();
         while (it.hasNext()) {
             Delimiter current = it.next();
-            if (current.isSameTypeAs(closer) && current.canBeOpener()) {
+            if (current == bottom) {
+                break;
+            } else if (current.isSameTypeAs(closer) && current.canBeOpener()) {
                 Delimiter opener = current;
                 if (opener.canBePairedWith(closer)) {
                     return opener;
                 } else {
-                    nextBottom = opener;
+                    newBottom = opener.previous();
                 }
             }
-            if (current == bottom) {
-                break;
-            }
         }
-        updateOpenersBottom(closer.delimiter(), nextBottom);
-        if (nextBottom == closer && !closer.canBeOpener()) {
+        updateOpenersBottom(closer.delimiter(), newBottom);
+        if (newBottom == previous && !closer.canBeOpener()) {
             this.stack.remove(closer);
         }
         return null;

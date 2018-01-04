@@ -120,6 +120,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
             link.setDestination(destination);
         }
         link.setTitle(title);
+        processDelimitersInLinkTitle(opener);
         deactiveOpenersBefore(opener);
         getDelimiterStack().remove(opener);
         opener.text().unlink();
@@ -136,6 +137,12 @@ public class LinkCloserHandler extends AbstractInlineHandler {
                 current.deactive();
             }
         }
+    }
+    
+    private void processDelimitersInLinkTitle(Delimiter opener) {
+        context().getDelimiterProcessor().processDelimiters(
+                getDelimiterStack(), 
+                opener);
     }
     
     private static String normalizeDestination(String s) {

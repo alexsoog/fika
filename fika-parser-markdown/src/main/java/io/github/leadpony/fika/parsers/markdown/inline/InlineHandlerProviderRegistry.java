@@ -23,34 +23,34 @@ import java.util.ServiceLoader;
 /**
  * @author leadpony
  */
-public class InlineHandlerFactoryRegistry {
+public class InlineHandlerProviderRegistry {
     
-    private static final InlineHandlerFactoryRegistry instance = new InlineHandlerFactoryRegistry();
+    private static final InlineHandlerProviderRegistry instance = new InlineHandlerProviderRegistry();
 
-    private final List<InlineHandlerFactory> factories;
+    private final List<InlineHandlerProvider> providers;
     
-    public static InlineHandlerFactoryRegistry get() {
+    public static InlineHandlerProviderRegistry get() {
         return instance;
     }
     
-    private InlineHandlerFactoryRegistry() {
-        this.factories = new ArrayList<>();
-        loadDefaultFactories();
+    private InlineHandlerProviderRegistry() {
+        this.providers = new ArrayList<>();
+        loadProviders();
     }
     
-    public List<InlineHandlerFactory> factories() {
-        return factories;
+    public List<InlineHandlerProvider> providers() {
+        return providers;
     }
     
-    private void loadDefaultFactories() {
-        ServiceLoader<InlineHandlerFactory> loader = ServiceLoader.load(InlineHandlerFactory.class);
-        Iterator<InlineHandlerFactory> it = loader.iterator();
+    private void loadProviders() {
+        ServiceLoader<InlineHandlerProvider> loader = ServiceLoader.load(InlineHandlerProvider.class);
+        Iterator<InlineHandlerProvider> it = loader.iterator();
         while (it.hasNext()) {
             add(it.next());
         }
     }
 
-    private void add(InlineHandlerFactory factory) {
-        this.factories.add(factory);
+    private void add(InlineHandlerProvider provider) {
+        this.providers.add(provider);
     }
 }

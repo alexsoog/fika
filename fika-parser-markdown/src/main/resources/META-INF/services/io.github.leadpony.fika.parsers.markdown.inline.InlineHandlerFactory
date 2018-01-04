@@ -1,8 +1,0 @@
-io.github.leadpony.fika.parsers.markdown.inline.handlers.AutoLinkHandlerFactory
-io.github.leadpony.fika.parsers.markdown.inline.handlers.CodeSpanHandlerFactory
-io.github.leadpony.fika.parsers.markdown.inline.handlers.RawHtmlHandlerFactory
-io.github.leadpony.fika.parsers.markdown.inline.handlers.AsteriskEmphasisHandlerFactory
-io.github.leadpony.fika.parsers.markdown.inline.handlers.UnderscoreEmphasisHandlerFactory
-io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkHandlerFactory
-io.github.leadpony.fika.parsers.markdown.inline.handlers.ImageHandlerFactory
-io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkCloserHandlerFactory

@@ -26,8 +26,8 @@ import java.util.NoSuchElementException;
  */
 public class DelimiterStack extends AbstractCollection<Delimiter> {
 
-    private Entry first;
-    private Entry last;
+    private Delimiter first;
+    private Delimiter last;
     private int size;
     
     public DelimiterStack() {
@@ -43,13 +43,12 @@ public class DelimiterStack extends AbstractCollection<Delimiter> {
         if (e == null) {
             throw new NullPointerException();
         }
-        Entry entry = (Entry)e;
         if (last == null) {
             first = last = e;
         } else {
-            last.next = e;
-            entry.previous = last;
-            entry.next = null;
+            ((Entry)last).next = e;
+            ((Entry)e).previous = last;
+            ((Entry)e).next = null;
             last = e;
         }
         this.size++;
@@ -65,7 +64,7 @@ public class DelimiterStack extends AbstractCollection<Delimiter> {
     
     @Override
     public Iterator<Delimiter> iterator() {
-        return new AscendingIterator<Delimiter>(this.first);
+        return new AscendingIterator(this.first);
     }
     
     @Override
@@ -75,9 +74,9 @@ public class DelimiterStack extends AbstractCollection<Delimiter> {
         } else if (!(o instanceof Entry)) {
             throw new ClassCastException();
         }
-        Entry entry = (Entry)o;
-        final Entry previous = entry.previous;
-        final Entry next = entry.next;
+        Delimiter entry = (Delimiter)o;
+        final Delimiter previous = entry.previous();
+        final Delimiter next = entry.next();
         if (this.first == entry) {
             this.first = next;
         }
@@ -85,12 +84,12 @@ public class DelimiterStack extends AbstractCollection<Delimiter> {
             this.last = previous;
         }
         if (previous != null) {
-            previous.next = next;
+            ((Entry)previous).next = next;
         }
         if (next != null) {
-            next.previous = previous;
+            ((Entry)next).previous = previous;
         }
-        entry.previous = entry.next = null;
+        ((Entry)entry).previous = ((Entry)entry).next = null;
         this.size--;
         return true;
     }
@@ -101,35 +100,49 @@ public class DelimiterStack extends AbstractCollection<Delimiter> {
     }
     
     public Delimiter getFirst() {
-        return (Delimiter)first;
+        return first;
     }
 
     public Delimiter getLast() {
-        return (Delimiter)last;
+        return last;
     }
     
     public Iterator<Delimiter> iterator(Delimiter first) {
-        return new AscendingIterator<Delimiter>(first);
+        return new AscendingIterator(first);
     }
 
     public Iterator<Delimiter> descendingIterator() {
-        return new DescendingIterator<Delimiter>(this.last);
+        return new DescendingIterator(this.last);
     }
     
     public Iterator<Delimiter> descendingIterator(Delimiter first) {
-        return new DescendingIterator<Delimiter>(first);
+        return new DescendingIterator(first);
     }
     
+    /**
+     * Entry of this stack.
+     * 
+     * @author leadpony
+     */
     public static class Entry {
-        private Entry previous;
-        private Entry next;
+        
+        private Delimiter previous;
+        private Delimiter next;
+        
+        public Delimiter previous() {
+            return previous;
+        }
+        
+        public Delimiter next() {
+            return next;
+        }
     }
     
-    private static class AscendingIterator<T extends Entry> implements Iterator<T> {
+    private static class AscendingIterator implements Iterator<Delimiter> {
         
-        private Entry current;
+        private Delimiter current;
         
-        private AscendingIterator(Entry first) {
+        private AscendingIterator(Delimiter first) {
             this.current = first;
         }
 
@@ -138,23 +151,22 @@ public class DelimiterStack extends AbstractCollection<Delimiter> {
             return (this.current != null);
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        public T next() {
+        public Delimiter next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            Entry current = this.current;
-            this.current = current.next;
-            return (T)current;
+            Delimiter current = this.current;
+            this.current = current.next();
+            return current;
         }
     }
     
-    private static class DescendingIterator<T extends Entry> implements Iterator<T> {
+    private static class DescendingIterator implements Iterator<Delimiter> {
         
-        private Entry current;
+        private Delimiter current;
         
-        private DescendingIterator(Entry first) {
+        private DescendingIterator(Delimiter first) {
             this.current = first;
         }
 
@@ -163,15 +175,14 @@ public class DelimiterStack extends AbstractCollection<Delimiter> {
             return (this.current != null);
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        public T next() {
+        public Delimiter next() {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            Entry current = this.current;
-            this.current = current.previous;
-            return (T)current;
+            Delimiter current = this.current;
+            this.current = current.previous();
+            return current;
         }
     }
 }

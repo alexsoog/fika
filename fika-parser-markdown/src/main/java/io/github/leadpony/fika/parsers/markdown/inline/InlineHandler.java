@@ -63,5 +63,7 @@ public interface InlineHandler {
         InlineAppender getAppender();
         
         DelimiterStack getDelimiterStack();
+        
+        DelimiterProcessor getDelimiterProcessor();
     }
 }

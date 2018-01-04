@@ -16,15 +16,15 @@
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
 import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerFactory;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
 
 /**
  * @author leadpony
  */
-public class LinkCloserHandlerFactory implements InlineHandlerFactory {
+public class LinkHandlerProvider implements InlineHandlerProvider {
 
     @Override
     public InlineHandler newHandler() {
-        return new LinkCloserHandler();
+        return new LinkHandler();
     }
 }

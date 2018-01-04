@@ -13,12 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.inline;
+package io.github.leadpony.fika.parsers.markdown.inline.handlers;
+
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
 
 /**
  * @author leadpony
  */
-public interface InlineHandlerFactory {
+public class LinkCloserHandlerProvider implements InlineHandlerProvider {
 
-    InlineHandler newHandler();
+    @Override
+    public InlineHandler newHandler() {
+        return new LinkCloserHandler();
+    }
 }

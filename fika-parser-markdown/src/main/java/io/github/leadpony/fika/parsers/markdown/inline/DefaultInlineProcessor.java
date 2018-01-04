@@ -97,6 +97,11 @@ public class DefaultInlineProcessor
         return delimiterStack;
     }
     
+    @Override
+    public DelimiterProcessor getDelimiterProcessor() {
+        return delimiterProcessor;
+    }
+    
     /* InlineAppender interface */
 
     @Override
@@ -219,7 +224,7 @@ public class DefaultInlineProcessor
     private void processDelimiters() {
         DelimiterStack delimiterStack = getDelimiterStack();
         if (delimiterStack.size() > 0) {
-            this.delimiterProcessor.processDelimiters(delimiterStack);
+            this.delimiterProcessor.processDelimiters(delimiterStack, null);
         }
     }
 }
