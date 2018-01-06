@@ -23,25 +23,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
+
 /**
  * @author leadpony
  */
 class BlockMatcherFinder {
     
     private final List<BlockMatcherFactory> factories;
-    private final Map<BlockType, List<BlockMatcherFactory>> interrupters;
+    private final Map<BlockType, List<BlockMatcherFactory>> interrupters = new HashMap<>();
 
-    static Builder builder() {
-        return new Builder();
-    }
-    
-    private BlockMatcherFinder(List<BlockMatcherFactory> factories) {
+    public BlockMatcherFinder(List<BlockMatcherFactory> factories) {
         this.factories = factories;
-        this.interrupters = new HashMap<>();
         setUpMatcherFactories();
     }
     
-    BlockMatcher findMatcher(BlockInputSequence content) {
+    BlockMatcher findMatcher(InputSequence content) {
         if (content.isBlank()) {
             return null;
         }
@@ -54,7 +51,7 @@ class BlockMatcherFinder {
         return null;
     }
     
-    BlockMatcher findInterruptingMatcher(BlockInputSequence content, BlockMatcher current) {
+    BlockMatcher findInterruptingMatcher(InputSequence content, BlockMatcher current) {
         if (content.isBlank()) {
             return null;
         }
@@ -86,36 +83,6 @@ class BlockMatcherFinder {
                 interrupters.put(type, list);
             }
             list.add(factory);
-        }
-    }
-
-    static class Builder {
-        
-        private static final List<BlockMatcherFactory> defaultFactories = loadDefaultFactories(); 
-        
-        private final List<BlockMatcherFactory> factories;
-        
-        private Builder() {
-            this.factories = new ArrayList<>(defaultFactories);
-        }
-        
-        BlockMatcherFinder build() {
-            return new BlockMatcherFinder(this.factories);
-        }
-        
-        private static List<BlockMatcherFactory> loadDefaultFactories() {
-            @SuppressWarnings("serial")
-            List<BlockMatcherFactory> list = new ArrayList<BlockMatcherFactory>() {{
-                add(new ThematicBreakMatcherFactory());
-                add(new HeadingMatcherFactory());
-                add(new IndentedCodeMatcherFactory());
-                add(new FencedCodeMatcherFactory());
-                add(new BlockQuoteMatcherFactory());
-                add(new ListMatcherFactory());
-                add(new HtmlBlockMatcherFactory());
-                add(new ParagraphMatcherFactory());
-            }};
-            return list;
         }
     }
 }

@@ -20,13 +20,14 @@ import java.util.List;
 
 import io.github.leadpony.fika.core.model.Block;
 import io.github.leadpony.fika.core.model.Node;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * Matcher for container blocks such as documents, block quotes, and lists.
  * 
  * @author leadpony
  */
-abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
+public abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
     
     private BlockMatcher childMatcher;
     private final List<Node> childNodes = new ArrayList<>();
@@ -45,8 +46,8 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
     }
     
     @Override
-    public Result match(BlockInputSequence content) {
-        return findAndInvokeChildMatcher(content);
+    public Result match(InputSequence input) {
+        return findAndInvokeChildMatcher(input);
     }
 
     @Override
@@ -59,58 +60,58 @@ abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
         return block;
     }
     
-    protected Result matchLazyContinuationLine(BlockInputSequence content) {
+    protected Result matchLazyContinuationLine(InputSequence input) {
         BlockMatcher last = lastMatcher();
-        return last.continueLazily(content);
+        return last.continueLazily(input);
     }
     
-    protected Result findAndInvokeChildMatcher(BlockInputSequence content) {
+    protected Result findAndInvokeChildMatcher(InputSequence input) {
         if (!hasChildMatcher()) {
-            if (findChildMatcher(content) == null) {
+            if (findChildMatcher(input) == null) {
                 return Result.NOT_MATCHED;
             }
         }
-        return invokeChildMatcherAndRetry(content);
+        return invokeChildMatcherAndRetry(input);
     }
     
-    protected Result invokeChildMatcherAndRetry(BlockInputSequence content) {
-        Result result = invokeChildMatcher(content);
+    protected Result invokeChildMatcherAndRetry(InputSequence input) {
+        Result result = invokeChildMatcher(input);
         if (result == Result.NOT_MATCHED) {
-            if (findChildMatcher(content) == null) {
+            if (findChildMatcher(input) == null) {
                 return Result.NOT_MATCHED;
             }
-            result = invokeChildMatcher(content);
+            result = invokeChildMatcher(input);
         }
         return result;
     }
     
-    protected Result invokeChildMatcher(BlockInputSequence content) {
+    protected Result invokeChildMatcher(InputSequence input) {
         BlockMatcher child = childMatcher();
         assert(child != null);
         if (child.isInterruptible()) {
-            BlockMatcher interrupter = child.interrupt(content);
+            BlockMatcher interrupter = child.interrupt(input);
             if (interrupter != null) {
                 openChildMatcher(interrupter);
                 child = interrupter;
             }
         }
-        Result result = callMatcherDirect(child, content);
+        Result result = callMatcherDirect(child, input);
         if (result == Result.COMPLETED || result == Result.NOT_MATCHED) {
             closeCurrentChildMatcher();
         }
         return result;
     }
     
-    protected BlockMatcher findChildMatcher(BlockInputSequence content) {
-        BlockMatcher matched = context().findMatcher(content);
+    protected BlockMatcher findChildMatcher(InputSequence input) {
+        BlockMatcher matched = context().findMatcher(input);
         if (matched != null) {
             openChildMatcher(matched);
         }
         return matched;
     }
     
-    private Result callMatcherDirect(BlockMatcher matcher, BlockInputSequence content) {
-        return matcher.match(content);
+    private Result callMatcherDirect(BlockMatcher matcher, InputSequence input) {
+        return matcher.match(input);
     }
     
     protected void openChildMatcher(BlockMatcher childMatcher) {

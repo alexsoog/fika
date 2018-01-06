@@ -35,10 +35,7 @@ public interface InputSequence extends CharSequence {
     
     /* CharSequence interface */
 
-    @Override
-    default CharSequence subSequence(int start, int end) {
-        return subContent(start, end);
-    }
+    InputSequence subSequence(int start, int end);
 
     /* String like interface */
     
@@ -110,14 +107,12 @@ public interface InputSequence extends CharSequence {
         return BLANK_PATTERN.matcher(this).matches();
     }
     
-    default InputSequence subContent(int beginIndex) {
+    default InputSequence subSequence(int beginIndex) {
         if (beginIndex == 0) {
             return this;
         }
-        return subContent(beginIndex, length());
+        return subSequence(beginIndex, length());
     }
-    
-    InputSequence subContent(int beginIndex, int endIndex);
     
     default int countLeading(char c) {
         return countLeading(c, 0, length());
@@ -179,6 +174,27 @@ public interface InputSequence extends CharSequence {
     
     default boolean hasLeadingSpaces(int count) {
         return hasLeading(SPACE, count);
+    }
+    
+    default int coundTrailing(char c) {
+        int i = length() - 1;
+        while (i >= 0) {
+            if (charAt(i) != c) {
+                break;
+            }
+            --i;
+        }
+        return length() - 1 - i;
+    }
+   
+    default int countTrailingSpaces() {
+        return coundTrailing(SPACE);
+    }
+    
+    default InputSequence trimSpaces() {
+        int beginIndex = countLeadingSpaces();
+        int endIndex = length() - countTrailingSpaces();
+        return subSequence(beginIndex, endIndex);
     }
     
     default String toSourceString() {

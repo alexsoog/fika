@@ -15,28 +15,23 @@
  */
 package io.github.leadpony.fika.parsers.markdown.parser;
 
-import io.github.leadpony.fika.core.parser.ParserFactory;
-import io.github.leadpony.fika.core.parser.ParserFactoryService;
+import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherProvider;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
 
 /**
  * @author leadpony
- *
  */
-public class MarkdownParserFactoryService extends ParserFactoryService {
+public interface ProviderRegistry {
     
-    private static final String TARGET_MEDIA_TYPE = "text/markdown";
-
-    @Override
-    public boolean supports(String mediaType) {
-        return TARGET_MEDIA_TYPE.equals(mediaType);
+    static ProviderRegistry getDefault() {
+        return DefaultProviderRegistry.get();
     }
+    
+    Iterable<BlockMatcherProvider> blockMatcherProviders();
 
-    @Override
-    public ParserFactory newFactory(String mediaType) {
-        ParserFactory factory = null;
-        if (TARGET_MEDIA_TYPE.equals(mediaType)) {
-            factory = new MarkdownParserFactory(ProviderRegistry.getDefault());
-        }
-        return factory;
-    }
+    Iterable<InlineHandlerProvider> inlineHandlerProviders();
+    
+    ProviderRegistry register(BlockMatcherProvider blockProvider);
+
+    ProviderRegistry register(InlineHandlerProvider inlineProvider);
 }

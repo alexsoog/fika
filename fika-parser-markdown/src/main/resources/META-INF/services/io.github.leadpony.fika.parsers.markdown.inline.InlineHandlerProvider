@@ -1,9 +1,0 @@
-io.github.leadpony.fika.parsers.markdown.inline.handlers.AutoLinkHandlerProvider
-io.github.leadpony.fika.parsers.markdown.inline.handlers.CodeSpanHandlerProvider
-io.github.leadpony.fika.parsers.markdown.inline.handlers.RawHtmlHandlerProvider
-io.github.leadpony.fika.parsers.markdown.inline.handlers.AsteriskEmphasisHandlerProvider
-io.github.leadpony.fika.parsers.markdown.inline.handlers.UnderscoreEmphasisHandlerProvider
-io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkHandlerProvider
-io.github.leadpony.fika.parsers.markdown.inline.handlers.ImageHandlerProvider
-io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkCloserHandlerProvider
-io.github.leadpony.fika.parsers.markdown.inline.handlers.CharacterReferenceHandlerProvider

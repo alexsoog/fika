@@ -28,14 +28,16 @@ import io.github.leadpony.fika.core.parser.support.model.DefaultNodeFactory;
  */
 public class MarkdownParserFactory implements ParserFactory {
     
+    private final ProviderRegistry providers;
     private final NodeFactory nodeFactory;
     
-    public MarkdownParserFactory() {
+    public MarkdownParserFactory(ProviderRegistry providers) {
+        this.providers = providers;
         this.nodeFactory = new DefaultNodeFactory();
     }
 
     @Override
     public Parser newParser(Reader reader) {
-        return new MarkdownParser(reader, this.nodeFactory);
+        return new MarkdownParser(reader, this.nodeFactory, this.providers);
     }
 }

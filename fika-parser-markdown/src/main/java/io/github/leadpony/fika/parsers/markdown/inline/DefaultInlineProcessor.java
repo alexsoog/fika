@@ -17,6 +17,8 @@ package io.github.leadpony.fika.parsers.markdown.inline;
 
 import static io.github.leadpony.fika.parsers.markdown.common.Characters.isPunctuation;
 
+import java.util.List;
+
 import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.NodeFactory;
 import io.github.leadpony.fika.core.model.Text;
@@ -47,30 +49,10 @@ public class DefaultInlineProcessor
     private int appendedNodeCount;
     private StringBuilder textBuffer = null;
     
-    public DefaultInlineProcessor(NodeFactory nodeFactory) {
+    public DefaultInlineProcessor(NodeFactory nodeFactory, List<InlineHandler> handlers) {
         this.nodeFactory = nodeFactory;
         this.handlers = new InlineHandler[MAX_TRIGGER_CODE + 1];
-    }
-    
-    /**
-     * Installs an inline handler.
-     * 
-     * @param newHandler the inline handler to install.
-     */
-    @Override
-    public void installHandler(InlineHandler newHandler) {
-        for (char letter: newHandler.triggerLetters()) {
-            if (letter >= MAX_TRIGGER_CODE) {
-                throw new IllegalArgumentException();
-            }
-            InlineHandler existingHandler = handlers[letter];
-            if (existingHandler != null) {
-                handlers[letter] = existingHandler.or(newHandler);
-            } else {
-                handlers[letter] = newHandler;
-            }
-        }
-        newHandler.bind(this);
+        installHandlers(handlers);
     }
     
     @Override
@@ -137,6 +119,32 @@ public class DefaultInlineProcessor
     }
 
     /* helper methods */
+    
+    private void installHandlers(List<InlineHandler> handlers) {
+        for (InlineHandler handler: handlers) {
+            installHandler(handler);
+        }
+    }
+ 
+    /**
+     * Installs an inline handler.
+     * 
+     * @param newHandler the inline handler to install.
+     */
+    private void installHandler(InlineHandler newHandler) {
+        for (char letter: newHandler.triggerLetters()) {
+            if (letter >= MAX_TRIGGER_CODE) {
+                throw new IllegalArgumentException();
+            }
+            InlineHandler existingHandler = handlers[letter];
+            if (existingHandler != null) {
+                handlers[letter] = existingHandler.or(newHandler);
+            } else {
+                handlers[letter] = newHandler;
+            }
+        }
+        newHandler.bind(this);
+    }
     
     private void resetProcessor(Text text) {
         this.firstText = text;

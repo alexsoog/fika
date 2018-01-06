@@ -13,12 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.block;
+package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.github.leadpony.fika.core.model.Block;
+import io.github.leadpony.fika.parsers.markdown.block.BasicBlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
+import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.ContainerBlockMatcher;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * Matcher for list items.
@@ -64,15 +69,15 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
     }
 
     @Override
-    public Result match(BlockInputSequence content) {
-        final boolean isBlank = content.isBlank();
+    public Result match(InputSequence input) {
+        final boolean isBlank = input.isBlank();
         if (isBlank) {
             this.lastBlankLineNo = lineNo();
-        } else if (lineNo() > 1 && !content.hasLeadingSpaces(indentSize)) {
+        } else if (lineNo() > 1 && !input.hasLeadingSpaces(indentSize)) {
             // Not indented.
-            return matchLazyContinuationLine(content);
+            return matchLazyContinuationLine(input);
         }
-        Result result = findAndInvokeChildMatcher(contentAfterMarker(content));
+        Result result = findAndInvokeChildMatcher(contentAfterMarker(input));
         if (result == Result.NOT_MATCHED) {
             if (++linesNotMatched >= 2) {
                 return Result.COMPLETED;
@@ -89,11 +94,11 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
     }
 
     @Override
-    public BlockMatcher interrupt(BlockInputSequence content) {
+    public BlockMatcher interrupt(InputSequence input) {
         assert(isInterruptible());
-        int indentSize = content.countLeadingSpaces(0, this.indentSize);
+        int indentSize = input.countLeadingSpaces(0, this.indentSize);
         if (indentSize < this.indentSize) {
-            return interrupterOfSameType(content);
+            return interrupterOfSameType(input);
         }
         return null;
     }
@@ -111,23 +116,23 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
         return nodeFactory().newListItem();
     }
     
-    private BlockInputSequence contentAfterMarker(BlockInputSequence content) {
-        if (content.isBlank()) {
-            return content;
+    private InputSequence contentAfterMarker(InputSequence input) {
+        if (input.isBlank()) {
+            return input;
         }
         int skipSize = this.indentSize;
-        if (skipSize > content.length()) {
-            skipSize = content.length();
+        if (skipSize > input.length()) {
+            skipSize = input.length();
         }
-        return content.subContent(skipSize);
+        return input.subSequence(skipSize);
     }
     
-    protected static int countSpacesAfterMarker(BlockInputSequence content, int offset) {
-        if (content.length() <= offset) {
+    protected static int countSpacesAfterMarker(InputSequence input, int offset) {
+        if (input.length() <= offset) {
             return 1;
         }
-        int spaces = content.countLeadingSpaces(offset);
-        if (offset + spaces >= content.length()) {
+        int spaces = input.countLeadingSpaces(offset);
+        if (offset + spaces >= input.length()) {
             spaces = 1;
         } else if (spaces > 4) {
             spaces = 1;
@@ -137,7 +142,7 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
 
     abstract boolean isSameTypeAs(ListItemMatcher other);
     
-    abstract BlockMatcher interrupterOfSameType(BlockInputSequence content);
+    abstract BlockMatcher interrupterOfSameType(InputSequence input);
 }
 
 /**
@@ -149,21 +154,21 @@ class BulletListItemMatcher extends ListItemMatcher {
 
     private static final String MARKERS = "+-*";
 
-    static BulletListItemMatcher matcher(BlockInputSequence content, int maxIndent) {
-        if (content.isEmpty()) {
+    static BulletListItemMatcher matcher(InputSequence input, int maxIndent) {
+        if (input.isEmpty()) {
             return null;
         }
-        int leadingSpaces = content.countLeadingSpaces(0, maxIndent);
-        char c = content.charAt(leadingSpaces);
+        int leadingSpaces = input.countLeadingSpaces(0, maxIndent);
+        char c = input.charAt(leadingSpaces);
         if (MARKERS.indexOf(c) < 0) {
             return null;
         }
-        int trailingSpaces = countSpacesAfterMarker(content, leadingSpaces + 1);
+        int trailingSpaces = countSpacesAfterMarker(input, leadingSpaces + 1);
         if (trailingSpaces == 0) {
             return null;
         }
         int indentSize = leadingSpaces + 1 + trailingSpaces;
-        boolean empty = indentSize >= content.length();
+        boolean empty = indentSize >= input.length();
         return new BulletListItemMatcher(indentSize, c, empty);
     }
     
@@ -182,8 +187,8 @@ class BulletListItemMatcher extends ListItemMatcher {
     }
     
     @Override
-    BlockMatcher interrupterOfSameType(BlockInputSequence content) {
-        BulletListItemMatcher m = matcher(content, indentSize() + 3);
+    BlockMatcher interrupterOfSameType(InputSequence input) {
+        BulletListItemMatcher m = matcher(input, indentSize() + 3);
         if (m != null && m.bullet == this.bullet) {
             return m;
         }
@@ -201,20 +206,20 @@ class OrderedListItemMatcher extends ListItemMatcher {
     
     private static final Pattern MARKER_PATTERN = Pattern.compile("^(\\d{1,9})([.)])");
     
-    static OrderedListItemMatcher matcher(BlockInputSequence content, int maxIndent) {
-        int leadingSpaces = content.countLeadingSpaces(0, maxIndent);
-        Matcher m = MARKER_PATTERN.matcher(content.subContent(leadingSpaces));
+    static OrderedListItemMatcher matcher(InputSequence input, int maxIndent) {
+        int leadingSpaces = input.countLeadingSpaces(0, maxIndent);
+        Matcher m = MARKER_PATTERN.matcher(input.subSequence(leadingSpaces));
         if (!m.find()) {
             return null;
         }
         int length = m.group().length();
-        int trailingSpace = countSpacesAfterMarker(content, leadingSpaces + length);
+        int trailingSpace = countSpacesAfterMarker(input, leadingSpaces + length);
         if (trailingSpace == 0) {
             return null;
         }
         int indentSize = leadingSpaces + length + trailingSpace;
         int number = Integer.parseInt(m.group(1));
-        boolean empty = indentSize >= content.length();
+        boolean empty = indentSize >= input.length();
         return new OrderedListItemMatcher(indentSize, number, m.group(2), empty);
     }
 
@@ -247,8 +252,8 @@ class OrderedListItemMatcher extends ListItemMatcher {
     }
 
     @Override
-    BlockMatcher interrupterOfSameType(BlockInputSequence content) {
-        OrderedListItemMatcher m = matcher(content, indentSize());
+    BlockMatcher interrupterOfSameType(InputSequence input) {
+        OrderedListItemMatcher m = matcher(input, indentSize());
         if (m != null && m.delimiter.equals(this.delimiter)) {
             return m;
         }

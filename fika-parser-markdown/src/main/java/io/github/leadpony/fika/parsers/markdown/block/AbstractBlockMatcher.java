@@ -17,11 +17,14 @@ package io.github.leadpony.fika.parsers.markdown.block;
 
 import io.github.leadpony.fika.core.model.Block;
 import io.github.leadpony.fika.core.model.NodeFactory;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
+ * Skeletal implementation of {@link BlockMatcher}.
+ * 
  * @author leadpony
  */
-abstract class AbstractBlockMatcher implements BlockMatcher {
+public abstract class AbstractBlockMatcher implements BlockMatcher {
 
     private Context context;
     private int firstLineNo;
@@ -38,14 +41,14 @@ abstract class AbstractBlockMatcher implements BlockMatcher {
     }
     
     @Override
-    public Result match(BlockInputSequence content) {
+    public Result match(InputSequence input) {
         return Result.NOT_MATCHED;
     }
     
     @Override
-    public BlockMatcher interrupt(BlockInputSequence content) {
+    public BlockMatcher interrupt(InputSequence input) {
         assert(isInterruptible());
-        return context().findInterruptingMatcher(content, this);
+        return context().findInterruptingMatcher(input, this);
     }
     
     @Override

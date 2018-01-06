@@ -32,13 +32,15 @@ import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.renderers.HtmlRenderer;
 import io.github.leadpony.fika.core.util.HtmlMinifier;
 import io.github.leadpony.fika.parsers.markdown.parser.MarkdownParserFactory;
+import io.github.leadpony.fika.parsers.markdown.parser.ProviderRegistry;
 
 /**
  * @author leadpony
  */
 public abstract class AbstractSpecTest {
    
-    private static final MarkdownParserFactory factory = new MarkdownParserFactory();
+    private static final MarkdownParserFactory factory = 
+            new MarkdownParserFactory(ProviderRegistry.getDefault());
 
     private final int index;
     protected final Fixture fixture;

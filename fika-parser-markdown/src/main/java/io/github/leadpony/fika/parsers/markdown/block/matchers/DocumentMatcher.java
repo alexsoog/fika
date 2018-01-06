@@ -13,40 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.block;
+package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
-import java.util.Collections;
-import java.util.Set;
-
+import io.github.leadpony.fika.core.model.Document;
+import io.github.leadpony.fika.parsers.markdown.block.BasicBlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.ContainerBlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
- * Factory for producing block matchers.
- * 
  * @author leadpony
  */
-public interface BlockMatcherFactory {
-
-    BlockType blockType();
+public class DocumentMatcher extends ContainerBlockMatcher {
     
-    default int precedence() {
-        return blockType().precedence();
+    public DocumentMatcher() {
+    }
+   
+    @Override
+    public BlockType blockType() {
+        return BasicBlockType.DOCUMENT;
     }
     
-    default Set<? extends BlockType> interruptible() {
-        return Collections.emptySet();
+    @Override
+    public Result match(InputSequence input) {
+        super.match(input);
+        return Result.CONTINUED;
     }
     
-    /**
-     * Creates a new block matcher for the given content.
-     * 
-     * @param input the content of the line.
-     * 
-     * @return new matcher if found.
-     */
-    BlockMatcher newMatcher(InputSequence input);
-    
-    default BlockMatcher newInterrupter(InputSequence input, BlockMatcher current) {
-        return null;
+    @Override
+    protected Document buildBlock() {
+        return nodeFactory().newDocument();
     }
 }

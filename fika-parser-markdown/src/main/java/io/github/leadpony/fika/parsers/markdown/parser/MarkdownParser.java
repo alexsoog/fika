@@ -18,6 +18,8 @@ package io.github.leadpony.fika.parsers.markdown.parser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import io.github.leadpony.fika.core.model.Document;
@@ -26,9 +28,11 @@ import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserException;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherChain;
+import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
+import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherProvider;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProviderRegistry;
 import io.github.leadpony.fika.parsers.markdown.inline.DefaultInlineProcessor;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
 
 /**
  * @author leadpony
@@ -39,10 +43,10 @@ class MarkdownParser implements Parser {
     private final BlockMatcherChain blockMatcherChain;
     private final DefaultInlineProcessor inlineProcessor;
     
-    public MarkdownParser(Reader reader, NodeFactory nodeFactory) {
+    public MarkdownParser(Reader reader, NodeFactory nodeFactory, ProviderRegistry providers) {
         this.reader = reader;
-        this.blockMatcherChain = createBlockMatcherChain(nodeFactory);
-        this.inlineProcessor = createInlineProcessor(nodeFactory);
+        this.blockMatcherChain = createBlockMatcherChain(nodeFactory, providers);
+        this.inlineProcessor = createInlineProcessor(nodeFactory, providers);
     }
 
     @Override
@@ -76,17 +80,20 @@ class MarkdownParser implements Parser {
         inlineProcessor.processInlines(text);
     }
     
-    private BlockMatcherChain createBlockMatcherChain(NodeFactory nodeFactory) {
-        return new BlockMatcherChain(nodeFactory);
+    private BlockMatcherChain createBlockMatcherChain(NodeFactory nodeFactory, ProviderRegistry providers) {
+        List<BlockMatcherFactory> factories = new ArrayList<>();
+        for (BlockMatcherProvider provider: providers.blockMatcherProviders()) {
+            factories.add(provider.newMatcherFactory());
+        }
+        return new BlockMatcherChain(nodeFactory, factories);
     }
     
-    private DefaultInlineProcessor createInlineProcessor(NodeFactory nodeFactory) {
-        InlineHandlerProviderRegistry registry = InlineHandlerProviderRegistry.get();
-        DefaultInlineProcessor processor = new DefaultInlineProcessor(nodeFactory);
-        registry.providers().stream()
-                .map(InlineHandlerProvider::newHandler)
-                .forEach(processor::installHandler);
-        return processor;
+    private DefaultInlineProcessor createInlineProcessor(NodeFactory nodeFactory, ProviderRegistry providers) {
+        List<InlineHandler> handlers = new ArrayList<>();
+        for (InlineHandlerProvider provider: providers.inlineHandlerProviders()) {
+            handlers.add(provider.newHandler());
+        }
+        return new DefaultInlineProcessor(nodeFactory, handlers);
     }
 }
 

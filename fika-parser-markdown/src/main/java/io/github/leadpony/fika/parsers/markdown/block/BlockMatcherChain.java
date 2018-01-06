@@ -16,22 +16,27 @@
 package io.github.leadpony.fika.parsers.markdown.block;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import io.github.leadpony.fika.core.model.Document;
 import io.github.leadpony.fika.core.model.NodeFactory;
 import io.github.leadpony.fika.core.model.Text;
+import io.github.leadpony.fika.parsers.markdown.block.matchers.DocumentMatcher;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * @author leadpony
  */
 public class BlockMatcherChain {
     
+    private final BlockMatcherFinder finder;
     private final Context context;
     private final DocumentMatcher rootMatcher;
     
-    public BlockMatcherChain(NodeFactory nodeFactory) {
-        this.context = createContext(nodeFactory);
+    public BlockMatcherChain(NodeFactory nodeFactory, List<BlockMatcherFactory> factories) {
+        this.finder = new BlockMatcherFinder(factories);
+        this.context = new Context(nodeFactory, finder);
         this.rootMatcher = new DocumentMatcher();
         this.rootMatcher.bind(this.context);
     }
@@ -48,11 +53,6 @@ public class BlockMatcherChain {
     
     public Set<Text> getInlines() {
         return context.inlines;
-    }
-    
-    private Context createContext(NodeFactory nodeFactory) {
-        BlockMatcherFinder finder = BlockMatcherFinder.builder().build();
-        return new Context(nodeFactory, finder);
     }
     
     private static class Context implements BlockMatcher.Context {
@@ -74,12 +74,12 @@ public class BlockMatcherChain {
         }
 
         @Override
-        public BlockMatcher findMatcher(BlockInputSequence content) {
+        public BlockMatcher findMatcher(InputSequence content) {
             return finder.findMatcher(content);
         }
 
         @Override
-        public BlockMatcher findInterruptingMatcher(BlockInputSequence content, BlockMatcher current) {
+        public BlockMatcher findInterruptingMatcher(InputSequence content, BlockMatcher current) {
             return finder.findInterruptingMatcher(content, current);
         }
     

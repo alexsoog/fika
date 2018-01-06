@@ -18,6 +18,7 @@ package io.github.leadpony.fika.parsers.markdown.block;
 import io.github.leadpony.fika.core.model.Block;
 import io.github.leadpony.fika.core.model.NodeFactory;
 import io.github.leadpony.fika.core.model.Text;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * @author leadpony
@@ -57,17 +58,17 @@ public interface BlockMatcher {
     
     int lineNo();
 
-    Result match(BlockInputSequence content);
+    Result match(InputSequence input);
 
     default boolean isInterruptible() {
         return false;
     }
     
-    default BlockMatcher interrupt(BlockInputSequence content) {
+    default BlockMatcher interrupt(InputSequence content) {
         return null;
     }
     
-    default Result continueLazily(BlockInputSequence content) {
+    default Result continueLazily(InputSequence content) {
         return Result.NOT_MATCHED;
     }
     
@@ -90,9 +91,9 @@ public interface BlockMatcher {
          */
         int lineNo();
         
-        BlockMatcher findMatcher(BlockInputSequence content);
+        BlockMatcher findMatcher(InputSequence content);
 
-        BlockMatcher findInterruptingMatcher(BlockInputSequence content, BlockMatcher current);
+        BlockMatcher findInterruptingMatcher(InputSequence content, BlockMatcher current);
         
         NodeFactory nodeFactory();
         

@@ -69,7 +69,7 @@ class OffsetInputSequence implements InputSequence {
     }
     
     @Override
-    public InputSequence subContent(int beginIndex, int endIndex) {
+    public InputSequence subSequence(int beginIndex, int endIndex) {
         if (beginIndex < 0 || endIndex < 0 || beginIndex > endIndex || endIndex > length()) {
             throw new IndexOutOfBoundsException();
         }

@@ -13,19 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.inline;
-
-import io.github.leadpony.fika.core.model.Text;
+package io.github.leadpony.fika.parsers.markdown.block;
 
 /**
  * @author leadpony
  */
-public interface InlineProcessor {
+public interface BlockMatcherProvider {
     
-    /**
-     * Processes all inline nodes found in the specified text node.
-     * 
-     * @param text the text to process.
-     */
-    void processInlines(Text text);
+    BlockMatcherFactory newMatcherFactory();
 }

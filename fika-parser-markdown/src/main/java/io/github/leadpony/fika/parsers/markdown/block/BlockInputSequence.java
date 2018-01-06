@@ -15,8 +15,6 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
-import static io.github.leadpony.fika.parsers.markdown.common.Characters.SPACE;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -68,11 +66,6 @@ class BlockInputSequence implements InputSequence {
     }
     
     @Override
-    public CharSequence subSequence(int start, int end) {
-        return subContent(start, end);
-    }
-    
-    @Override
     public String toString() {
         if (beginIndex == 0 && endIndex == line.length()) {
             return line;
@@ -96,15 +89,15 @@ class BlockInputSequence implements InputSequence {
     /* */
     
     @Override
-    public BlockInputSequence subContent(int beginIndex) {
+    public BlockInputSequence subSequence(int beginIndex) {
         if (beginIndex == 0) {
             return this;
         }
-        return subContent(beginIndex, length());
+        return subSequence(beginIndex, length());
     }
 
     @Override
-    public BlockInputSequence subContent(int beginIndex, int endIndex) {
+    public BlockInputSequence subSequence(int beginIndex, int endIndex) {
         if (beginIndex < 0 || endIndex < 0 || beginIndex > endIndex || endIndex > length) {
             throw new IndexOutOfBoundsException();
         }
@@ -114,56 +107,6 @@ class BlockInputSequence implements InputSequence {
         int newBeginIndex = this.beginIndex + beginIndex;
         int newEndIndex = this.beginIndex + endIndex;
         return new BlockInputSequence(this.line, this.tabs, newBeginIndex, newEndIndex);
-    }
-    
-    BlockInputSequence removeIndentUpTo(int size) {
-        int i = 0;
-        while (i < size) {
-            if (charAt(i) != SPACE) {
-                break;
-            }
-            ++i;
-        }
-        return subContent(i);
-    }
-    
-    BlockInputSequence trimSpaces() {
-        int i = 0;
-        while (i < length) {
-            char c = charAt(i);
-            if (c != SPACE) {
-                break;
-            }
-            ++i;
-        }
-        int beginIndex = i;
-        i = length() - 1;
-        while (i > beginIndex) {
-            char c = charAt(i);
-            if (c != SPACE) {
-                break;
-            }
-            --i;
-        }
-        int endIndex = i + 1;
-        return subContent(beginIndex, endIndex);
-    }
-    
-    BlockInputSequence trimLeadingSpaces() {
-        int i = 0;
-        while (i < length) {
-            char c = charAt(i);
-            if (c != SPACE) {
-                break;
-            }
-            ++i;
-        }
-        return subContent(i, length);
-    }
-    
-    BlockInputSequence trimSmallIndent() {
-        int beginIndex = countLeadingSpaces(0, 3);
-        return subContent(beginIndex, length());
     }
     
     @Override
