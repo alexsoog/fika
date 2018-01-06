@@ -25,7 +25,8 @@ import java.util.BitSet;
 public final class Characters {
     
     public static final char SPACE = '\u0020';
-
+    public static final int REPLACEMENT_CHARACTER = '\uFFFD';
+    
     private static final char[] ASCII_PUNCTUATIONS = {
         '!', '"', '#', '$', '%', '&', '\'', '(', ')', '*', '+', ',',
         '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\',
@@ -74,6 +75,13 @@ public final class Characters {
             return true;
         }
         return false;
+    }
+    
+    public static int sanitize(int c) {
+        if (c == 0 || !Character.isValidCodePoint(c)) {
+            return REPLACEMENT_CHARACTER;
+        }
+        return c;
     }
 
     private Characters() {

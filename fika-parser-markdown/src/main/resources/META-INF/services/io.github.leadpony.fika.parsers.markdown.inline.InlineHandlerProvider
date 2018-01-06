@@ -6,3 +6,4 @@ io.github.leadpony.fika.parsers.markdown.inline.handlers.UnderscoreEmphasisHandl
 io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkHandlerProvider
 io.github.leadpony.fika.parsers.markdown.inline.handlers.ImageHandlerProvider
 io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkCloserHandlerProvider
+io.github.leadpony.fika.parsers.markdown.inline.handlers.CharacterReferenceHandlerProvider

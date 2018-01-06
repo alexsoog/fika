@@ -32,10 +32,10 @@ public class DefaultInlineProcessor
     private static final int MAX_TRIGGER_CODE = 127;
     
     private final InlineHandler[] handlers;
-    private final DelimiterProcessor delimiterProcessor = new DelimiterProcessor();
   
     private final NodeFactory nodeFactory;
     private final DelimiterStack delimiterStack = new DelimiterStack();
+    private final DelimiterProcessor delimiterProcessor = new DelimiterProcessor(delimiterStack);
 
     private Text firstText;
     private Node parentNode;
@@ -117,14 +117,19 @@ public class DefaultInlineProcessor
     public final void appendContent(char c) {
         this.textBuffer.append(c);
     }
+   
+    @Override
+    public void appendContent(int codePoint) {
+        this.textBuffer.appendCodePoint(codePoint);
+    }
     
     @Override
-    public final void appendContent(String s) {
+    public void appendContent(String s) {
         this.textBuffer.append(s);
     }
 
     @Override
-    public final void appendContent(int length) {
+    public void appendContentTo(int length) {
         int beginIndex = currentIndex;
         int endIndex = beginIndex + length;
         String s = input.substring(beginIndex, endIndex);
@@ -224,7 +229,7 @@ public class DefaultInlineProcessor
     private void processDelimiters() {
         DelimiterStack delimiterStack = getDelimiterStack();
         if (delimiterStack.size() > 0) {
-            this.delimiterProcessor.processDelimiters(delimiterStack, null);
+            this.delimiterProcessor.processDelimiters(null);
         }
     }
 }

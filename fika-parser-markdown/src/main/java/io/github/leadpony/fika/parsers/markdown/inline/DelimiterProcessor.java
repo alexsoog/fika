@@ -24,16 +24,20 @@ import java.util.Map;
  */
 public class DelimiterProcessor {
     
-    private DelimiterStack stack;
+    private final DelimiterStack stack;
+
     private Delimiter stackBottom;
     private final Map<String, Delimiter> openersBottom = new HashMap<>();
-
-    public void processDelimiters(DelimiterStack stack, Delimiter bottom) {
+    
+    public DelimiterProcessor(DelimiterStack stack) {
         this.stack = stack;
+    }
+
+    public void processDelimiters(Delimiter bottom) {
         this.stackBottom = bottom;
         this.openersBottom.clear();
         pairAll();
-        stack.clear();
+        stack.removeAfter(bottom);
     }
     
     private void pairAll() {

@@ -55,7 +55,7 @@ class CodeSpanHandler extends AbstractInlineHandler {
             }
             i += found;
         }
-        getAppender().appendContent(backticks);
+        getAppender().appendContentTo(backticks);
         return backticks;
     }
     

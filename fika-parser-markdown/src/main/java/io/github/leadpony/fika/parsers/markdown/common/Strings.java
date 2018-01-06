@@ -17,6 +17,10 @@ package io.github.leadpony.fika.parsers.markdown.common;
 
 import static io.github.leadpony.fika.parsers.markdown.common.Characters.isPunctuation;
 import static io.github.leadpony.fika.parsers.markdown.common.Characters.isWhitespace;
+import static io.github.leadpony.fika.parsers.markdown.common.Characters.sanitize;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author leadpony
@@ -82,6 +86,52 @@ public final class Strings {
             }
         }
         return s;
+    }
+    
+    public static final Pattern CHARACTER_REFERENCE_PATTERN = Pattern.compile(
+            "&((#x([0-9a-f]{1,8}))|(#(\\d{1,8}))|(\\w+));",
+            Pattern.CASE_INSENSITIVE);
+
+    /**
+     * Expands entity and numeric character references in specified string.
+     * 
+     * @param s the string to expand.
+     * @return expanded string.
+     */
+    public static String expandReferences(String s) {
+        Matcher m = CHARACTER_REFERENCE_PATTERN.matcher(s);
+        if (!m.find()) {
+            return s;
+        }
+        StringBuilder b = new StringBuilder();
+        EntityResolver resolver = EntityResolver.get();
+        int last = 0;
+        do {
+            b.append(s.substring(last, m.start()));
+            if (m.group(3) != null) {
+                // Hexadecimal numeric character
+                int c = Integer.parseInt(m.group(3), 16);
+                b.appendCodePoint(sanitize(c));
+            } else if (m.group(5) != null) {
+                // Decimal numeric character
+                int c = Integer.parseInt(m.group(5));
+                b.appendCodePoint(sanitize(c));
+            } else {
+                // Entity reference
+                String resolved = resolver.resolve(m.group(1));
+                if (resolved != null) {
+                    b.append(resolved);
+                } else {
+                    b.append(m.group(0));
+                }
+            }
+            last = m.end();
+        } while (m.find());
+        
+        if (last < s.length()) {
+            b.append(s.substring(last));
+        }
+        return b.toString();
     }
     
     private Strings() {

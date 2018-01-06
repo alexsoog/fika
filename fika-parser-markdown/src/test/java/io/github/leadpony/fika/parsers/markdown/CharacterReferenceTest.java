@@ -25,20 +25,19 @@ import org.junit.runners.Parameterized.Parameters;
  * @author leadpony
  */
 @RunWith(Parameterized.class)
-public class LinkTest extends AbstractSpecTest {
+public class CharacterReferenceTest extends AbstractSpecTest {
 
-    public LinkTest(int index, String source, String expected) {
+    public CharacterReferenceTest(int index, String source, String expected) {
         super(index, source, expected);
     }
   
     @Parameters(name = "{0}: {1}")
     public static Iterable<Object[]> parameters() {
-        return parameters("/links.json");
+        return parameters("/character-references.json");
     }
 
     @Before
     public void setUp() {
-        //Assume.assumeTrue(index() == 474);
-        Assume.assumeTrue(index() <= 497);
+        //Assume.assumeTrue(index() == 302);
     }
 }

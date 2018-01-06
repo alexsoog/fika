@@ -15,6 +15,7 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
+import static io.github.leadpony.fika.parsers.markdown.common.Strings.expandReferences;
 import static io.github.leadpony.fika.parsers.markdown.common.Strings.unescape;
 
 import java.util.Iterator;
@@ -140,9 +141,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
     }
     
     private void processDelimitersInLinkTitle(Delimiter opener) {
-        context().getDelimiterProcessor().processDelimiters(
-                getDelimiterStack(), 
-                opener);
+        context().getDelimiterProcessor().processDelimiters(opener);
     }
     
     private static String normalizeDestination(String s) {
@@ -154,6 +153,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
                 s = s.substring(1, s.length() - 1);
             }
         }
+        s = expandReferences(s);
         return unescape(s);
     }
     
@@ -170,6 +170,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
                 s = s.substring(1, s.length() - 1);
             }
         }
+        s = expandReferences(s);
         return unescape(s);
     }
     

@@ -46,9 +46,8 @@ public class DelimiterStack extends AbstractCollection<Delimiter> {
         if (last == null) {
             first = last = e;
         } else {
-            ((Entry)last).next = e;
-            ((Entry)e).previous = last;
-            ((Entry)e).next = null;
+            setNext(last, e);
+            setPreviousAndNext(e, last, null);
             last = e;
         }
         this.size++;
@@ -84,12 +83,12 @@ public class DelimiterStack extends AbstractCollection<Delimiter> {
             this.last = previous;
         }
         if (previous != null) {
-            ((Entry)previous).next = next;
+            setNext(previous, next);
         }
         if (next != null) {
-            ((Entry)next).previous = previous;
+            setPrevious(next, previous);
         }
-        ((Entry)entry).previous = ((Entry)entry).next = null;
+        setPreviousAndNext(entry, null, null);
         this.size--;
         return true;
     }
@@ -99,12 +98,33 @@ public class DelimiterStack extends AbstractCollection<Delimiter> {
         return size;
     }
     
-    public Delimiter getFirst() {
+    /**
+     * Retrieves, but does not remove, the first element of this stack, 
+     * or returns null if this stack is empty.
+     * 
+     * @return the head of this stack, or {@code null} if this stack is empty.
+     */
+    public Delimiter peekFirst() {
         return first;
     }
 
-    public Delimiter getLast() {
+    /**
+     * Retrieves, but does not remove, the last element of this stack, 
+     * or returns null if this stack is empty.
+     * 
+     * @return the tail of this stack, or {@code null} if this stack is empty.
+     */
+    public Delimiter peekLast() {
         return last;
+    }
+    
+    public void removeAfter(Delimiter newLast) {
+        if (newLast == null) {
+            clear();
+        } else {
+            this.last = newLast;
+            setNext(newLast, null);
+        }
     }
     
     public Iterator<Delimiter> iterator(Delimiter first) {
@@ -117,6 +137,19 @@ public class DelimiterStack extends AbstractCollection<Delimiter> {
     
     public Iterator<Delimiter> descendingIterator(Delimiter first) {
         return new DescendingIterator(first);
+    }
+    
+    private static void setPrevious(Entry entry, Delimiter previous) {
+        entry.previous = previous;
+    }
+
+    private static void setNext(Entry entry, Delimiter next) {
+        entry.next = next;
+    }
+    
+    private static void setPreviousAndNext(Entry entry, Delimiter previous, Delimiter next) {
+        entry.previous = previous;
+        entry.next = next;
     }
     
     /**

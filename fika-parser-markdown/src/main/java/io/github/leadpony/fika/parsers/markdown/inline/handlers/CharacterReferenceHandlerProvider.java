@@ -13,22 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.inline;
+package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
-import io.github.leadpony.fika.core.model.Node;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
 
 /**
  * @author leadpony
  */
-public interface InlineAppender {
-    
-    void appendNode(Node node);
-    
-    void appendContent(char c);
+public class CharacterReferenceHandlerProvider implements InlineHandlerProvider {
 
-    void appendContent(int codePoint);
-
-    void appendContent(String s);
-
-    void appendContentTo(int length);
+    @Override
+    public InlineHandler newHandler() {
+        return new CharacterReferenceHandler();
+    }
 }
