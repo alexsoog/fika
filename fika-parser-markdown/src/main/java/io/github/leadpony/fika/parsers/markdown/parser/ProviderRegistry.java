@@ -19,16 +19,33 @@ import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherProvider;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
 
 /**
+ * Registry for block matcher and inline handler providers.
+ * 
  * @author leadpony
  */
 public interface ProviderRegistry {
     
+    /**
+     * Returns the default registry.
+     * 
+     * @return the default registry.
+     */
     static ProviderRegistry getDefault() {
         return DefaultProviderRegistry.get();
     }
     
+    /**
+     * Returns the registered block matcher providers.
+     * 
+     * @return block matcher providers.
+     */
     Iterable<BlockMatcherProvider> blockMatcherProviders();
 
+    /**
+     * Returns the registered inline handler providers.
+     * 
+     * @return inline handler providers.
+     */
     Iterable<InlineHandlerProvider> inlineHandlerProviders();
     
     ProviderRegistry register(BlockMatcherProvider blockProvider);

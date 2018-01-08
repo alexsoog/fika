@@ -60,7 +60,7 @@ class IndentedCodeMatcher extends AbstractBlockMatcher {
         for (int i = 1; i <= lastNonBlankLineNo; ++i) {
             builder.append(lines.get(i - 1)).append('\n');
         }
-        CodeBlock block = nodeFactory().newCodeBlock();
+        CodeBlock block = getNodeFactory().newCodeBlock();
         block.setContent(builder.toString());
         return block;
     }

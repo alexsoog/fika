@@ -52,8 +52,8 @@ class HeadingMatcher extends AbstractBlockMatcher {
     
     @Override
     protected Heading buildBlock() {
-        Heading block = nodeFactory().newHeading(this.level);
-        Text text = nodeFactory().newText();
+        Heading block = getNodeFactory().newHeading(this.level);
+        Text text = getNodeFactory().newText();
         text.setContent(this.title);
         block.appendChild(text);
         context().addInline(text);
@@ -78,7 +78,7 @@ class HeadingMatcherFactory implements BlockMatcherFactory {
 
     @Override
     public Set<? extends BlockType> interruptible() {
-        return EnumSet.of(BasicBlockType.PARAGRAPH);
+        return EnumSet.of(BasicBlockType.PARAGRAPH, BasicBlockType.LINK_DEFINITION);
     }
     
     @Override

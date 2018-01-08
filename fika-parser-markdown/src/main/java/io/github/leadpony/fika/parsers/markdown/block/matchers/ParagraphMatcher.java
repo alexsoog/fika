@@ -36,19 +36,13 @@ import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
  */
 class ParagraphMatcher extends AbstractBlockMatcher {
     
-    @FunctionalInterface
-    private static interface BlockProvider {
-        Block provide(BlockMatcher.Context context);
-    }
-    
-    private final List<String> lines;
-    private BlockProvider blockProvider;
+    private final List<String> lines = new ArrayList<>();
+    private BlockBuilder blockBuilder;
     
     private static final Pattern UNDERLINE_PATTERN = Pattern.compile("\\u0020{0,3}(=+|-{2,})\\u0020*");
-    
+
     ParagraphMatcher() {
-        this.lines = new ArrayList<>();
-        this.blockProvider = null;
+        this.blockBuilder = null;
     }
   
     @Override
@@ -61,7 +55,7 @@ class ParagraphMatcher extends AbstractBlockMatcher {
         if (lineNo() <= 1) {
             appendLine(input);
             return Result.CONTINUED;
-        } else if (input.isBlank() || this.blockProvider != null) {
+        } else if (input.isBlank() || this.blockBuilder != null) {
             return Result.COMPLETED;
         }
         appendLine(input);
@@ -94,17 +88,12 @@ class ParagraphMatcher extends AbstractBlockMatcher {
     
     @Override
     protected Block buildBlock() {
-        Block block = null;
-        if (this.blockProvider != null) {
-            block = this.blockProvider.provide(context());
+        String content = buildContent();
+        if (this.blockBuilder != null) {
+            return this.blockBuilder.buildBlock(content);
         } else {
-            block = nodeFactory().newParagraph();
+            return buildParagraph(content);
         }
-        Text text = nodeFactory().newText();
-        text.setContent(buildContent());
-        block.appendChild(text);
-        context().addInline(text);
-        return block;
     }
     
     private void appendLine(InputSequence input) {
@@ -120,10 +109,19 @@ class ParagraphMatcher extends AbstractBlockMatcher {
         int index = input.countLeadingSpaces(0, 3);
         char c = input.charAt(index);
         int level = (c == '=') ? 1 : 2;
-        this.blockProvider = HeadingProvider.of(level);
+        this.blockBuilder = new HeadingBuilder(level);
         return true;
     }
-
+    
+    private Block buildParagraph(String content) {
+        if (content.isEmpty()) {
+            return null;
+        }
+        Block block = getNodeFactory().newParagraph();
+        block.appendChild(addText(content));
+        return block;
+    }
+    
     /**
      * Builds the content of current paragraph.
      * 
@@ -136,27 +134,32 @@ class ParagraphMatcher extends AbstractBlockMatcher {
         String content = lines.stream().collect(Collectors.joining("\n"));
         return trimWhitespace(content);    
     }
+    
+    private Text addText(String content) {
+        Text text = getNodeFactory().newText();
+        text.setContent(content);
+        context().addInline(text);
+        return text;
+    }
 
-    private static class HeadingProvider implements BlockProvider {
+    @FunctionalInterface
+    private static interface BlockBuilder {
+        Block buildBlock(String content);
+    }
+    
+    private class HeadingBuilder implements BlockBuilder {
         
-        static final HeadingProvider instances[] = {
-            new HeadingProvider(1),
-            new HeadingProvider(2)
-        };
+        private int level;
         
-        final int level;
-        
-        static BlockProvider of(int level) {
-            return instances[level - 1];
-        }
-        
-        private HeadingProvider(int level) {
+        public HeadingBuilder(int level) {
             this.level = level;
         }
     
         @Override
-        public Block provide(BlockMatcher.Context context) {
-            return context.nodeFactory().newHeading(this.level);
+        public Block buildBlock(String content) {
+            Block block = getNodeFactory().newHeading(this.level);
+            block.appendChild(addText(content));
+            return block;
         }
     }
 }    

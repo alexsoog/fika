@@ -22,6 +22,7 @@ import java.util.List;
 import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.NodeFactory;
 import io.github.leadpony.fika.core.model.Text;
+import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionMap;
 
 /**
  * Default implementation of {@link InlineProcessor}.
@@ -36,6 +37,7 @@ public class DefaultInlineProcessor
     private final InlineHandler[] handlers;
   
     private final NodeFactory nodeFactory;
+    private final LinkDefinitionMap linkDefinitionMap;
     private final DelimiterStack delimiterStack = new DelimiterStack();
     private final DelimiterProcessor delimiterProcessor = new DelimiterProcessor(delimiterStack);
 
@@ -49,8 +51,9 @@ public class DefaultInlineProcessor
     private int appendedNodeCount;
     private StringBuilder textBuffer = null;
     
-    public DefaultInlineProcessor(NodeFactory nodeFactory, List<InlineHandler> handlers) {
+    public DefaultInlineProcessor(NodeFactory nodeFactory, LinkDefinitionMap linkDefinitionMap, List<InlineHandler> handlers) {
         this.nodeFactory = nodeFactory;
+        this.linkDefinitionMap = linkDefinitionMap; 
         this.handlers = new InlineHandler[MAX_TRIGGER_CODE + 1];
         installHandlers(handlers);
     }
@@ -82,6 +85,11 @@ public class DefaultInlineProcessor
     @Override
     public DelimiterProcessor getDelimiterProcessor() {
         return delimiterProcessor;
+    }
+   
+    @Override
+    public LinkDefinitionMap getLinkDefinitionMap() {
+        return linkDefinitionMap;
     }
     
     /* InlineAppender interface */

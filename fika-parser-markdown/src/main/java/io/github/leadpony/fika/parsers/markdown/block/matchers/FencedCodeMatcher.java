@@ -67,7 +67,7 @@ class FencedCodeMatcher extends AbstractBlockMatcher {
 
     @Override
     protected Block buildBlock() {
-        CodeBlock block = nodeFactory().newCodeBlock();
+        CodeBlock block = getNodeFactory().newCodeBlock();
         block.setContent(builder.toString());
         String infoString = unescape(expandReferences(this.infoString));
         String[] words = infoString.split("\\s+");
@@ -134,7 +134,7 @@ class FencedCodeMatcherFactory implements BlockMatcherFactory {
     
     @Override
     public Set<? extends BlockType> interruptible() {
-        return EnumSet.of(BasicBlockType.PARAGRAPH);
+        return EnumSet.of(BasicBlockType.PARAGRAPH, BasicBlockType.LINK_DEFINITION);
     }
 
     @Override

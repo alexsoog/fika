@@ -1,0 +1,186 @@
+[
+  {
+    "end_line": 2789,
+    "section": "Link reference definitions",
+    "html": "<p><a href=\"/url\" title=\"title\">foo</a></p>\n",
+    "markdown": "[foo]: /url \"title\"\n\n[foo]\n",
+    "example": 159,
+    "start_line": 2783
+  },
+  {
+    "end_line": 2800,
+    "section": "Link reference definitions",
+    "html": "<p><a href=\"/url\" title=\"the title\">foo</a></p>\n",
+    "markdown": "   [foo]: \n      /url  \n           'the title'  \n\n[foo]\n",
+    "example": 160,
+    "start_line": 2792
+  },
+  {
+    "end_line": 2809,
+    "section": "Link reference definitions",
+    "html": "<p><a href=\"my_(url)\" title=\"title (with parens)\">Foo*bar]</a></p>\n",
+    "markdown": "[Foo*bar\\]]:my_(url) 'title (with parens)'\n\n[Foo*bar\\]]\n",
+    "example": 161,
+    "start_line": 2803
+  },
+  {
+    "end_line": 2820,
+    "section": "Link reference definitions",
+    "html": "<p><a href=\"my%20url\" title=\"title\">Foo bar</a></p>\n",
+    "markdown": "[Foo bar]:\n<my%20url>\n'title'\n\n[Foo bar]\n",
+    "example": 162,
+    "start_line": 2812
+  },
+  {
+    "end_line": 2839,
+    "section": "Link reference definitions",
+    "html": "<p><a href=\"/url\" title=\"\ntitle\nline1\nline2\n\">foo</a></p>\n",
+    "markdown": "[foo]: /url '\ntitle\nline1\nline2\n'\n\n[foo]\n",
+    "example": 163,
+    "start_line": 2825
+  },
+  {
+    "end_line": 2854,
+    "section": "Link reference definitions",
+    "html": "<p>[foo]: /url 'title</p>\n<p>with blank line'</p>\n<p>[foo]</p>\n",
+    "markdown": "[foo]: /url 'title\n\nwith blank line'\n\n[foo]\n",
+    "example": 164,
+    "start_line": 2844
+  },
+  {
+    "end_line": 2866,
+    "section": "Link reference definitions",
+    "html": "<p><a href=\"/url\">foo</a></p>\n",
+    "markdown": "[foo]:\n/url\n\n[foo]\n",
+    "example": 165,
+    "start_line": 2859
+  },
+  {
+    "end_line": 2878,
+    "section": "Link reference definitions",
+    "html": "<p>[foo]:</p>\n<p>[foo]</p>\n",
+    "markdown": "[foo]:\n\n[foo]\n",
+    "example": 166,
+    "start_line": 2871
+  },
+  {
+    "end_line": 2890,
+    "section": "Link reference definitions",
+    "html": "<p><a href=\"/url%5Cbar*baz\" title=\"foo&quot;bar\\baz\">foo</a></p>\n",
+    "markdown": "[foo]: /url\\bar\\*baz \"foo\\\"bar\\baz\"\n\n[foo]\n",
+    "example": 167,
+    "start_line": 2884
+  },
+  {
+    "end_line": 2901,
+    "section": "Link reference definitions",
+    "html": "<p><a href=\"url\">foo</a></p>\n",
+    "markdown": "[foo]\n\n[foo]: url\n",
+    "example": 168,
+    "start_line": 2895
+  },
+  {
+    "end_line": 2914,
+    "section": "Link reference definitions",
+    "html": "<p><a href=\"first\">foo</a></p>\n",
+    "markdown": "[foo]\n\n[foo]: first\n[foo]: second\n",
+    "example": 169,
+    "start_line": 2907
+  },
+  {
+    "end_line": 2926,
+    "section": "Link reference definitions",
+    "html": "<p><a href=\"/url\">Foo</a></p>\n",
+    "markdown": "[FOO]: /url\n\n[Foo]\n",
+    "example": 170,
+    "start_line": 2920
+  },
+  {
+    "end_line": 2935,
+    "section": "Link reference definitions",
+    "html": "<p><a href=\"/%CF%86%CE%BF%CF%85\">αγω</a></p>\n",
+    "markdown": "[ΑΓΩ]: /φου\n\n[αγω]\n",
+    "example": 171,
+    "start_line": 2929
+  },
+  {
+    "end_line": 2944,
+    "section": "Link reference definitions",
+    "html": "",
+    "markdown": "[foo]: /url\n",
+    "example": 172,
+    "start_line": 2941
+  },
+  {
+    "end_line": 2956,
+    "section": "Link reference definitions",
+    "html": "<p>bar</p>\n",
+    "markdown": "[\nfoo\n]: /url\nbar\n",
+    "example": 173,
+    "start_line": 2949
+  },
+  {
+    "end_line": 2966,
+    "section": "Link reference definitions",
+    "html": "<p>[foo]: /url &quot;title&quot; ok</p>\n",
+    "markdown": "[foo]: /url \"title\" ok\n",
+    "example": 174,
+    "start_line": 2962
+  },
+  {
+    "end_line": 2976,
+    "section": "Link reference definitions",
+    "html": "<p>&quot;title&quot; ok</p>\n",
+    "markdown": "[foo]: /url\n\"title\" ok\n",
+    "example": 175,
+    "start_line": 2971
+  },
+  {
+    "end_line": 2990,
+    "section": "Link reference definitions",
+    "html": "<pre><code>[foo]: /url &quot;title&quot;\n</code></pre>\n<p>[foo]</p>\n",
+    "markdown": "    [foo]: /url \"title\"\n\n[foo]\n",
+    "example": 176,
+    "start_line": 2982
+  },
+  {
+    "end_line": 3006,
+    "section": "Link reference definitions",
+    "html": "<pre><code>[foo]: /url\n</code></pre>\n<p>[foo]</p>\n",
+    "markdown": "```\n[foo]: /url\n```\n\n[foo]\n",
+    "example": 177,
+    "start_line": 2996
+  },
+  {
+    "end_line": 3020,
+    "section": "Link reference definitions",
+    "html": "<p>Foo\n[bar]: /baz</p>\n<p>[bar]</p>\n",
+    "markdown": "Foo\n[bar]: /baz\n\n[bar]\n",
+    "example": 178,
+    "start_line": 3011
+  },
+  {
+    "end_line": 3035,
+    "section": "Link reference definitions",
+    "html": "<h1><a href=\"/url\">Foo</a></h1>\n<blockquote>\n<p>bar</p>\n</blockquote>\n",
+    "markdown": "# [Foo]\n[foo]: /url\n> bar\n",
+    "example": 179,
+    "start_line": 3026
+  },
+  {
+    "end_line": 3054,
+    "section": "Link reference definitions",
+    "html": "<p><a href=\"/foo-url\" title=\"foo\">foo</a>,\n<a href=\"/bar-url\" title=\"bar\">bar</a>,\n<a href=\"/baz-url\">baz</a></p>\n",
+    "markdown": "[foo]: /foo-url \"foo\"\n[bar]: /bar-url\n  \"bar\"\n[baz]: /baz-url\n\n[foo],\n[bar],\n[baz]\n",
+    "example": 180,
+    "start_line": 3041
+  },
+  {
+    "end_line": 3070,
+    "section": "Link reference definitions",
+    "html": "<p><a href=\"/url\">foo</a></p>\n<blockquote>\n</blockquote>\n",
+    "markdown": "[foo]\n\n> [foo]: /url\n",
+    "example": 181,
+    "start_line": 3062
+  }
+]

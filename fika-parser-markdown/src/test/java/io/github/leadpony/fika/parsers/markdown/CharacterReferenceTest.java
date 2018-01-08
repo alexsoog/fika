@@ -38,6 +38,5 @@ public class CharacterReferenceTest extends AbstractSpecTest {
 
     @Before
     public void setUp() {
-        //Assume.assumeTrue(index() == 302);
     }
 }

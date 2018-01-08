@@ -30,7 +30,10 @@ import io.github.leadpony.fika.core.parser.ParserException;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherChain;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherProvider;
+import io.github.leadpony.fika.parsers.markdown.block.DefaultBlockMatcherChain;
+import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionMap;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineProcessor;
 import io.github.leadpony.fika.parsers.markdown.inline.DefaultInlineProcessor;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
 
@@ -40,13 +43,17 @@ import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
 class MarkdownParser implements Parser {
     
     private final Reader reader;
+
+    private final LinkDefinitionMap linkDefinitions;
+    
     private final BlockMatcherChain blockMatcherChain;
-    private final DefaultInlineProcessor inlineProcessor;
+    private final InlineProcessor inlineProcessor;
     
     public MarkdownParser(Reader reader, NodeFactory nodeFactory, ProviderRegistry providers) {
         this.reader = reader;
-        this.blockMatcherChain = createBlockMatcherChain(nodeFactory, providers);
-        this.inlineProcessor = createInlineProcessor(nodeFactory, providers);
+        this.linkDefinitions = new LinkDefinitionMap();
+        this.blockMatcherChain = buildBlockMatcherChain(nodeFactory, providers);
+        this.inlineProcessor = buildInlineProcessor(nodeFactory, providers);
     }
 
     @Override
@@ -80,20 +87,20 @@ class MarkdownParser implements Parser {
         inlineProcessor.processInlines(text);
     }
     
-    private BlockMatcherChain createBlockMatcherChain(NodeFactory nodeFactory, ProviderRegistry providers) {
+    private BlockMatcherChain buildBlockMatcherChain(NodeFactory nodeFactory, ProviderRegistry providers) {
         List<BlockMatcherFactory> factories = new ArrayList<>();
         for (BlockMatcherProvider provider: providers.blockMatcherProviders()) {
             factories.add(provider.newMatcherFactory());
         }
-        return new BlockMatcherChain(nodeFactory, factories);
+        return new DefaultBlockMatcherChain(nodeFactory, linkDefinitions, factories);
     }
     
-    private DefaultInlineProcessor createInlineProcessor(NodeFactory nodeFactory, ProviderRegistry providers) {
+    private InlineProcessor buildInlineProcessor(NodeFactory nodeFactory, ProviderRegistry providers) {
         List<InlineHandler> handlers = new ArrayList<>();
         for (InlineHandlerProvider provider: providers.inlineHandlerProviders()) {
             handlers.add(provider.newHandler());
         }
-        return new DefaultInlineProcessor(nodeFactory, handlers);
+        return new DefaultInlineProcessor(nodeFactory, linkDefinitions, handlers);
     }
 }
 

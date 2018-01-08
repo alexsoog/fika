@@ -113,7 +113,7 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
     
     @Override
     protected Block buildBlock() {
-        return nodeFactory().newListItem();
+        return getNodeFactory().newListItem();
     }
     
     private InputSequence contentAfterMarker(InputSequence input) {

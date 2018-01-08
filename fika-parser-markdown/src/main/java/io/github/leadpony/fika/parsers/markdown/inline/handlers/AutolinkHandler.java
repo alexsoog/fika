@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import io.github.leadpony.fika.core.model.Link;
 import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
-import io.github.leadpony.fika.parsers.markdown.common.Urls;
+import io.github.leadpony.fika.parsers.markdown.common.UrlEncoder;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 
 /**
@@ -79,7 +79,8 @@ class AutolinkHandler extends AbstractInlineHandler {
 
     private Link buildAutoLink(String url, String label) {
         Link newNode = getNodeFactory().newLink();
-        newNode.setDestination(Urls.encode(url));
+        UrlEncoder encoder = new UrlEncoder();
+        newNode.setDestination(encoder.encode(url));
         Text text = getNodeFactory().newText();
         text.setContent(label);
         newNode.appendChild(text);

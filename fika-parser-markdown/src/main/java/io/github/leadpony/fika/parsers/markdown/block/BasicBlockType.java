@@ -28,6 +28,7 @@ public enum BasicBlockType implements BlockType {
     FENCED_CODE(140),
     HTML_BLOCK(150),
     INDENTED_CODE(160),
+    LINK_DEFINITION(170),
     PARAGRAPH(180),
     DOCUMENT,
     ;

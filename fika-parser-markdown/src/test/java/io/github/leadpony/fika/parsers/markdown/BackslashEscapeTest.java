@@ -38,6 +38,5 @@ public class BackslashEscapeTest extends AbstractSpecTest {
 
     @Before
     public void setUp() {
-        //Assume.assumeTrue(index() == 291);
     }
 }

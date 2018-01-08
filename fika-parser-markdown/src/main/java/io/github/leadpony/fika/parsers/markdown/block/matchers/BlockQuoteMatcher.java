@@ -57,7 +57,7 @@ class BlockQuoteMatcher extends ContainerBlockMatcher {
 
     @Override
     protected BlockQuote buildBlock() {
-        return nodeFactory().newBlockQuote();
+        return getNodeFactory().newBlockQuote();
     }
 }
 
@@ -76,7 +76,7 @@ class BlockQuoteMatcherFactory implements BlockMatcherFactory {
 
     @Override
     public Set<? extends BlockType> interruptible() {
-        return EnumSet.of(BasicBlockType.PARAGRAPH);
+        return EnumSet.of(BasicBlockType.PARAGRAPH, BasicBlockType.LINK_DEFINITION);
     }
     
     @Override

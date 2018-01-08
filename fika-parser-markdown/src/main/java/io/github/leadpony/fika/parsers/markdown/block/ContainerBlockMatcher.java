@@ -103,7 +103,7 @@ public abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
     }
     
     protected BlockMatcher findChildMatcher(InputSequence input) {
-        BlockMatcher matched = context().findMatcher(input);
+        BlockMatcher matched = context().finder().findMatcher(input);
         if (matched != null) {
             openChildMatcher(matched);
         }

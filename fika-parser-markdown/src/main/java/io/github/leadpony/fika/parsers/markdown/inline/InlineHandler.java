@@ -17,6 +17,7 @@ package io.github.leadpony.fika.parsers.markdown.inline;
 
 import io.github.leadpony.fika.core.model.NodeFactory;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
+import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionMap;
 
 /**
  * The interface for handling inline nodes. 
@@ -65,5 +66,7 @@ public interface InlineHandler {
         DelimiterStack getDelimiterStack();
         
         DelimiterProcessor getDelimiterProcessor();
+        
+        LinkDefinitionMap getLinkDefinitionMap();
     }
 }

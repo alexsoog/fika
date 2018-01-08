@@ -48,7 +48,7 @@ public abstract class AbstractBlockMatcher implements BlockMatcher {
     @Override
     public BlockMatcher interrupt(InputSequence input) {
         assert(isInterruptible());
-        return context().findInterruptingMatcher(input, this);
+        return context().finder().findInterruptingMatcher(input, this);
     }
     
     @Override
@@ -60,8 +60,8 @@ public abstract class AbstractBlockMatcher implements BlockMatcher {
         return context;
     }
     
-    protected NodeFactory nodeFactory() {
-        return context.nodeFactory();
+    protected NodeFactory getNodeFactory() {
+        return context.getNodeFactory();
     }
     
     protected abstract Block buildBlock();

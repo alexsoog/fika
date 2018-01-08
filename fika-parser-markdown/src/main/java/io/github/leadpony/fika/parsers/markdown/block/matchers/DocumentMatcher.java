@@ -42,6 +42,6 @@ public class DocumentMatcher extends ContainerBlockMatcher {
     
     @Override
     protected Document buildBlock() {
-        return nodeFactory().newDocument();
+        return getNodeFactory().newDocument();
     }
 }

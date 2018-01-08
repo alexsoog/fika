@@ -51,7 +51,7 @@ class HtmlBlockMatcher extends AbstractBlockMatcher {
 
     @Override
     protected Block buildBlock() {
-        HtmlBlock block = nodeFactory().newHtmlBlock();
+        HtmlBlock block = getNodeFactory().newHtmlBlock();
         block.setHtml(builder.toString());
         return block;
     }
@@ -345,7 +345,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
 
     @Override
     public Set<? extends BlockType> interruptible() {
-        return EnumSet.of(BasicBlockType.PARAGRAPH);
+        return EnumSet.of(BasicBlockType.PARAGRAPH, BasicBlockType.LINK_DEFINITION);
     }
     
     @Override

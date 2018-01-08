@@ -25,6 +25,7 @@ import io.github.leadpony.fika.parsers.markdown.block.matchers.FencedCodeMatcher
 import io.github.leadpony.fika.parsers.markdown.block.matchers.HeadingMatcherProvider;
 import io.github.leadpony.fika.parsers.markdown.block.matchers.HtmlBlockMatcherProvider;
 import io.github.leadpony.fika.parsers.markdown.block.matchers.IndentedCodeMatcherProvider;
+import io.github.leadpony.fika.parsers.markdown.block.matchers.LinkDefinitionMatcherProvider;
 import io.github.leadpony.fika.parsers.markdown.block.matchers.ListMatcherProvider;
 import io.github.leadpony.fika.parsers.markdown.block.matchers.ParagraphMatcherProvider;
 import io.github.leadpony.fika.parsers.markdown.block.matchers.ThematicBreakMatcherProvider;
@@ -87,6 +88,7 @@ class DefaultProviderRegistry implements ProviderRegistry {
         providers.add(new HeadingMatcherProvider());
         providers.add(new HtmlBlockMatcherProvider());
         providers.add(new IndentedCodeMatcherProvider());
+        providers.add(new LinkDefinitionMatcherProvider());
         providers.add(new ListMatcherProvider());
         providers.add(new ParagraphMatcherProvider());
         providers.add(new ThematicBreakMatcherProvider());

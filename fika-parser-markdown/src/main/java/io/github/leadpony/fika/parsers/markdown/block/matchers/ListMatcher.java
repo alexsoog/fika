@@ -112,7 +112,7 @@ abstract class ListMatcher extends ContainerBlockMatcher {
                 return null;
             }
         }
-        BlockMatcher matcher = context().findInterruptingMatcher(input, this);
+        BlockMatcher matcher = context().finder().findInterruptingMatcher(input, this);
         if (matcher == null) {
             matcher = this.factory.newInterrupter(input, this);
         }
@@ -186,7 +186,7 @@ class BulletListMatcher extends ListMatcher {
     
     @Override
     protected Block buildBlock() {
-        return nodeFactory().newLiskBlock(ListType.UNORDERED);
+        return getNodeFactory().newLiskBlock(ListType.UNORDERED);
     }
 }
 
@@ -206,7 +206,7 @@ class OrderedListMatcher extends ListMatcher {
     
     @Override
     protected Block buildBlock() {
-        OrderedList block = (OrderedList)nodeFactory().newLiskBlock(ListType.ORDERED);
+        OrderedList block = (OrderedList)getNodeFactory().newLiskBlock(ListType.ORDERED);
         block.setStartNumber(startNumber);
         return block;
     }
@@ -227,7 +227,7 @@ class ListMatcherFactory implements BlockMatcherFactory {
   
     @Override
     public Set<? extends BlockType> interruptible() {
-        return EnumSet.of(BasicBlockType.PARAGRAPH);
+        return EnumSet.of(BasicBlockType.PARAGRAPH, BasicBlockType.LINK_DEFINITION);
     }
     
     @Override

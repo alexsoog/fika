@@ -38,6 +38,5 @@ public class ListTest extends AbstractSpecTest {
     
     @Before
     public void setUp() {
-        Assume.assumeFalse(index() == 278);
     }
 }

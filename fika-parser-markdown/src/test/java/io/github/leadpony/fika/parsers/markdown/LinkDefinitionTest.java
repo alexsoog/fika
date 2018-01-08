@@ -25,15 +25,15 @@ import org.junit.runners.Parameterized.Parameters;
  * @author leadpony
  */
 @RunWith(Parameterized.class)
-public class EmphasisTest extends AbstractSpecTest {
+public class LinkDefinitionTest extends AbstractSpecTest {
 
-    public EmphasisTest(int index, String source, String expected) {
+    public LinkDefinitionTest(int index, String source, String expected) {
         super(index, source, expected);
     }
   
     @Parameters(name = "{0}: {1}")
     public static Iterable<Object[]> parameters() {
-        return parameters("/emphasis.json");
+        return parameters("/link-definitions.json");
     }
 
     @Before

@@ -19,6 +19,7 @@ import io.github.leadpony.fika.core.model.Block;
 import io.github.leadpony.fika.core.model.NodeFactory;
 import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
+import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionMap;
 
 /**
  * @author leadpony
@@ -91,11 +92,11 @@ public interface BlockMatcher {
          */
         int lineNo();
         
-        BlockMatcher findMatcher(InputSequence content);
-
-        BlockMatcher findInterruptingMatcher(InputSequence content, BlockMatcher current);
+        NodeFactory getNodeFactory();
         
-        NodeFactory nodeFactory();
+        BlockMatcherFinder finder();
+        
+        LinkDefinitionMap getLinkDefinitionMap();
         
         void addInline(Text text);
     }

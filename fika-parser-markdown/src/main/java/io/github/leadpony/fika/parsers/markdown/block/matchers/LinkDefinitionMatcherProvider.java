@@ -13,30 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown;
+package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
+import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherProvider;
 
 /**
  * @author leadpony
  */
-@RunWith(Parameterized.class)
-public class EmphasisTest extends AbstractSpecTest {
+public class LinkDefinitionMatcherProvider implements BlockMatcherProvider {
 
-    public EmphasisTest(int index, String source, String expected) {
-        super(index, source, expected);
-    }
-  
-    @Parameters(name = "{0}: {1}")
-    public static Iterable<Object[]> parameters() {
-        return parameters("/emphasis.json");
-    }
-
-    @Before
-    public void setUp() {
+    @Override
+    public BlockMatcherFactory newMatcherFactory() {
+        return new LinkDefinitionMatcherFactory();
     }
 }

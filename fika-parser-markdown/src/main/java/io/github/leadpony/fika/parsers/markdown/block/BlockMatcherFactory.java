@@ -33,10 +33,6 @@ public interface BlockMatcherFactory {
         return blockType().precedence();
     }
     
-    default Set<? extends BlockType> interruptible() {
-        return Collections.emptySet();
-    }
-    
     /**
      * Creates a new block matcher for the given content.
      * 
@@ -45,6 +41,10 @@ public interface BlockMatcherFactory {
      * @return new matcher if found.
      */
     BlockMatcher newMatcher(InputSequence input);
+    
+    default Set<? extends BlockType> interruptible() {
+        return Collections.emptySet();
+    }
     
     default BlockMatcher newInterrupter(InputSequence input, BlockMatcher current) {
         return null;

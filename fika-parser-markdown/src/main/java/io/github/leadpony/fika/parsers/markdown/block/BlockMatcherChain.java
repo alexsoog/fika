@@ -15,82 +15,19 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import io.github.leadpony.fika.core.model.Document;
-import io.github.leadpony.fika.core.model.NodeFactory;
 import io.github.leadpony.fika.core.model.Text;
-import io.github.leadpony.fika.parsers.markdown.block.matchers.DocumentMatcher;
-import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * @author leadpony
  */
-public class BlockMatcherChain {
+public interface BlockMatcherChain {
     
-    private final BlockMatcherFinder finder;
-    private final Context context;
-    private final DocumentMatcher rootMatcher;
+    void match(String line);
     
-    public BlockMatcherChain(NodeFactory nodeFactory, List<BlockMatcherFactory> factories) {
-        this.finder = new BlockMatcherFinder(factories);
-        this.context = new Context(nodeFactory, finder);
-        this.rootMatcher = new DocumentMatcher();
-        this.rootMatcher.bind(this.context);
-    }
-    
-    public void match(String line) {
-        BlockInputSequence content = BlockInputSequence.of(line);
-        context.lineNo++;
-        rootMatcher.match(content);
-    }
-    
-    public Document close() {
-        return (Document)rootMatcher.close();
-    }
-    
-    public Set<Text> getInlines() {
-        return context.inlines;
-    }
-    
-    private static class Context implements BlockMatcher.Context {
+    Document close();
 
-        private final NodeFactory nodeFactory;
-        private final BlockMatcherFinder finder;
-        private int lineNo;
-        private final Set<Text> inlines = new HashSet<>();
-        
-        Context(NodeFactory nodeFactory, BlockMatcherFinder finder) {
-            this.nodeFactory = nodeFactory;
-            this.finder = finder;
-            this.lineNo = 0;
-        }
-        
-        @Override
-        public int lineNo() {
-            return lineNo;
-        }
-
-        @Override
-        public BlockMatcher findMatcher(InputSequence content) {
-            return finder.findMatcher(content);
-        }
-
-        @Override
-        public BlockMatcher findInterruptingMatcher(InputSequence content, BlockMatcher current) {
-            return finder.findInterruptingMatcher(content, current);
-        }
-    
-        @Override
-        public NodeFactory nodeFactory() {
-            return nodeFactory;
-        }
-        
-        @Override
-        public void addInline(Text text) {
-            this.inlines.add(text);
-        }
-    }
+    Set<Text> getInlines();
 }

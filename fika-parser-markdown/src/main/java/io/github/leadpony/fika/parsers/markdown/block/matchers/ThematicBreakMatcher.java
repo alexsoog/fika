@@ -46,7 +46,7 @@ class ThematicBreakMatcher extends AbstractBlockMatcher {
     
     @Override
     protected Block buildBlock() {
-        return nodeFactory().newThematicBreak();
+        return getNodeFactory().newThematicBreak();
     }
 }
 
@@ -69,6 +69,7 @@ class ThematicBreakMatcherFactory implements BlockMatcherFactory {
     public Set<? extends BlockType> interruptible() {
         return EnumSet.of(
                 BasicBlockType.PARAGRAPH,
+                BasicBlockType.LINK_DEFINITION,
                 BasicBlockType.LIST);
     }
 
