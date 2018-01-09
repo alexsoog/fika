@@ -16,15 +16,12 @@
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
 import java.util.Iterator;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import io.github.leadpony.fika.core.model.Link;
 import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.Text;
-import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
-import io.github.leadpony.fika.parsers.markdown.common.Links;
+import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionParser;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.Delimiter;
 import io.github.leadpony.fika.parsers.markdown.inline.DelimiterStack;
@@ -35,7 +32,6 @@ import io.github.leadpony.fika.parsers.markdown.inline.DelimiterStack;
 public class LinkCloserHandler extends AbstractInlineHandler {
   
     private static final char TRIGGER_LETTER = ']';
-    private static final Pattern INLINE_LINK_PATTERN = Pattern.compile(Links.INLINE_LINK);
    
     @Override
     public char[] triggerLetters() {
@@ -43,14 +39,14 @@ public class LinkCloserHandler extends AbstractInlineHandler {
     }
     
     @Override
-    public int handleContent(InputSequence input) {
+    public int handleContent(String input, int currentIndex) {
         Text text = buildNode(LinkHandler.CLOSING_CONTENT);
         getAppender().appendNode(text);
         Delimiter closer = new ClosingDelimiter(text);
         Delimiter opener = findOpener(closer);
         if (opener != null) {
             if (opener.isActive()) {
-                int consumed = parseLink(input, opener, closer);
+                int consumed = parseLink(input, currentIndex, opener, closer);
                 if (consumed > 0) {
                     return consumed;
                 }
@@ -66,41 +62,36 @@ public class LinkCloserHandler extends AbstractInlineHandler {
         return text;
     }
     
-    private int parseLink(InputSequence input, Delimiter opener, Delimiter closer) {
-        if (input.length() > 1) {
-            char first = input.charAt(1);
+    private int parseLink(String input, int currentIndex, Delimiter opener, Delimiter closer) {
+        final int nextIndex = currentIndex + 1;
+        if (input.length() > nextIndex) {
+            char first = input.charAt(nextIndex);
             if (first == '(') {
-                return parseInlineLink(input, opener, closer);
+                return parseInlineLink(input, currentIndex, opener, closer);
             }
         }
-        return parseShortcutLink(opener, closer);
+        return parseShortcutLink(opener, closer, currentIndex);
     }
     
-    private int parseInlineLink(InputSequence input, Delimiter opener, Delimiter closer) {
-        Matcher m = matchInput(input, INLINE_LINK_PATTERN);
-        if (!m.lookingAt()) {
+    private int parseInlineLink(String input, int currentIndex, Delimiter opener, Delimiter closer) {
+        LinkDefinitionParser parser = new LinkDefinitionParser();
+        LinkDefinition definition = parser.parseInlineLink(input, currentIndex + 1);
+        if (definition == null) {
             return 0;
         }
-        LinkDefinition definition = new LinkDefinition(m.group("destination"), m.group("title"));
         makeLink(opener, closer, definition);
-        return 1 + m.group().length();
+        return 1 + parser.length();
     }
     
-    private int parseShortcutLink(Delimiter opener, Delimiter closer) {
-        String label = extractLinkLabel(opener, closer);
-        LinkDefinition definition = context().getLinkDefinitionMap().get(label);
+    private int parseShortcutLink(Delimiter opener, Delimiter closer, int endIndex) {
+        String linkLabel = extractLinkLabel(opener, closer, endIndex);
+        LinkDefinition definition = context().getLinkDefinitionMap().get(linkLabel);
         if (definition != null) {
             makeLink(opener, closer, definition);
             return 1;
         } else {
             return 0;
         }
-    }
-    
-    private static Matcher matchInput(InputSequence input, Pattern pattern) {
-        Matcher m = INLINE_LINK_PATTERN.matcher(input);
-        m.region(1, input.length());
-        return m;
     }
     
     private Delimiter findOpener(Delimiter closer) {
@@ -115,17 +106,9 @@ public class LinkCloserHandler extends AbstractInlineHandler {
         return null;
     }
     
-    private static String extractLinkLabel(Delimiter opener, Delimiter closer) {
-        StringBuilder b = new StringBuilder();
-        final Node last = closer.text();
-        Node current = opener.text().nextNode();
-        while (current != null && current != last) {
-            if (current instanceof Text) {
-                b.append(((Text)current).getContent());
-            }
-            current = current.nextNode();
-        }
-        return b.toString();
+    private String extractLinkLabel(Delimiter opener, Delimiter closer, int endIndex) {
+        int beginIndex = 1 + ((LinkHandler.LinkDelimiterRun)opener).getPosition();
+        return context().input().substring(beginIndex, endIndex);
     }
     
     private Node makeLink(Delimiter opener, Delimiter closer, LinkDefinition definition) {

@@ -19,8 +19,6 @@ import static io.github.leadpony.fika.parsers.markdown.common.Strings.trimWhites
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import io.github.leadpony.fika.core.model.Block;
@@ -34,7 +32,7 @@ import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionMap;
-import io.github.leadpony.fika.parsers.markdown.common.Links;
+import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionParser;
 
 /**
  * @author leadpony
@@ -43,7 +41,6 @@ import io.github.leadpony.fika.parsers.markdown.common.Links;
 class LinkDefinitionMatcher extends AbstractBlockMatcher {
     
     private final List<String> lines = new ArrayList<>();
-    private static final Pattern LINK_DEFINITION_PATTERN = Pattern.compile(Links.LINK_DEFINITION);
    
     @Override
     public BlockType blockType() {
@@ -76,22 +73,19 @@ class LinkDefinitionMatcher extends AbstractBlockMatcher {
         this.lines.add(input.toSourceString());
     }
     
-    private String processLinkDefinitions(String content) {
+    private String processLinkDefinitions(String input) {
         LinkDefinitionMap map = context().getLinkDefinitionMap();
-        Matcher m = LINK_DEFINITION_PATTERN.matcher(content);
-        int end = 0;
-        while (m.lookingAt()) {
-            String label = m.group("label");
-            String destination = m.group("destination");
-            String title = m.group("title");
-            map.put(label, new LinkDefinition(destination, title));
-            end = m.end();
-            m.region(end, content.length());
+        LinkDefinitionParser parser = new LinkDefinitionParser();
+        int offset = 0;
+        LinkDefinition def = null;
+        while ((def = parser.parseLinkDefinition(input, offset)) != null) {
+            map.put(parser.label(), def);
+            offset += parser.length();
         }
-        if (end > 0) {
-            content = content.substring(end);
+        if (offset > 0) {
+            input = input.substring(offset);
         }
-        return content;
+        return input;
     }
     
     private Paragraph buildParagraph(String content) {

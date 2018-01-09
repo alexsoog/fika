@@ -61,8 +61,15 @@ public interface InlineHandler {
          */
         NodeFactory getNodeFactory();
         
+        /**
+         * Return the original input string.
+         * 
+         * @return the original input string.
+         */
+        String input();
+
         InlineAppender getAppender();
-        
+
         DelimiterStack getDelimiterStack();
         
         DelimiterProcessor getDelimiterProcessor();

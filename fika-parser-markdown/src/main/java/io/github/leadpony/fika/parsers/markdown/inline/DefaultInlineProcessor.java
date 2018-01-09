@@ -71,6 +71,11 @@ public class DefaultInlineProcessor
     public NodeFactory getNodeFactory() {
         return nodeFactory;
     }
+    
+    @Override
+    public String input() {
+        return input;
+    }
   
     @Override
     public InlineAppender getAppender() {

@@ -16,7 +16,6 @@
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
 import io.github.leadpony.fika.core.model.Text;
-import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * @author leadpony
@@ -32,13 +31,13 @@ public class ImageHandler extends LinkHandler {
     }
     
     @Override
-    public int handleContent(InputSequence input) {
-        if (input.length() < 2 || input.charAt(1) != '[') {
+    public int handleContent(String input, int offset) {
+        if (input.length() <= offset + 1 || input.charAt(offset + 1) != '[') {
             return 0;
         }
         Text text = buildNode(OPENING_CONTENT);
         getAppender().appendNode(text);
-        getDelimiterStack().add(new LinkDelimiterRun(text));
+        getDelimiterStack().add(new LinkDelimiterRun(text, offset));
         return OPENING_CONTENT.length();
     }
 }

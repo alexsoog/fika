@@ -17,7 +17,6 @@ package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
 import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.Text;
-import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.Delimiter;
 
@@ -37,10 +36,10 @@ class LinkHandler extends AbstractInlineHandler {
     }
     
     @Override
-    public int handleContent(InputSequence input) {
+    public int handleContent(String input, int currentIndex) {
         Text text = buildNode(OPENING_CONTENT);
         getAppender().appendNode(text);
-        getDelimiterStack().add(new LinkDelimiterRun(text));
+        getDelimiterStack().add(new LinkDelimiterRun(text, currentIndex));
         return OPENING_CONTENT.length();
     }
 
@@ -52,11 +51,13 @@ class LinkHandler extends AbstractInlineHandler {
     
     class LinkDelimiterRun extends Delimiter {
         
-        private String delimiter;
+        private final String delimiter;
+        private final int position;
 
-        protected LinkDelimiterRun(Text text) {
+        protected LinkDelimiterRun(Text text, int position) {
             super(text);
             this.delimiter = text.getContent();
+            this.position = position;
         }
 
         @Override
@@ -87,6 +88,10 @@ class LinkHandler extends AbstractInlineHandler {
             // Inserts wrapper immediate after the opener.
             text().parentNode().insertChildAfter(wrapper, text());
             return wrapper;
+        }
+        
+        public int getPosition() {
+            return position;
         }
         
         protected Node buildWrapNode() {

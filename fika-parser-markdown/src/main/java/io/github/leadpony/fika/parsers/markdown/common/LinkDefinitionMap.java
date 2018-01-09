@@ -15,8 +15,6 @@
  */
 package io.github.leadpony.fika.parsers.markdown.common;
 
-import static io.github.leadpony.fika.parsers.markdown.common.Strings.unescape;
-
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,22 +34,26 @@ public class LinkDefinitionMap extends AbstractMap<String, LinkDefinition> {
 
     @Override
     public LinkDefinition get(Object key) {
-        String label = (String)key;
-        return definitions.get(label.toLowerCase());
+        String label = normalizeLabel((String)key);
+        return definitions.get(label);
     }
     
     @Override
     public LinkDefinition put(String label, LinkDefinition definition) {
-        label = unescape(label);
+        label = normalizeLabel(label);
         LinkDefinition existing = get(label);
         if (existing != null) {
             return existing;
         }
-        return this.definitions.put(label.toLowerCase(), definition);
+        return this.definitions.put(label, definition);
     }
     
     @Override
     public String toString() {
         return definitions.toString();
+    }
+    
+    private static String normalizeLabel(String label) {
+        return label.toLowerCase();
     }
 }
