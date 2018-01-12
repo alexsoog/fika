@@ -32,7 +32,7 @@ import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionMap;
-import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionParser;
+import io.github.leadpony.fika.parsers.markdown.common.LinkParser;
 
 /**
  * @author leadpony
@@ -75,15 +75,15 @@ class LinkDefinitionMatcher extends AbstractBlockMatcher {
     
     private String processLinkDefinitions(String input) {
         LinkDefinitionMap map = context().getLinkDefinitionMap();
-        LinkDefinitionParser parser = new LinkDefinitionParser();
-        int offset = 0;
+        LinkParser parser = LinkParser.definitionParser(input, 0);
         LinkDefinition def = null;
-        while ((def = parser.parseLinkDefinition(input, offset)) != null) {
-            map.put(parser.label(), def);
-            offset += parser.length();
+        int nextIndex = 0;
+        while ((def = parser.parse()) != null) {
+            map.put(def.label(), def);
+            nextIndex = parser.index();
         }
-        if (offset > 0) {
-            input = input.substring(offset);
+        if (nextIndex > 0) {
+            input = input.substring(nextIndex);
         }
         return input;
     }

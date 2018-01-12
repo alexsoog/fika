@@ -15,6 +15,8 @@
  */
 package io.github.leadpony.fika.parsers.markdown.common;
 
+import static io.github.leadpony.fika.parsers.markdown.common.Strings.normalizeString;
+
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -54,6 +56,7 @@ public class LinkDefinitionMap extends AbstractMap<String, LinkDefinition> {
     }
     
     private static String normalizeLabel(String label) {
-        return label.toLowerCase();
+        String normalized = normalizeString(label);
+        return normalized.toLowerCase();
     }
 }

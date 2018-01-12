@@ -15,21 +15,28 @@
  */
 package io.github.leadpony.fika.parsers.markdown.common;
 
-import static io.github.leadpony.fika.parsers.markdown.common.Strings.expandReferences;
-import static io.github.leadpony.fika.parsers.markdown.common.Strings.unescape;
-
 /**
  * @author leadpony
  *
  */
 public class LinkDefinition {
 
+    private final String label;
     private final String destination;
     private final String title;
     
     public LinkDefinition(String destination, String title) {
-        this.destination = normalizeDestination(destination);
-        this.title = normalizeTitle(title);
+        this(null, destination, title);
+    }
+    
+    public LinkDefinition(String label, String destination, String title) {
+        this.label = label;
+        this.destination = destination;
+        this.title = title;
+    }
+
+    public String label() {
+        return label;
     }
     
     public String destination() {
@@ -52,47 +59,5 @@ public class LinkDefinition {
             b.append(" \"").append(title()).append("\"");
         }
         return b.toString();
-    }
-
-    private static String normalizeDestination(String s) {
-        if (s == null) {
-            return "";
-        }
-        s = unquoteDestination(s);
-        s = expandReferences(s);
-        s = unescape(s);
-        UrlEncoder encoder = new UrlEncoder();
-        return encoder.encode(s);
-    }
-    
-    private static String unquoteDestination(String s) {
-        if (s.length() >= 2) {
-            if (s.charAt(0) == '<' && s.charAt(s.length() - 1) == '>') {
-                s = s.substring(1, s.length() - 1);
-            }
-        }
-        return s;
-    }
-
-    private static String normalizeTitle(String s) {
-        if (s == null) {
-            return null;
-        }
-        s = unquoteTitle(s);
-        s = expandReferences(s);
-        return unescape(s);
-    }
-    
-    private static String unquoteTitle(String s) {
-        if (s.length() >= 2) {
-            char first = s.charAt(0);
-            char last = s.charAt(s.length() - 1);
-            if ((first == '"' && last == '"') ||
-                (first == '\'' && last == '\'') ||
-                (first == '(' && last == ')')) {
-                s = s.substring(1, s.length() - 1);
-            }
-        }
-        return s;
     }
 }

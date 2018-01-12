@@ -15,13 +15,16 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
+import static io.github.leadpony.fika.parsers.markdown.common.Strings.trimWhitespace;
+
 import java.util.Iterator;
 
 import io.github.leadpony.fika.core.model.Link;
 import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.Text;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
-import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionParser;
+import io.github.leadpony.fika.parsers.markdown.common.LinkParser;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.Delimiter;
 import io.github.leadpony.fika.parsers.markdown.inline.DelimiterStack;
@@ -42,13 +45,14 @@ public class LinkCloserHandler extends AbstractInlineHandler {
     public int handleContent(String input, int currentIndex) {
         Text text = buildNode(LinkHandler.CLOSING_CONTENT);
         getAppender().appendNode(text);
-        Delimiter closer = new ClosingDelimiter(text);
+        Delimiter closer = new ClosingDelimiter(text, currentIndex);
         Delimiter opener = findOpener(closer);
         if (opener != null) {
             if (opener.isActive()) {
-                int consumed = parseLink(input, currentIndex, opener, closer);
-                if (consumed > 0) {
-                    return consumed;
+                InputSequence offsetted = InputSequence.withOffset(input, currentIndex + 1);
+                int consumed = parseLink(offsetted, opener, closer);
+                if (consumed >= 0) {
+                    return 1 + consumed;
                 }
             }
             getDelimiterStack().remove(opener);
@@ -62,35 +66,77 @@ public class LinkCloserHandler extends AbstractInlineHandler {
         return text;
     }
     
-    private int parseLink(String input, int currentIndex, Delimiter opener, Delimiter closer) {
-        final int nextIndex = currentIndex + 1;
-        if (input.length() > nextIndex) {
-            char first = input.charAt(nextIndex);
+    private int parseLink(InputSequence input, Delimiter opener, Delimiter closer) {
+        if (input.length() > 0) {
+            char first = input.charAt(0);
             if (first == '(') {
-                return parseInlineLink(input, currentIndex, opener, closer);
+                return parseInlineLink(input, opener, closer);
+            } else if (first == '[') {
+                if (input.length() <= 1) {
+                    return -1;
+                } else if (input.charAt(1) == ']') {
+                    return parseCollapsedReferenceLink(opener, closer);
+                } else {
+                    return parseFullReferenceLink(input, opener, closer);
+                }
             }
         }
-        return parseShortcutLink(opener, closer, currentIndex);
+        return parseShortcutReferenceLink(opener, closer);
     }
     
-    private int parseInlineLink(String input, int currentIndex, Delimiter opener, Delimiter closer) {
-        LinkDefinitionParser parser = new LinkDefinitionParser();
-        LinkDefinition definition = parser.parseInlineLink(input, currentIndex + 1);
+    private int parseInlineLink(InputSequence input, Delimiter opener, Delimiter closer) {
+        LinkParser parser = LinkParser.inlineParser(input, 0);
+        LinkDefinition definition = parser.parse();
         if (definition == null) {
-            return 0;
+            return -1;
         }
         makeLink(opener, closer, definition);
-        return 1 + parser.length();
+        return parser.index();
     }
     
-    private int parseShortcutLink(Delimiter opener, Delimiter closer, int endIndex) {
-        String linkLabel = extractLinkLabel(opener, closer, endIndex);
-        LinkDefinition definition = context().getLinkDefinitionMap().get(linkLabel);
+    private int parseFullReferenceLink(InputSequence input, Delimiter opener, Delimiter closer) {
+        int i = 1;
+        for (; i < input.length(); ++i) {
+            char c = input.charAt(i);
+            if (c == ']') {
+                break;
+            } else if (c == '\\') {
+                ++i;
+            }
+        }
+        int end = i;
+        String label = trimWhitespace(input.substring(1, end));
+        if (label.isEmpty()) {
+            return -1;
+        }
+        LinkDefinition definition = findDefinition(label);
         if (definition != null) {
             makeLink(opener, closer, definition);
-            return 1;
+            return end + 1;
         } else {
+            return -1;
+        }
+    }
+    
+    private int parseCollapsedReferenceLink(Delimiter opener, Delimiter closer) {
+        String label = extractLinkLabel(opener, closer);
+        LinkDefinition definition = findDefinition(label);
+        if (definition != null) {
+            makeLink(opener, closer, definition);
+            return 2;
+        } else {
+            return -1;
+        }
+    }
+    
+    private int parseShortcutReferenceLink(Delimiter opener, Delimiter closer) {
+        String label = extractLinkLabel(opener, closer);
+        LinkDefinition definition = findDefinition(label);
+        if (definition != null) {
+            makeLink(opener, closer, definition);
             return 0;
+        } else {
+            return -1;
         }
     }
     
@@ -106,9 +152,14 @@ public class LinkCloserHandler extends AbstractInlineHandler {
         return null;
     }
     
-    private String extractLinkLabel(Delimiter opener, Delimiter closer, int endIndex) {
+    private String extractLinkLabel(Delimiter opener, Delimiter closer) {
         int beginIndex = 1 + ((LinkHandler.LinkDelimiterRun)opener).getPosition();
+        int endIndex = ((ClosingDelimiter)closer).position;
         return context().input().substring(beginIndex, endIndex);
+    }
+    
+    private LinkDefinition findDefinition(String label) {
+        return context().getLinkDefinitionMap().get(label);
     }
     
     private Node makeLink(Delimiter opener, Delimiter closer, LinkDefinition definition) {
@@ -139,9 +190,12 @@ public class LinkCloserHandler extends AbstractInlineHandler {
     }
     
     private static class ClosingDelimiter extends Delimiter {
+        
+        private final int position;
 
-        protected ClosingDelimiter(Text text) {
+        protected ClosingDelimiter(Text text, int position) {
             super(text);
+            this.position = position;
         }
 
         @Override

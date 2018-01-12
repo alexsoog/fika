@@ -61,7 +61,7 @@ public final class Strings {
             }
         }
         int trailing = 0;
-        for (int i = s.length() - 1; i >= 0; --i) {
+        for (int i = s.length() - 1; i > leading; --i) {
             if (isWhitespace(s.charAt(i))) {
                 ++trailing;
             } else {
@@ -73,19 +73,12 @@ public final class Strings {
         }
         return s;
     }
+  
+    private static final Pattern CONSECUTIVE_WHITESPACE = Pattern.compile("\\s+");
     
-    public static String unquote(String s) {
-        if (s.length() < 2) {
-            return s;
-        }
-        char first = s.charAt(0);
-        if (first == '"' || first == '\'') {
-            char last = s.charAt(s.length() - 1);
-            if (first == last) {
-                return s.substring(1, s.length() - 1); 
-            }
-        }
-        return s;
+    public static String normalizeString(String s) {
+        s = trimWhitespace(s);
+        return CONSECUTIVE_WHITESPACE.matcher(s).replaceAll("\u0020");
     }
     
     public static final Pattern CHARACTER_REFERENCE_PATTERN = Pattern.compile(

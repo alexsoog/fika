@@ -15,6 +15,8 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
+import static io.github.leadpony.fika.parsers.markdown.common.Characters.isWhitespace;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -31,6 +33,7 @@ import io.github.leadpony.fika.parsers.markdown.block.BasicBlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.common.HtmlMatchers;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
@@ -273,16 +276,14 @@ class ElementMatcher extends HtmlBlockMatcher {
 }
 
 /**
+ * type 7: 
+ * Line begins with a complete open tag or closing tag
+ * (with any tag name other than script, style, or pre)
+ * followed only by whitespace or the end of the line.
+ * 
  * @author leadpony
  */
-class CompleteTagMatcher extends HtmlBlockMatcher {
-    
-    private static final Pattern START_PATTERN = Pattern.compile(
-            "^(" +
-            "(<(\\w+)(\\s*\\w+?\\s*=\\s*\".*?\")*\\s*>)|" +
-            "(</(\\w+)\\s*>)" +        
-            ")\\u0020*$"
-            );
+class CompleteHtmlTagMatcher extends HtmlBlockMatcher {
     
     @SuppressWarnings("serial")
     private static final Set<String> ELEMENTS_NOT_ALLOWED = new HashSet<String>() {{
@@ -292,16 +293,13 @@ class CompleteTagMatcher extends HtmlBlockMatcher {
     }};
     
     static HtmlBlockMatcher start(InputSequence input) {
-        Matcher m = START_PATTERN.matcher(input);
-        if (!m.find()) {
+        Matcher m = HtmlMatchers.newTagLineMatcher(input);
+        if (!m.matches()) {
             return null;
         }
-        String tag = m.group(3);
-        if (tag == null) {
-            tag = m.group(6);
-        }
+        String tag = extractTagName(m.group());
         if (!ELEMENTS_NOT_ALLOWED.contains(tag.toLowerCase())) {
-            return new CompleteTagMatcher();
+            return new CompleteHtmlTagMatcher();
         }
         return null;
     }
@@ -313,6 +311,22 @@ class CompleteTagMatcher extends HtmlBlockMatcher {
         }
         appendLine(input);
         return Result.CONTINUED;
+    }
+    
+    private static String extractTagName(String tag) {
+        int i = 1;
+        int beginIndex = 1;
+        if (tag.charAt(i) == '/') {
+            beginIndex = 2;
+            ++i;
+        }
+        for (; i < tag.length(); ++i) {
+            char c = tag.charAt(i);
+            if (isWhitespace(c) || c == '>' || c == '/') {
+                break;
+            }
+        }
+        return tag.substring(beginIndex, i);
     }
 }
 
@@ -332,7 +346,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
         interruptingStarters.add(CDataMatcher::start);
         interruptingStarters.add(ElementMatcher::start);
         starters.addAll(interruptingStarters);
-        starters.add(CompleteTagMatcher::start);
+        starters.add(CompleteHtmlTagMatcher::start);
     }
     
     public HtmlBlockMatcherFactory() {

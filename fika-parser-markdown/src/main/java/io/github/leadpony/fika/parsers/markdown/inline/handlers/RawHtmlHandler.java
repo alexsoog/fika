@@ -16,9 +16,9 @@
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import io.github.leadpony.fika.core.model.HtmlInline;
+import io.github.leadpony.fika.parsers.markdown.common.HtmlMatchers;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 
@@ -29,64 +29,6 @@ public class RawHtmlHandler extends AbstractInlineHandler {
 
     private static final char TRIGGER_LETTER = '<';
     
-    private static final String TAG_NAME = "[a-zA-Z][a-zA-Z0-9-]*";
-    private static final String ATTRIBUTE_NAME = "[a-zA-Z_:][a-zA-Z0-9_.\\:-]*";
-    
-    private static final String DOUBLE_QUOTED_ATTRIBUTE_VALUE =
-            "\"[^\"]*\"";
-    private static final String SINGLE_QUOTED_ATTRIBUTE_VALUE =
-            "'[^']*'";
-    private static final String UNQUOTED_ATTRIBUTE_VALUE =
-            "[^\"'=<>`]+";
-    private static final String ATTRIBUTE_VALUE =
-            "(" +
-            DOUBLE_QUOTED_ATTRIBUTE_VALUE + "|" +
-            SINGLE_QUOTED_ATTRIBUTE_VALUE + "|" +
-            UNQUOTED_ATTRIBUTE_VALUE +
-            ")"
-            ;
-    private static final String ATTRIBUTE_VALUE_SPEC =
-            "\\s*=\\s*" + 
-            ATTRIBUTE_VALUE
-            ;
-    private static final String ATTRIBUTE =
-            "\\s+" +
-            ATTRIBUTE_NAME +
-            "(" + ATTRIBUTE_VALUE_SPEC + ")?"
-            ;
-    private static final String OPEN_TAG =
-            "<" + 
-            TAG_NAME +
-            "(" + ATTRIBUTE + ")*" +
-            "\\s*/?>"
-            ;
-    private static final String CLOSING_TAG =
-            "</" + 
-            TAG_NAME +
-            "\\s*>"
-            ;
-    private static final String HTML_COMMENT =
-            "<!--(-[^>]|[^>])([^-]|-[^-])*-->";
-            ;
-    private static final String PROCESSING_INSTRUCTION =
-            "<\\?.*?\\?>";
-            ;
-    private static final String DECLARATION =
-            "<![a-zA-Z]+\\s+.+?>";
-            ;
-    private static final String CDATA_SECTION =
-            "<!\\[CDATA\\[.*?\\]\\]>";
-            ;
-    private static final String HTML_TAG =
-            "(" + OPEN_TAG + ")|" +
-            "(" + CLOSING_TAG + ")|" +
-            "(" + HTML_COMMENT + ")|" +     
-            "(" + PROCESSING_INSTRUCTION + ")|" +     
-            "(" + DECLARATION + ")|" +     
-            "(" + CDATA_SECTION + ")"     
-            ;
-    private static final Pattern RAW_HTML_PATTERN = Pattern.compile(HTML_TAG);
-    
     @Override
     public char[] triggerLetters() {
         return new char[] { TRIGGER_LETTER };
@@ -94,7 +36,7 @@ public class RawHtmlHandler extends AbstractInlineHandler {
 
     @Override
     public int handleContent(InputSequence input) {
-        Matcher m = RAW_HTML_PATTERN.matcher(input);
+        Matcher m = HtmlMatchers.newHtmlMatcher(input);
         if (m.lookingAt()) {
             getAppender().appendNode(buildNode(m.group()));
             return m.end();
