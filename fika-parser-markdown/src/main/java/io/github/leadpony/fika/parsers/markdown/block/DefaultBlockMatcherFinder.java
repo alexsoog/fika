@@ -44,12 +44,12 @@ class DefaultBlockMatcherFinder implements BlockMatcherFinder {
     }
 
     @Override
-    public BlockMatcher findMatcher(InputSequence content) {
-        if (content.isBlank()) {
+    public BlockMatcher findMatcher(InputSequence input) {
+        if (input.isBlank()) {
             return null;
         }
         for (BlockMatcherFactory factory: this.factories) {
-            BlockMatcher matched = factory.newMatcher(content);
+            BlockMatcher matched = factory.newMatcher(input);
             if (matched != null) {
                 return matched;
             }
@@ -58,8 +58,8 @@ class DefaultBlockMatcherFinder implements BlockMatcherFinder {
     }
     
     @Override
-    public BlockMatcher findInterruptingMatcher(InputSequence content, BlockMatcher current) {
-        if (content.isBlank()) {
+    public BlockMatcher findInterruptingMatcher(InputSequence input, BlockMatcher current) {
+        if (input.isBlank()) {
             return null;
         }
         List<BlockMatcherFactory> factories = interrupters.get(current.blockType());
@@ -67,7 +67,7 @@ class DefaultBlockMatcherFinder implements BlockMatcherFinder {
             return null;
         }
         for (BlockMatcherFactory factory: factories) {
-            BlockMatcher matched = factory.newInterrupter(content, current);
+            BlockMatcher matched = factory.newInterrupter(input, current);
             if (matched != null) {
                 return matched;
             }

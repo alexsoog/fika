@@ -70,9 +70,8 @@ abstract class EmphasisHandler extends AbstractInlineHandler {
     }
     
     private Text buildTextNode(String input, int start, int length) {
-        Text newNode = getNodeFactory().newText();
-        newNode.setContent(input.substring(start, start + length));
-        return newNode;
+        String content = input.substring(start, start + length);
+        return getNodeFactory().newText(content);
     }
     
     private static int extractPrecedingChar(String input, int index) {

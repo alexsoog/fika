@@ -54,13 +54,13 @@ public class DefaultNodeFactory implements NodeFactory {
     }
 
     @Override
-    public CodeBlock newCodeBlock() {
-        return new CodeBlockImpl(this);
+    public CodeBlock newCodeBlock(String content) {
+        return new CodeBlockImpl(this, content);
     }
     
     @Override
-    public CodeSpan newCodeSpan() {
-        return new CodeSpanImpl(this);
+    public CodeSpan newCodeSpan(String content) {
+        return new CodeSpanImpl(this, content);
     }
 
     @Override
@@ -84,13 +84,13 @@ public class DefaultNodeFactory implements NodeFactory {
     }
 
     @Override
-    public HtmlBlock newHtmlBlock() {
-        return new HtmlBlockImpl(this);
+    public HtmlBlock newHtmlBlock(String content) {
+        return new HtmlBlockImpl(this, content);
     }
     
     @Override
-    public HtmlInline newHtmlInline() {
-        return new HtmlInlineImpl(this);
+    public HtmlInline newHtmlInline(String content) {
+        return new HtmlInlineImpl(this, content);
     }
 
     @Override
@@ -125,8 +125,8 @@ public class DefaultNodeFactory implements NodeFactory {
     }
 
     @Override
-    public Text newText() {
-        return new TextImpl(this);
+    public Text newText(String content) {
+        return new TextImpl(this, content);
     }
 
     @Override
@@ -143,15 +143,15 @@ public class DefaultNodeFactory implements NodeFactory {
     
     private static class CodeBlockImpl extends CodeNode implements CodeBlock {
 
-        CodeBlockImpl(NodeFactory factory) {
-            super(factory);
+        CodeBlockImpl(NodeFactory factory, String content) {
+            super(factory, content);
         }
     }
     
     private static class CodeSpanImpl extends CodeNode implements CodeSpan {
 
-        CodeSpanImpl(NodeFactory factory) {
-            super(factory);
+        CodeSpanImpl(NodeFactory factory, String content) {
+            super(factory, content);
         }
     }
 
@@ -211,15 +211,15 @@ public class DefaultNodeFactory implements NodeFactory {
     
     private static class HtmlBlockImpl extends HtmlNode implements HtmlBlock {
         
-        HtmlBlockImpl(NodeFactory factory) {
-            super(factory);
+        HtmlBlockImpl(NodeFactory factory, String content) {
+            super(factory, content);
         }
     }
 
     private static class HtmlInlineImpl extends HtmlNode implements HtmlInline {
         
-        HtmlInlineImpl(NodeFactory factory) {
-            super(factory);
+        HtmlInlineImpl(NodeFactory factory, String content) {
+            super(factory, content);
         }
     }
 
@@ -330,8 +330,8 @@ public class DefaultNodeFactory implements NodeFactory {
  
     private static class TextImpl extends CharDataNode implements Text {
         
-        TextImpl(NodeFactory factory) {
-            super(factory);
+        TextImpl(NodeFactory factory, String content) {
+            super(factory, content);
         }
     }
     

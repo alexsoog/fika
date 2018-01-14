@@ -26,12 +26,22 @@ import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionMap;
  */
 public interface BlockMatcher {
     
-    enum Result {
+    /**
+     * Matching result.
+     * 
+     * @author leadpony
+     */
+    public enum Result {
         NOT_MATCHED,
         CONTINUED,
         COMPLETED
     }
     
+    /**
+     * Returns the block type this matcher will produce.
+     * 
+     * @return the block type.
+     */
     BlockType blockType();
     
     /**

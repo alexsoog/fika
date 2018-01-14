@@ -46,9 +46,7 @@ class LinkHandler extends AbstractInlineHandler {
     }
 
     protected Text buildNode(String content) {
-        Text text = getNodeFactory().newText();
-        text.setContent(content);
-        return text;
+        return getNodeFactory().newText(content);
     }
     
     class LinkDelimiterRun extends Delimiter {

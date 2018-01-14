@@ -25,9 +25,9 @@ abstract class CharDataNode extends BaseNode implements CharData {
     
     private String content;
 
-    protected CharDataNode(NodeFactory factory) {
+    protected CharDataNode(NodeFactory factory, String content) {
         super(factory);
-        content = "";
+        this.content = content;
     }
 
     @Override

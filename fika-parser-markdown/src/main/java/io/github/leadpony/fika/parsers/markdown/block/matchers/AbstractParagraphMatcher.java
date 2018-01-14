@@ -46,7 +46,7 @@ abstract class AbstractParagraphMatcher extends AbstractBlockMatcher {
      * @param linesToSkip the number lines to skip.
      * @return the content of the paragraph.
      */
-    protected String buildContent(int linesToSkip) {
+    String buildContent(int linesToSkip) {
         StringBuilder b = new StringBuilder();
         for (int i = linesToSkip; i < lines.size(); ++i) {
             String line = lines.get(i);
@@ -55,13 +55,12 @@ abstract class AbstractParagraphMatcher extends AbstractBlockMatcher {
         return trimWhitespace(b.toString());
     }
     
-    protected Paragraph buildParagraph(int skipLines) {
+    Paragraph buildParagraph(int skipLines) {
         String content = buildContent(skipLines);
         if (content.isEmpty()) {
             return null;
         }
-        Text text = getNodeFactory().newText();
-        text.setContent(content);
+        Text text = getNodeFactory().newText(content);
         context().addInline(text);
         Paragraph block = getNodeFactory().newParagraph();
         block.appendChild(text);

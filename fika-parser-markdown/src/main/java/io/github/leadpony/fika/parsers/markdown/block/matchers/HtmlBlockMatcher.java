@@ -27,7 +27,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.github.leadpony.fika.core.model.Block;
-import io.github.leadpony.fika.core.model.HtmlBlock;
 import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BasicBlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
@@ -54,9 +53,7 @@ class HtmlBlockMatcher extends AbstractBlockMatcher {
 
     @Override
     protected Block buildBlock() {
-        HtmlBlock block = getNodeFactory().newHtmlBlock();
-        block.setContent(builder.toString());
-        return block;
+        return getNodeFactory().newHtmlBlock(builder.toString());
     }
     
     protected void appendLine(InputSequence input) {

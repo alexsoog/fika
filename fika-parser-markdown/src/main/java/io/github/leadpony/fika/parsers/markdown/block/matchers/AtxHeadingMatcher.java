@@ -28,21 +28,23 @@ import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
+ * Matcher for ATX headings.
+ * 
  * @author leadpony
  */
-class HeadingMatcher extends AbstractBlockMatcher {
+class AtxHeadingMatcher extends AbstractBlockMatcher {
 
     private final int level;
     private final String title;
   
-    HeadingMatcher(int level, String title) {
+    AtxHeadingMatcher(int level, String title) {
         this.level = level;
         this.title = title;
     }
 
     @Override
     public BlockType blockType() {
-        return BasicBlockType.HEADING;
+        return BasicBlockType.ATX_HEADING;
     }
     
     @Override
@@ -53,8 +55,7 @@ class HeadingMatcher extends AbstractBlockMatcher {
     @Override
     protected Heading buildBlock() {
         Heading block = getNodeFactory().newHeading(this.level);
-        Text text = getNodeFactory().newText();
-        text.setContent(this.title);
+        Text text = getNodeFactory().newText(this.title);
         block.appendChild(text);
         context().addInline(text);
         return block;
@@ -64,16 +65,16 @@ class HeadingMatcher extends AbstractBlockMatcher {
 /**
  * @author leadpony
  */
-class HeadingMatcherFactory implements BlockMatcherFactory {
+class AtxHeadingMatcherFactory implements BlockMatcherFactory {
     
     private static final int MAX_LEVEL = 6;
 
-    HeadingMatcherFactory() {
+    AtxHeadingMatcherFactory() {
     }
 
     @Override
     public BlockType blockType() {
-        return BasicBlockType.HEADING;
+        return BasicBlockType.ATX_HEADING;
     }
 
     @Override
@@ -103,7 +104,7 @@ class HeadingMatcherFactory implements BlockMatcherFactory {
                 return null;
             }
         }
-        return new HeadingMatcher(level, extractTitle(input.subSequence(i)));
+        return new AtxHeadingMatcher(level, extractTitle(input.subSequence(i)));
     }
 
     @Override

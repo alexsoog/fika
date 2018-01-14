@@ -38,5 +38,6 @@ public class SetextHeadingTest extends AbstractSpecTest {
     
     @Before
     public void setUp() {
+        //Assume.assumeTrue(index() == 61);
     }
 }

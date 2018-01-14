@@ -241,8 +241,7 @@ public class DefaultInlineProcessor
                 firstText.setContent(content);
             }
         } else {
-            Text text = getNodeFactory().newText();
-            text.setContent(content);
+            Text text = getNodeFactory().newText(content);
             appendOrInsertNode(text);
         }
     }

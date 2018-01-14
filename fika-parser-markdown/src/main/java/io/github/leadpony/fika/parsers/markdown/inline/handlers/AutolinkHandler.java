@@ -81,8 +81,7 @@ class AutolinkHandler extends AbstractInlineHandler {
         Link newNode = getNodeFactory().newLink();
         UrlEncoder encoder = new UrlEncoder();
         newNode.setDestination(encoder.encode(url));
-        Text text = getNodeFactory().newText();
-        text.setContent(label);
+        Text text = getNodeFactory().newText(label);
         newNode.appendChild(text);
         return newNode;
     }

@@ -38,6 +38,5 @@ public class ParagraphTest extends AbstractSpecTest {
 
     @Before
     public void setUp() {
-        Assume.assumeFalse(index() == 189);
     }
 }

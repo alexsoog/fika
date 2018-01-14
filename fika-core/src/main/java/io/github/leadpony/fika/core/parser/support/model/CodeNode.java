@@ -25,8 +25,8 @@ abstract class CodeNode extends CharDataNode implements Code {
 
     private String language;
     
-    protected CodeNode(NodeFactory factory) {
-        super(factory);
+    protected CodeNode(NodeFactory factory, String content) {
+        super(factory, content);
     }
 
     @Override

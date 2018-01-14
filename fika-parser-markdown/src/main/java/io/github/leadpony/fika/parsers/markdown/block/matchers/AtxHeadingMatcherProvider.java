@@ -21,10 +21,10 @@ import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherProvider;
 /**
  * @author leadpony
  */
-public class HeadingMatcherProvider implements BlockMatcherProvider {
+public class AtxHeadingMatcherProvider implements BlockMatcherProvider {
 
     @Override
     public BlockMatcherFactory newMatcherFactory() {
-        return new HeadingMatcherFactory();
+        return new AtxHeadingMatcherFactory();
     }
 }

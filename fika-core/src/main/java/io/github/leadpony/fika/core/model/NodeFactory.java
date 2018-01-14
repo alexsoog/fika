@@ -29,9 +29,9 @@ public interface NodeFactory {
      */
     BlockQuote newBlockQuote();
     
-    CodeBlock newCodeBlock();
+    CodeBlock newCodeBlock(String content);
 
-    CodeSpan newCodeSpan();
+    CodeSpan newCodeSpan(String content);
 
     Document newDocument();
 
@@ -41,9 +41,9 @@ public interface NodeFactory {
 
     Heading newHeading(int level);
 
-    HtmlBlock newHtmlBlock();
+    HtmlBlock newHtmlBlock(String content);
     
-    HtmlInline newHtmlInline();
+    HtmlInline newHtmlInline(String content);
     
     Image newImage();
 
@@ -55,7 +55,7 @@ public interface NodeFactory {
 
     Paragraph newParagraph();
 
-    Text newText();
+    Text newText(String content);
     
     ThematicBreak newThematicBreak();
 }

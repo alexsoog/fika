@@ -20,16 +20,21 @@ package io.github.leadpony.fika.parsers.markdown.block;
  *
  */
 public enum BasicBlockType implements BlockType {
-    THEMATIC_BREAK(100),
-    LIST(110),
-    LIST_ITEM(110),
-    HEADING(120),
-    BLOCK_QUOTE(130),
-    FENCED_CODE(140),
-    HTML_BLOCK(150),
-    INDENTED_CODE(160),
-    LINK_DEFINITION(170),
-    PARAGRAPH(180),
+    /**
+     * Setext heading. 
+     * This must have higher precedence than thematic break.
+     */
+    SETEXT_HEADING(100),
+    THEMATIC_BREAK(110),
+    LIST(120),
+    LIST_ITEM(130),
+    ATX_HEADING(140),
+    BLOCK_QUOTE(150),
+    FENCED_CODE(160),
+    HTML_BLOCK(170),
+    INDENTED_CODE(180),
+    LINK_DEFINITION(190),
+    PARAGRAPH(200),
     DOCUMENT,
     ;
 

@@ -13,19 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.support.model;
+package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
-import io.github.leadpony.fika.core.model.Html;
-import io.github.leadpony.fika.core.model.NodeFactory;
+import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
+import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherProvider;
 
 /**
- * Skeletal implementation of {@link Html}.
- * 
  * @author leadpony
  */
-abstract class HtmlNode extends CharDataNode implements Html {
+public class SetextHeadingMatcherProvider implements BlockMatcherProvider {
 
-    protected HtmlNode(NodeFactory factory, String content) {
-        super(factory, content);
+    @Override
+    public BlockMatcherFactory newMatcherFactory() {
+        return new SetextHeadingMatcherFactory();
     }
 }

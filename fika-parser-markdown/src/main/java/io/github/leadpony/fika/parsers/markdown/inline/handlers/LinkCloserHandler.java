@@ -61,9 +61,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
     }
     
     private Text buildNode(String content) {
-        Text text = getNodeFactory().newText();
-        text.setContent(content);
-        return text;
+        return getNodeFactory().newText(content);
     }
     
     private int parseLink(InputSequence input, Delimiter opener, Delimiter closer) {

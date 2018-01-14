@@ -22,7 +22,7 @@ import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
  */
 public interface BlockMatcherFinder {
     
-    BlockMatcher findMatcher(InputSequence content);
+    BlockMatcher findMatcher(InputSequence input);
     
-    BlockMatcher findInterruptingMatcher(InputSequence content, BlockMatcher current);
+    BlockMatcher findInterruptingMatcher(InputSequence input, BlockMatcher current);
 }

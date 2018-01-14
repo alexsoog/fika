@@ -67,8 +67,7 @@ class FencedCodeMatcher extends AbstractBlockMatcher {
 
     @Override
     protected Block buildBlock() {
-        CodeBlock block = getNodeFactory().newCodeBlock();
-        block.setContent(builder.toString());
+        CodeBlock block = getNodeFactory().newCodeBlock(builder.toString());
         String infoString = unescape(expandReferences(this.infoString));
         String[] words = infoString.split("\\s+");
         String language = words[0];
