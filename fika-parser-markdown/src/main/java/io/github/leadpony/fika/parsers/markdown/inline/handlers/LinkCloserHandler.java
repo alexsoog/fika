@@ -24,7 +24,6 @@ import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
-import io.github.leadpony.fika.parsers.markdown.common.LinkParser;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.Delimiter;
 import io.github.leadpony.fika.parsers.markdown.inline.DelimiterStack;
@@ -71,10 +70,8 @@ public class LinkCloserHandler extends AbstractInlineHandler {
             char first = input.charAt(0);
             if (first == '(') {
                 return parseInlineLink(input, opener, closer);
-            } else if (first == '[') {
-                if (input.length() <= 1) {
-                    return -1;
-                } else if (input.charAt(1) == ']') {
+            } else if (first == '[' && input.length() > 1) {
+                if (input.charAt(1) == ']') {
                     return parseCollapsedReferenceLink(opener, closer);
                 } else {
                     return parseFullReferenceLink(input, opener, closer);
@@ -85,10 +82,10 @@ public class LinkCloserHandler extends AbstractInlineHandler {
     }
     
     private int parseInlineLink(InputSequence input, Delimiter opener, Delimiter closer) {
-        LinkParser parser = LinkParser.inlineParser(input, 0);
+        InlineLinkParser parser = new InlineLinkParser(input, 0);
         LinkDefinition definition = parser.parse();
         if (definition == null) {
-            return -1;
+            return parseShortcutReferenceLink(opener, closer);
         }
         makeLink(opener, closer, definition);
         return parser.index();

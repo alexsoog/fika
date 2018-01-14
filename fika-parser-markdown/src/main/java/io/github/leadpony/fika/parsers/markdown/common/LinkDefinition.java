@@ -15,9 +15,13 @@
  */
 package io.github.leadpony.fika.parsers.markdown.common;
 
+import static io.github.leadpony.fika.parsers.markdown.common.Strings.expandReferences;
+import static io.github.leadpony.fika.parsers.markdown.common.Strings.unescape;
+
 /**
+ * A link reference definition.
+ * 
  * @author leadpony
- *
  */
 public class LinkDefinition {
 
@@ -31,8 +35,8 @@ public class LinkDefinition {
     
     public LinkDefinition(String label, String destination, String title) {
         this.label = label;
-        this.destination = destination;
-        this.title = title;
+        this.destination = encodeDestination(destination);
+        this.title = expandTitle(title);
     }
 
     public String label() {
@@ -59,5 +63,20 @@ public class LinkDefinition {
             b.append(" \"").append(title()).append("\"");
         }
         return b.toString();
+    }
+    
+    private String encodeDestination(String s) {
+        if (s == null) {
+            return "";
+        }
+        s = unescape(expandReferences(s));
+        return new UrlEncoder().encode(s);
+    }
+    
+    private String expandTitle(String s) {
+        if (s == null) {
+            return null;
+        }
+        return unescape(expandReferences(s));
     }
 }

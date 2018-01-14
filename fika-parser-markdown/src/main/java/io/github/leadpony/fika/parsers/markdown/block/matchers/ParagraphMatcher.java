@@ -15,16 +15,10 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
-import static io.github.leadpony.fika.parsers.markdown.common.Strings.trimWhitespace;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import io.github.leadpony.fika.core.model.Block;
 import io.github.leadpony.fika.core.model.Text;
-import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BasicBlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
@@ -34,9 +28,8 @@ import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 /**
  * @author leadpony
  */
-class ParagraphMatcher extends AbstractBlockMatcher {
+class ParagraphMatcher extends AbstractParagraphMatcher {
     
-    private final List<String> lines = new ArrayList<>();
     private BlockBuilder blockBuilder;
     
     private static final Pattern UNDERLINE_PATTERN = Pattern.compile("\\u0020{0,3}(=+|-{2,})\\u0020*");
@@ -57,9 +50,10 @@ class ParagraphMatcher extends AbstractBlockMatcher {
             return Result.CONTINUED;
         } else if (input.isBlank() || this.blockBuilder != null) {
             return Result.COMPLETED;
+        } else {
+            appendLine(input);
+            return Result.CONTINUED;
         }
-        appendLine(input);
-        return Result.CONTINUED;
     }
 
     @Override
@@ -88,7 +82,7 @@ class ParagraphMatcher extends AbstractBlockMatcher {
     
     @Override
     protected Block buildBlock() {
-        String content = buildContent();
+        String content = buildContent(0);
         if (this.blockBuilder != null) {
             return this.blockBuilder.buildBlock(content);
         } else {
@@ -96,12 +90,6 @@ class ParagraphMatcher extends AbstractBlockMatcher {
         }
     }
     
-    private void appendLine(InputSequence input) {
-        int spaces = input.countLeadingSpaces();
-        String extracted = input.subSequence(spaces).toSourceString();
-        this.lines.add(extracted);
-    }
-
     private boolean matchHeading(InputSequence input) {
         if (!UNDERLINE_PATTERN.matcher(input).matches()) {
             return false;
@@ -120,19 +108,6 @@ class ParagraphMatcher extends AbstractBlockMatcher {
         Block block = getNodeFactory().newParagraph();
         block.appendChild(addText(content));
         return block;
-    }
-    
-    /**
-     * Builds the content of current paragraph.
-     * 
-     * The paragraph's raw content is formed by
-     * concatenating the lines and removing initial and final whitespace.
-     * 
-     * @return the content of the paragraph.
-     */
-    private String buildContent() {
-        String content = lines.stream().collect(Collectors.joining("\n"));
-        return trimWhitespace(content);    
     }
     
     private Text addText(String content) {

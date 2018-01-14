@@ -15,32 +15,23 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
-import static io.github.leadpony.fika.parsers.markdown.common.Strings.trimWhitespace;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Consumer;
 
 import io.github.leadpony.fika.core.model.Block;
-import io.github.leadpony.fika.core.model.Paragraph;
-import io.github.leadpony.fika.core.model.Text;
-import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BasicBlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
-import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionMap;
-import io.github.leadpony.fika.parsers.markdown.common.LinkParser;
 
 /**
  * @author leadpony
- *
  */
-class LinkDefinitionMatcher extends AbstractBlockMatcher {
+class LinkDefinitionMatcher extends AbstractParagraphMatcher 
+    implements Consumer<LinkDefinition> {
     
-    private final List<String> lines = new ArrayList<>();
+    private final LinkDefinitionRecognizer recognizer = new LinkDefinitionRecognizer(this);
    
     @Override
     public BlockType blockType() {
@@ -48,57 +39,37 @@ class LinkDefinitionMatcher extends AbstractBlockMatcher {
     }
 
     @Override
+    public Result match(InputSequence input) {
+        if (lineNo() > 1 && input.isBlank()) {
+            return Result.COMPLETED;
+        }
+        appendLine(input);
+        if (recognizer.acceptLine(input)) {
+            return Result.COMPLETED;
+        }
+        return Result.CONTINUED;
+    }
+    
+    @Override
     public boolean isInterruptible() {
         return lineNo() > 1;
     }
    
     @Override
-    public Result match(InputSequence input) {
-        if (lineNo() <= 1 || !input.isBlank()) {
-            appendLine(input);
-            return Result.CONTINUED;
-        } else {
-            return Result.COMPLETED;
-        }
-    }
-    
-    @Override
     protected Block buildBlock() {
-        String content = lines.stream().collect(Collectors.joining("\n"));
-        content = processLinkDefinitions(content);
-        return buildParagraph(content);
+        int linesConsumed = recognizer.flush();
+        return buildParagraph(linesConsumed);
     }
 
-    private void appendLine(InputSequence input) {
-        this.lines.add(input.toSourceString());
-    }
-    
-    private String processLinkDefinitions(String input) {
-        LinkDefinitionMap map = context().getLinkDefinitionMap();
-        LinkParser parser = LinkParser.definitionParser(input, 0);
-        LinkDefinition def = null;
-        int nextIndex = 0;
-        while ((def = parser.parse()) != null) {
-            map.put(def.label(), def);
-            nextIndex = parser.index();
-        }
-        if (nextIndex > 0) {
-            input = input.substring(nextIndex);
-        }
-        return input;
-    }
-    
-    private Paragraph buildParagraph(String content) {
-        content = trimWhitespace(content);
-        if (content.isEmpty()) {
-            return null;
-        }
-        Text text = getNodeFactory().newText();
-        text.setContent(content);
-        context().addInline(text);
-        Paragraph p = getNodeFactory().newParagraph();
-        p.appendChild(text);
-        return p;
+    /**
+     * Processes the link definition found.
+     * 
+     * @param definition the link definition found.
+     */
+    @Override
+    public void accept(LinkDefinition definition) {
+        context().getLinkDefinitionMap()
+            .put(definition.label(), definition);
     }
 }
 

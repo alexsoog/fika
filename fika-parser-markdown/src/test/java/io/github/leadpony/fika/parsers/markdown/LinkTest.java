@@ -38,6 +38,6 @@ public class LinkTest extends AbstractSpecTest {
 
     @Before
     public void setUp() {
-        //Assume.assumeTrue(index() == 523);
+        //Assume.assumeTrue(index() == 542);
     }
 }

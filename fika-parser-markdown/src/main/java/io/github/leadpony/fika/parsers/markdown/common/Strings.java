@@ -73,6 +73,18 @@ public final class Strings {
         }
         return s;
     }
+    
+    public static String trimLeadingWhitespace(String s) {
+        int leading = 0;
+        for (int i = 0; i < s.length(); ++i) {
+            if (isWhitespace(s.charAt(i))) {
+                ++leading;
+            } else {
+                break;
+            }
+        }
+        return (leading > 0) ? s.substring(leading) : s;
+    }
   
     private static final Pattern CONSECUTIVE_WHITESPACE = Pattern.compile("\\s+");
     
