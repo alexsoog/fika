@@ -15,8 +15,10 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
+import io.github.leadpony.fika.core.model.Link;
 import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.Text;
+import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.Delimiter;
 
@@ -54,7 +56,7 @@ class LinkHandler extends AbstractInlineHandler {
         private final String delimiter;
         private final int position;
 
-        protected LinkDelimiterRun(Text text, int position) {
+        LinkDelimiterRun(Text text, int position) {
             super(text);
             this.delimiter = text.getContent();
             this.position = position;
@@ -82,8 +84,11 @@ class LinkHandler extends AbstractInlineHandler {
         }
 
         @Override
-        public Node makePairWith(Delimiter closer) {
-            Node wrapper = buildWrapNode();
+        public Node makePairWith(Delimiter closer, Object... params) {
+            if (params.length == 0 || !(params[0] instanceof LinkDefinition)) {
+                throw new IllegalArgumentException();
+            }
+            Node wrapper = buildWrapNode((LinkDefinition)params[0]);
             wrapNodes(wrapper, text(), closer.text());
             // Inserts wrapper immediate after the opener.
             text().parentNode().insertChildAfter(wrapper, text());
@@ -94,9 +99,11 @@ class LinkHandler extends AbstractInlineHandler {
             return position;
         }
         
-        protected Node buildWrapNode() {
-            Node node = getNodeFactory().newLink(); 
-            return node;
+        protected Node buildWrapNode(LinkDefinition definition) {
+            Link link = getNodeFactory().newLink();
+            link.setDestination(definition.destination());
+            link.setTitle(definition.title());
+            return link;
         }
     }
 }

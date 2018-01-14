@@ -18,6 +18,8 @@ package io.github.leadpony.fika.core.model;
 import java.util.Collection;
 
 /**
+ * The supertype of all nodes.
+ * 
  * @author leadpony
  */
 public interface Node {
@@ -75,6 +77,8 @@ public interface Node {
             parent.removeChild(this);
         }
     }
+
+    String textContent();
     
     void accept(Visitor visitor);
 

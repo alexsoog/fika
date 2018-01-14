@@ -94,7 +94,12 @@ public class MinimalHtmlFormatter implements HtmlFormatter {
     private void appendAttributes(Map<String, String> attributes) {
         for (Map.Entry<String, String> entry: attributes.entrySet()) {
             String key = entry.getKey();
-            String value = escape(entry.getValue());
+            String value = entry.getValue();
+            if (value == null) {
+                value = "";
+            } else {
+                value = escape(value);
+            }
             writer.append(" ")
                   .append(key).append("=\"")
                   .append(value).append("\"");

@@ -15,47 +15,23 @@
  */
 package io.github.leadpony.fika.core.model;
 
+import java.net.URI;
+
 /**
- * Factory for creating various kinds of nodes.
- * 
  * @author leadpony
  */
-public interface NodeFactory {
-
-    /**
-     * Creates a new block quote.
-     * 
-     * @return newly created node.
-     */
-    BlockQuote newBlockQuote();
+public interface Image extends Block {
     
-    CodeBlock newCodeBlock();
-
-    CodeSpan newCodeSpan();
-
-    Document newDocument();
-
-    Emphasis newEmphasis(int strength);
-
-    HardLineBreak newHardLineBreak();
-
-    Heading newHeading(int level);
-
-    HtmlBlock newHtmlBlock();
+    URI getLocation();
     
-    HtmlInline newHtmlInline();
+    void setLocation(URI location);
     
-    Image newImage();
-
-    Link newLink();
-
-    ListBlock newLiskBlock(ListType type);
-
-    ListItem newListItem();
-
-    Paragraph newParagraph();
-
-    Text newText();
+    String getTitle();
     
-    ThematicBreak newThematicBreak();
+    void setTitle(String title);
+
+    @Override
+    default void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
 }

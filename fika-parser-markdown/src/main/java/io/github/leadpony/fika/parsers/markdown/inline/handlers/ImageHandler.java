@@ -15,7 +15,12 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
+import java.net.URI;
+
+import io.github.leadpony.fika.core.model.Image;
+import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.Text;
+import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
 
 /**
  * @author leadpony
@@ -37,7 +42,22 @@ public class ImageHandler extends LinkHandler {
         }
         Text text = buildNode(OPENING_CONTENT);
         getAppender().appendNode(text);
-        getDelimiterStack().add(new LinkDelimiterRun(text, offset));
+        getDelimiterStack().add(new ImageDelimiterRun(text, offset));
         return OPENING_CONTENT.length();
+    }
+
+    class ImageDelimiterRun extends LinkDelimiterRun {
+
+        ImageDelimiterRun(Text text, int position) {
+            super(text, position);
+        }
+
+        @Override
+        protected Node buildWrapNode(LinkDefinition definition) {
+            Image image = getNodeFactory().newImage(); 
+            image.setLocation(URI.create(definition.destination()));
+            image.setTitle(definition.title());
+            return image;
+        }
     }
 }

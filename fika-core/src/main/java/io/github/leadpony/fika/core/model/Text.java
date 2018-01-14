@@ -18,12 +18,8 @@ package io.github.leadpony.fika.core.model;
 /**
  * @author leadpony
  */
-public interface Text extends Inline {
+public interface Text extends Inline, CharData {
 
-    String getContent();
-    
-    void setContent(String content);
-    
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

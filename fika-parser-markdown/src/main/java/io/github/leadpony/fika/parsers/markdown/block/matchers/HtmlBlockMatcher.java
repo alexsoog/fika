@@ -55,7 +55,7 @@ class HtmlBlockMatcher extends AbstractBlockMatcher {
     @Override
     protected Block buildBlock() {
         HtmlBlock block = getNodeFactory().newHtmlBlock();
-        block.setHtml(builder.toString());
+        block.setContent(builder.toString());
         return block;
     }
     

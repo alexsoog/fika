@@ -19,7 +19,7 @@ package io.github.leadpony.fika.core.model;
  * @author leadpony
  *
  */
-public interface HtmlBlock extends Block, HtmlNode {
+public interface HtmlBlock extends Block, Html {
 
     @Override
     default void accept(Visitor visitor) {

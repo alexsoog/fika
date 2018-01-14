@@ -91,6 +91,13 @@ public abstract class ContainerNode extends BaseNode {
         return b.toString();
     }
 
+    @Override
+    protected void buildTextContent(StringBuilder builder) {
+        for (Node child: childNodes()) {
+            ((BaseNode)child).buildTextContent(builder);
+        }
+    }
+    
     private BaseNode appendChild(BaseNode child) {
         child.unlink();
         final BaseNode lastChild = lastChildNode;

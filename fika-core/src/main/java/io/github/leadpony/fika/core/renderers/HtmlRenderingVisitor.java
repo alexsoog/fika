@@ -27,6 +27,7 @@ import io.github.leadpony.fika.core.model.HardLineBreak;
 import io.github.leadpony.fika.core.model.Heading;
 import io.github.leadpony.fika.core.model.HtmlBlock;
 import io.github.leadpony.fika.core.model.HtmlInline;
+import io.github.leadpony.fika.core.model.Image;
 import io.github.leadpony.fika.core.model.Link;
 import io.github.leadpony.fika.core.model.ListItem;
 import io.github.leadpony.fika.core.model.OrderedList;
@@ -106,12 +107,27 @@ class HtmlRenderingVisitor implements Visitor {
     
     @Override
     public void visit(HtmlBlock node) {
-        formatter.rawHtml(node.getHtml());
+        formatter.rawHtml(node.getContent());
     }
     
     @Override
     public void visit(HtmlInline node) {
-        formatter.rawHtml(node.getHtml());
+        formatter.rawHtml(node.getContent());
+    }
+
+    @Override
+    public void visit(Image node) {
+        String title = node.getTitle();
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("src", node.getLocation().toString());
+        if (title != null) {
+            attributes.put("title", title);
+        }
+        String alt = node.textContent();
+        if (alt != null) {
+            attributes.put("alt", alt);
+        }
+        formatter.emptyTag("img", attributes);
     }
 
     @Override

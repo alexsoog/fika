@@ -15,6 +15,8 @@
  */
 package io.github.leadpony.fika.core.parser.support.model;
 
+import java.net.URI;
+
 import io.github.leadpony.fika.core.model.BlockQuote;
 import io.github.leadpony.fika.core.model.CodeBlock;
 import io.github.leadpony.fika.core.model.CodeSpan;
@@ -24,6 +26,7 @@ import io.github.leadpony.fika.core.model.HardLineBreak;
 import io.github.leadpony.fika.core.model.Heading;
 import io.github.leadpony.fika.core.model.HtmlBlock;
 import io.github.leadpony.fika.core.model.HtmlInline;
+import io.github.leadpony.fika.core.model.Image;
 import io.github.leadpony.fika.core.model.Link;
 import io.github.leadpony.fika.core.model.ListBlock;
 import io.github.leadpony.fika.core.model.ListItem;
@@ -91,6 +94,11 @@ public class DefaultNodeFactory implements NodeFactory {
     }
 
     @Override
+    public Image newImage() {
+        return new ImageImpl(this);
+    }
+
+    @Override
     public Link newLink() {
         return new LinkImpl(this);
     }
@@ -133,62 +141,17 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
     
-    private static class CodeBlockImpl extends BaseNode implements CodeBlock {
+    private static class CodeBlockImpl extends CodeNode implements CodeBlock {
 
-        String content;
-        String language;
-        
         CodeBlockImpl(NodeFactory factory) {
             super(factory);
         }
-
-        @Override
-        public String getContent() {
-            return content;
-        }
-        
-        @Override
-        public void setContent(String content) {
-            this.content = content;
-        }
-
-        @Override
-        public String getLanguage() {
-            return language;
-        }
-        
-        @Override
-        public void setLanguage(String language) {
-            this.language = language;
-        }
-        
-        @Override
-        public String toString() {
-            return content;
-        }
     }
     
-    private static class CodeSpanImpl extends BaseNode implements CodeSpan {
+    private static class CodeSpanImpl extends CodeNode implements CodeSpan {
 
-        String content;
-        
         CodeSpanImpl(NodeFactory factory) {
             super(factory);
-        }
-
-        @Override
-        public String getContent() {
-            return content;
-        }
-        
-        @Override
-        public void setContent(String content) {
-            this.content = content;
-        }
-
-        @Override
-        public String toString() {
-            return content;
         }
     }
 
@@ -219,7 +182,7 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
     
-    private static class HardLineBreakImpl extends AbstractHtmlNode implements HardLineBreak {
+    private static class HardLineBreakImpl extends BaseNode implements HardLineBreak {
         
         HardLineBreakImpl(NodeFactory factory) {
             super(factory);
@@ -246,39 +209,71 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
     
-    private static class HtmlBlockImpl extends AbstractHtmlNode implements HtmlBlock {
+    private static class HtmlBlockImpl extends HtmlNode implements HtmlBlock {
         
         HtmlBlockImpl(NodeFactory factory) {
             super(factory);
         }
     }
 
-    private static class HtmlInlineImpl extends AbstractHtmlNode implements HtmlInline {
+    private static class HtmlInlineImpl extends HtmlNode implements HtmlInline {
         
         HtmlInlineImpl(NodeFactory factory) {
             super(factory);
         }
     }
 
+    private static class ImageImpl extends ContainerNode implements Image {
+        
+        private URI location;
+        private String title;
+
+        ImageImpl(NodeFactory factory) {
+            super(factory);
+            this.location = null;
+            this.title = null;
+        }
+
+        @Override
+        public URI getLocation() {
+            return location;
+        }
+
+        @Override
+        public void setLocation(URI location) {
+            this.location = location;
+        }
+
+        @Override
+        public String getTitle() {
+            return title;
+        }
+
+        @Override
+        public void setTitle(String title) {
+            this.title = title;
+        }
+    }
+    
     private static class LinkImpl extends ContainerNode implements Link {
         
-        private String url;
+        private String destination;
         private String title;
         
         LinkImpl(NodeFactory factory) {
             super(factory);
-            this.url = "";
+            this.destination = null;
             this.title = null;
         }
 
         @Override
         public String getDestination() {
-            return url;
+            return destination;
         }
 
         @Override
-        public void setDestination(String url) {
-            this.url = url;
+        public void setDestination(String destination) {
+            this.destination = destination;
         }
 
         @Override
@@ -333,27 +328,10 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
  
-    private static class TextImpl extends BaseNode implements Text {
-        
-        String content;
+    private static class TextImpl extends CharDataNode implements Text {
         
         TextImpl(NodeFactory factory) {
             super(factory);
-        }
-        
-        @Override
-        public String getContent() {
-            return content;
-        }
-        
-        @Override
-        public void setContent(String content) {
-            this.content = content;
-        }
-        
-        @Override
-        public String toString() {
-            return content;
         }
     }
     

@@ -16,46 +16,37 @@
 package io.github.leadpony.fika.core.model;
 
 /**
- * Factory for creating various kinds of nodes.
+ * A holder of character data.
  * 
  * @author leadpony
  */
-public interface NodeFactory {
-
+public interface CharData {
+    
+    default boolean isEmpty() {
+        return length() == 0;
+    }
+    
     /**
-     * Creates a new block quote.
+     * Returns the number of characters this object holds.
      * 
-     * @return newly created node.
+     * @return the number of characters.
      */
-    BlockQuote newBlockQuote();
+    default int length() {
+        return getContent().length();
+    }
     
-    CodeBlock newCodeBlock();
-
-    CodeSpan newCodeSpan();
-
-    Document newDocument();
-
-    Emphasis newEmphasis(int strength);
-
-    HardLineBreak newHardLineBreak();
-
-    Heading newHeading(int level);
-
-    HtmlBlock newHtmlBlock();
+    /**
+     * Returns the character data this object holds.
+     * 
+     * @return the character data, may be empty but never be {@code null}.
+     */
+    String getContent();
     
-    HtmlInline newHtmlInline();
-    
-    Image newImage();
-
-    Link newLink();
-
-    ListBlock newLiskBlock(ListType type);
-
-    ListItem newListItem();
-
-    Paragraph newParagraph();
-
-    Text newText();
-    
-    ThematicBreak newThematicBreak();
+    /**
+     * Assigns the character data to this object.
+     * 
+     * @param content the character data to assign.
+     * @throws NullPointerException if {@code content} is {@code null}.
+     */
+    void setContent(String content);
 }

@@ -13,15 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.model;
+package io.github.leadpony.fika.core.parser.support.model;
+
+import io.github.leadpony.fika.core.model.Code;
+import io.github.leadpony.fika.core.model.NodeFactory;
 
 /**
  * @author leadpony
  */
-public interface CodeBlock extends Block, Code {
+abstract class CodeNode extends CharDataNode implements Code {
+
+    private String language;
+    
+    protected CodeNode(NodeFactory factory) {
+        super(factory);
+    }
 
     @Override
-    default void accept(Visitor visitor) {
-        visitor.visit(this);
+    public String getLanguage() {
+        return language;
+    }
+
+    @Override
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }

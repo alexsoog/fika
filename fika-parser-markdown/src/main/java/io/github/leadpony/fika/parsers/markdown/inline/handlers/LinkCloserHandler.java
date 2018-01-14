@@ -19,7 +19,6 @@ import static io.github.leadpony.fika.parsers.markdown.common.Strings.trimWhites
 
 import java.util.Iterator;
 
-import io.github.leadpony.fika.core.model.Link;
 import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
@@ -27,6 +26,8 @@ import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.Delimiter;
 import io.github.leadpony.fika.parsers.markdown.inline.DelimiterStack;
+import io.github.leadpony.fika.parsers.markdown.inline.handlers.ImageHandler.ImageDelimiterRun;
+import io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkHandler.LinkDelimiterRun;
 
 /**
  * @author leadpony
@@ -150,7 +151,9 @@ public class LinkCloserHandler extends AbstractInlineHandler {
     }
     
     private String extractLinkLabel(Delimiter opener, Delimiter closer) {
-        int beginIndex = 1 + ((LinkHandler.LinkDelimiterRun)opener).getPosition();
+        LinkDelimiterRun linkOpener = (LinkDelimiterRun)opener;
+        int openerLength = linkOpener.delimiter().length();
+        int beginIndex = openerLength + linkOpener.getPosition();
         int endIndex = ((ClosingDelimiter)closer).position;
         return context().input().substring(beginIndex, endIndex);
     }
@@ -160,15 +163,15 @@ public class LinkCloserHandler extends AbstractInlineHandler {
     }
     
     private Node makeLink(Delimiter opener, Delimiter closer, LinkDefinition definition) {
-        Link link = (Link)opener.makePairWith(closer);
-        link.setDestination(definition.destination());
-        link.setTitle(definition.title());
-        processDelimitersInLinkTitle(opener);
-        deactiveOpenersBefore(opener);
+        Node newNode = opener.makePairWith(closer, definition);
+        processDelimitersInText(opener);
+        if (!(opener instanceof ImageDelimiterRun)) {
+            deactiveOpenersBefore(opener);
+        }
         getDelimiterStack().remove(opener);
         opener.text().unlink();
         closer.text().unlink();
-        return link;
+        return newNode;
     }
     
     private void deactiveOpenersBefore(Delimiter opener) {
@@ -182,7 +185,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
         }
     }
     
-    private void processDelimitersInLinkTitle(Delimiter opener) {
+    private void processDelimitersInText(Delimiter opener) {
         context().getDelimiterProcessor().processDelimiters(opener);
     }
     
@@ -216,7 +219,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
         }
 
         @Override
-        public Node makePairWith(Delimiter closer) {
+        public Node makePairWith(Delimiter closer, Object... params) {
             throw new UnsupportedOperationException();
         }
     }

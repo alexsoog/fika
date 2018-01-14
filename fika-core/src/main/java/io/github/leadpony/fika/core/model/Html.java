@@ -18,10 +18,5 @@ package io.github.leadpony.fika.core.model;
 /**
  * @author leadpony
  */
-public interface CodeBlock extends Block, Code {
-
-    @Override
-    default void accept(Visitor visitor) {
-        visitor.visit(this);
-    }
+public interface Html extends CharData {
 }

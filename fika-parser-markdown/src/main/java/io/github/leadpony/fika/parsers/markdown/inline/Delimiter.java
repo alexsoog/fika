@@ -73,7 +73,7 @@ public abstract class Delimiter extends DelimiterStack.Entry {
                 );
     }
     
-    public abstract Node makePairWith(Delimiter closer);
+    public abstract Node makePairWith(Delimiter closer, Object... params);
     
     @Override
     public String toString() {

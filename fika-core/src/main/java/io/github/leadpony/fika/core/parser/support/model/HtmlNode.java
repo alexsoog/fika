@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.model;
+package io.github.leadpony.fika.core.parser.support.model;
+
+import io.github.leadpony.fika.core.model.Html;
+import io.github.leadpony.fika.core.model.NodeFactory;
 
 /**
+ * Skeletal implementation of {@link Html}.
+ * 
  * @author leadpony
- *
  */
-public interface HtmlNode {
-    
-    String getHtml();
-    
-    void setHtml(String html);
+abstract class HtmlNode extends CharDataNode implements Html {
+
+    protected HtmlNode(NodeFactory factory) {
+        super(factory);
+    }
 }

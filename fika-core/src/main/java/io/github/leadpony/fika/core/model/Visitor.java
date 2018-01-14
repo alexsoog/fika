@@ -52,6 +52,10 @@ public interface Visitor {
     default void visit(HtmlInline node) {
     }
 
+    default void visit(Image node) {
+        visitChildren(node);
+    }
+
     default void visit(Link node) {
         visitChildren(node);
     }

@@ -22,7 +22,7 @@ public interface Link extends Inline {
 
     String getDestination();
     
-    void setDestination(String url);
+    void setDestination(String destination);
     
     String getTitle();
     

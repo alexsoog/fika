@@ -18,5 +18,5 @@ package io.github.leadpony.fika.core.model;
 /**
  * @author leadpony
  */
-public interface LineBreak extends Node {
+public interface LineBreak extends Inline {
 }

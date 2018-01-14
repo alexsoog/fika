@@ -65,6 +65,13 @@ public abstract class BaseNode implements Node {
     }
 
     @Override
+    public String textContent() {
+        StringBuilder builder = new StringBuilder();
+        buildTextContent(builder);
+        return builder.toString();
+    }
+    
+    @Override
     public NodeFactory factory() {
         return factory;
     }
@@ -81,5 +88,8 @@ public abstract class BaseNode implements Node {
             throw new IllegalArgumentException(name + " was instantiated by other factory.");
         }
         return (BaseNode)node;
+    }
+
+    protected void buildTextContent(StringBuilder builder) {
     }
 }

@@ -62,7 +62,7 @@ public abstract class DelimiterRun extends Delimiter {
     }
     
     @Override
-    public Node makePairWith(Delimiter closer) {
+    public Node makePairWith(Delimiter closer, Object... params) {
         return makePairWith((DelimiterRun)closer);
     }
 

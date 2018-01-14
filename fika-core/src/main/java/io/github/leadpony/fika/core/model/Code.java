@@ -13,35 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser.support.model;
-
-import io.github.leadpony.fika.core.model.HtmlNode;
-import io.github.leadpony.fika.core.model.NodeFactory;
+package io.github.leadpony.fika.core.model;
 
 /**
  * @author leadpony
- *
  */
-abstract class AbstractHtmlNode extends BaseNode implements HtmlNode {
+public interface Code extends CharData {
 
-    private String html;
+    String getLanguage();
     
-    protected AbstractHtmlNode(NodeFactory factory) {
-        super(factory);
-    }
-
-    @Override
-    public String getHtml() {
-        return html;
-    }
-
-    @Override
-    public void setHtml(String html) {
-        this.html = html;
-    }
-
-    @Override
-    public String toString() {
-        return getHtml();
-    }
+    void setLanguage(String language);
 }

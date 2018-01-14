@@ -18,12 +18,8 @@ package io.github.leadpony.fika.core.model;
 /**
  * @author leadpony
  */
-public interface CodeSpan extends Inline {
+public interface CodeSpan extends Inline, Code {
 
-    String getContent();
-    
-    void setContent(String content);
-    
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

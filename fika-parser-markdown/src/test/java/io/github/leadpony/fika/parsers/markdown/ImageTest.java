@@ -13,15 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.model;
+package io.github.leadpony.fika.parsers.markdown;
+
+import org.junit.Assume;
+import org.junit.Before;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * @author leadpony
  */
-public interface CodeBlock extends Block, Code {
+@RunWith(Parameterized.class)
+public class ImageTest extends AbstractSpecTest {
 
-    @Override
-    default void accept(Visitor visitor) {
-        visitor.visit(this);
+    public ImageTest(int index, String source, String expected) {
+        super(index, source, expected);
+    }
+  
+    @Parameters(name = "{0}: {1}")
+    public static Iterable<Object[]> parameters() {
+        return parameters("/images.json");
+    }
+
+    @Before
+    public void setUp() {
+        //Assume.assumeTrue(index() == 545);
     }
 }
