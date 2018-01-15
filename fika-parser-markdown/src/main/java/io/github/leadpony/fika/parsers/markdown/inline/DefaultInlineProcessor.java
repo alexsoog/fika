@@ -100,35 +100,46 @@ public class DefaultInlineProcessor
     /* InlineAppender interface */
 
     @Override
-    public void appendNode(Node newNode) {
+    public InlineAppender appendNode(Node newNode) {
         if (newNode == null) {
             throw new NullPointerException();
         }
         flushTextBuffer();
         appendOrInsertNode(newNode);
+        return this;
     }
     
     @Override
-    public final void appendContent(char c) {
+    public final InlineAppender appendContent(char c) {
         this.textBuffer.append(c);
+        return this;
     }
    
     @Override
-    public void appendContent(int codePoint) {
+    public InlineAppender appendContent(int codePoint) {
         this.textBuffer.appendCodePoint(codePoint);
+        return this;
     }
     
     @Override
-    public void appendContent(String s) {
+    public InlineAppender appendContent(String s) {
         this.textBuffer.append(s);
+        return this;
     }
 
     @Override
-    public void appendContentTo(int length) {
+    public InlineAppender appendContentTo(int length) {
         int beginIndex = currentIndex;
         int endIndex = beginIndex + length;
         String s = input.substring(beginIndex, endIndex);
-        appendContent(s);
+        return appendContent(s);
+    }
+    
+    @Override
+    public InlineAppender removeContent(int length) {
+        int newLength = this.textBuffer.length() - length;
+        this.textBuffer.setLength(newLength);
+        return this;
     }
 
     /* helper methods */

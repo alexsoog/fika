@@ -24,20 +24,20 @@ import org.junit.runners.Parameterized.Parameters;
 /**
  * @author leadpony
  */
+@SuppressWarnings("unused")
 @RunWith(Parameterized.class)
-public class SetextHeadingTest extends AbstractSpecTest {
+public class AllSpecTest extends AbstractSpecTest {
 
-    public SetextHeadingTest(int index, String source, String expected) {
+    public AllSpecTest(int index, String source, String expected) {
         super(index, source, expected);
     }
   
     @Parameters(name = "{0}: {1}")
     public static Iterable<Object[]> parameters() {
-        return parameters("/setext-headings.json");
+        return parameters("/spec.json");
     }
     
     @Before
     public void setUp() {
-        //Assume.assumeTrue(index() == 61);
     }
 }

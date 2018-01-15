@@ -26,8 +26,7 @@ import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.Delimiter;
 import io.github.leadpony.fika.parsers.markdown.inline.DelimiterStack;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.ImageHandler.ImageDelimiterRun;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkHandler.LinkDelimiterRun;
+import io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkHandler.LinkDelimiter;
 
 /**
  * @author leadpony
@@ -43,7 +42,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
     
     @Override
     public int handleContent(String input, int currentIndex) {
-        Text text = buildNode(LinkHandler.CLOSING_CONTENT);
+        Text text = buildNode(AbstractLinkDelimiter.CLOSING_CONTENT);
         getAppender().appendNode(text);
         Delimiter closer = new ClosingDelimiter(text, currentIndex);
         Delimiter opener = findOpener(closer);
@@ -149,7 +148,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
     }
     
     private String extractLinkLabel(Delimiter opener, Delimiter closer) {
-        LinkDelimiterRun linkOpener = (LinkDelimiterRun)opener;
+        AbstractLinkDelimiter linkOpener = (AbstractLinkDelimiter)opener;
         int openerLength = linkOpener.delimiter().length();
         int beginIndex = openerLength + linkOpener.getPosition();
         int endIndex = ((ClosingDelimiter)closer).position;
@@ -163,7 +162,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
     private Node makeLink(Delimiter opener, Delimiter closer, LinkDefinition definition) {
         Node newNode = opener.makePairWith(closer, definition);
         processDelimitersInText(opener);
-        if (!(opener instanceof ImageDelimiterRun)) {
+        if (opener instanceof LinkDelimiter) {
             deactiveOpenersBefore(opener);
         }
         getDelimiterStack().remove(opener);

@@ -20,7 +20,6 @@ import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
-import io.github.leadpony.fika.parsers.markdown.inline.Delimiter;
 
 /**
  * @author leadpony
@@ -28,7 +27,6 @@ import io.github.leadpony.fika.parsers.markdown.inline.Delimiter;
 class LinkHandler extends AbstractInlineHandler {
 
     public static final String OPENING_CONTENT = "[";
-    public static final String CLOSING_CONTENT = "]";
 
     private static final char TRIGGER_LETTER = '[';
   
@@ -41,7 +39,7 @@ class LinkHandler extends AbstractInlineHandler {
     public int handleContent(String input, int currentIndex) {
         Text text = buildNode(OPENING_CONTENT);
         getAppender().appendNode(text);
-        getDelimiterStack().add(new LinkDelimiterRun(text, currentIndex));
+        getDelimiterStack().add(new LinkDelimiter(text, currentIndex));
         return OPENING_CONTENT.length();
     }
 
@@ -49,54 +47,13 @@ class LinkHandler extends AbstractInlineHandler {
         return getNodeFactory().newText(content);
     }
     
-    class LinkDelimiterRun extends Delimiter {
+    class LinkDelimiter extends AbstractLinkDelimiter {
         
-        private final String delimiter;
-        private final int position;
-
-        LinkDelimiterRun(Text text, int position) {
-            super(text);
-            this.delimiter = text.getContent();
-            this.position = position;
+        LinkDelimiter(Text text, int position) {
+            super(text, position);
         }
 
         @Override
-        public String delimiter() {
-            return delimiter;
-        }
-
-        @Override
-        public boolean canBeOpener() {
-            return true;
-        }
-        
-        @Override
-        public boolean canBeCloser() {
-            return false;
-        }
-       
-        @Override
-        public boolean isSameTypeAs(Delimiter other) {
-            String delimiter = other.delimiter();
-            return delimiter.equals(delimiter()) || delimiter.equals(CLOSING_CONTENT); 
-        }
-
-        @Override
-        public Node makePairWith(Delimiter closer, Object... params) {
-            if (params.length == 0 || !(params[0] instanceof LinkDefinition)) {
-                throw new IllegalArgumentException();
-            }
-            Node wrapper = buildWrapNode((LinkDefinition)params[0]);
-            wrapNodes(wrapper, text(), closer.text());
-            // Inserts wrapper immediate after the opener.
-            text().parentNode().insertChildAfter(wrapper, text());
-            return wrapper;
-        }
-        
-        public int getPosition() {
-            return position;
-        }
-        
         protected Node buildWrapNode(LinkDefinition definition) {
             Link link = getNodeFactory().newLink();
             link.setDestination(definition.destination());

@@ -42,13 +42,13 @@ public class ImageHandler extends LinkHandler {
         }
         Text text = buildNode(OPENING_CONTENT);
         getAppender().appendNode(text);
-        getDelimiterStack().add(new ImageDelimiterRun(text, offset));
+        getDelimiterStack().add(new ImageDelimiter(text, offset));
         return OPENING_CONTENT.length();
     }
 
-    class ImageDelimiterRun extends LinkDelimiterRun {
+    class ImageDelimiter extends AbstractLinkDelimiter {
 
-        ImageDelimiterRun(Text text, int position) {
+        ImageDelimiter(Text text, int position) {
             super(text, position);
         }
 

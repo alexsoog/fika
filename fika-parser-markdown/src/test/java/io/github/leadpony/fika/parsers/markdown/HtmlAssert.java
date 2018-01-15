@@ -13,19 +13,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.util;
+package io.github.leadpony.fika.parsers.markdown;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.assertj.core.api.AbstractAssert;
+
 /**
+ * Custom assertion for testing HTML content.
+ * 
  * @author leadpony
  */
-public class HtmlMinifier {
-    
-    private static final Pattern TAG_PATTERN = Pattern.compile("<[^>]+>");
+public class HtmlAssert extends AbstractAssert<HtmlAssert, String> {
 
-    public String minify(String html) {
+    public static HtmlAssert assertThat(String actual) {
+        return new HtmlAssert(actual);
+    }
+    
+    private HtmlAssert(String actual) {
+        super(normalize(actual), HtmlAssert.class);
+    }
+
+    public HtmlAssert isEqualTo(String expected) {
+        expected = normalize(expected);
+        return super.isEqualTo(expected);
+    }
+ 
+    private static final Pattern TAG_PATTERN = Pattern.compile("<[^>]+>");
+    
+    private static String normalize(String html) {
         StringBuilder b = new StringBuilder();
         Matcher m = TAG_PATTERN.matcher(html);
         boolean preformatted = false;
@@ -35,7 +52,7 @@ public class HtmlMinifier {
             if (last < index) {
                 String content = html.substring(last, index);
                 if (!preformatted) {
-                    content = content.trim();
+                    content = convertText(content);
                 }
                 b.append(content);
             }
@@ -49,8 +66,19 @@ public class HtmlMinifier {
             last = m.end();
         }
         if (last < html.length()) {
-            b.append(html.substring(last).trim());
+            b.append(convertText(html.substring(last)));
         }
         return b.toString();
+    }
+
+    private static String convertText(String text) {
+        if ("\n".equals(text)) {
+            return "";
+        } else if (text.startsWith("\n")){
+            return text.substring(1);
+        } else if (text.endsWith("\n")) {
+            return text.substring(0, text.length() - 1);
+        }
+        return text;
     }
 }

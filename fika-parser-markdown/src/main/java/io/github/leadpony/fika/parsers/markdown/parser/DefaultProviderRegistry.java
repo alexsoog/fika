@@ -36,6 +36,7 @@ import io.github.leadpony.fika.parsers.markdown.inline.handlers.AutoLinkHandlerP
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.CharacterReferenceHandlerProvider;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.CodeSpanHandlerProvider;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.ImageHandlerProvider;
+import io.github.leadpony.fika.parsers.markdown.inline.handlers.LineBreakHandlerProvider;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkCloserHandlerProvider;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkHandlerProvider;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.RawHtmlHandlerProvider;
@@ -101,15 +102,16 @@ class DefaultProviderRegistry implements ProviderRegistry {
     private List<InlineHandlerProvider> populateInlineProviders() {
         List<InlineHandlerProvider> providers = new ArrayList<>();
         
-        providers.add(new AutoLinkHandlerProvider());
-        providers.add(new CodeSpanHandlerProvider());
-        providers.add(new RawHtmlHandlerProvider());
         providers.add(new AsteriskEmphasisHandlerProvider());
-        providers.add(new UnderscoreEmphasisHandlerProvider());
-        providers.add(new LinkHandlerProvider());
-        providers.add(new ImageHandlerProvider());
-        providers.add(new LinkCloserHandlerProvider());
+        providers.add(new AutoLinkHandlerProvider());
         providers.add(new CharacterReferenceHandlerProvider());
+        providers.add(new CodeSpanHandlerProvider());
+        providers.add(new ImageHandlerProvider());
+        providers.add(new LineBreakHandlerProvider());
+        providers.add(new LinkCloserHandlerProvider());
+        providers.add(new LinkHandlerProvider());
+        providers.add(new RawHtmlHandlerProvider());
+        providers.add(new UnderscoreEmphasisHandlerProvider());
         
         return Collections.unmodifiableList(providers);
     }

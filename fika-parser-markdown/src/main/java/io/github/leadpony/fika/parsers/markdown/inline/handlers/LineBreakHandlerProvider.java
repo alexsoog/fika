@@ -13,30 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown;
+package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
 
 /**
  * @author leadpony
  */
-@RunWith(Parameterized.class)
-public class FencedCodeBlockTest extends AbstractSpecTest {
+public class LineBreakHandlerProvider implements InlineHandlerProvider {
 
-    public FencedCodeBlockTest(int index, String source, String expected) {
-        super(index, source, expected);
-    }
-  
-    @Parameters(name = "{0}: {1}")
-    public static Iterable<Object[]> parameters() {
-        return parameters("/fenced-code-blocks.json");
-    }
-
-    @Before
-    public void setUp() {
+    @Override
+    public InlineHandler newHandler() {
+        return new LineBreakHandler();
     }
 }

@@ -22,13 +22,15 @@ import io.github.leadpony.fika.core.model.Node;
  */
 public interface InlineAppender {
     
-    void appendNode(Node node);
+    InlineAppender appendNode(Node node);
     
-    void appendContent(char c);
+    InlineAppender appendContent(char c);
 
-    void appendContent(int codePoint);
+    InlineAppender appendContent(int codePoint);
 
-    void appendContent(String s);
+    InlineAppender appendContent(String s);
 
-    void appendContentTo(int length);
+    InlineAppender appendContentTo(int length);
+    
+    InlineAppender removeContent(int length);
 }

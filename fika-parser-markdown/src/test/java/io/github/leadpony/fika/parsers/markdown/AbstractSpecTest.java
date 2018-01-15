@@ -15,8 +15,6 @@
  */
 package io.github.leadpony.fika.parsers.markdown;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -30,7 +28,6 @@ import org.junit.Test;
 import io.github.leadpony.fika.core.model.Document;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.renderers.HtmlRenderer;
-import io.github.leadpony.fika.core.util.HtmlMinifier;
 import io.github.leadpony.fika.parsers.markdown.parser.MarkdownParserFactory;
 import io.github.leadpony.fika.parsers.markdown.parser.ProviderRegistry;
 
@@ -44,7 +41,6 @@ public abstract class AbstractSpecTest {
 
     private final int index;
     protected final Fixture fixture;
-    private final HtmlMinifier minifier = new HtmlMinifier();
     
     protected AbstractSpecTest(int index, String source, String expected) {
         this.index = index;
@@ -58,9 +54,9 @@ public abstract class AbstractSpecTest {
         HtmlRenderer renderer = HtmlRenderer.builder()
                 .disable(HtmlRenderer.Option.FULL_HTML)
                 .build();
-        String actual = minifier.minify(renderer.render(doc));
-        String expected = minifier.minify(fixture.expected());
-        assertThat(actual).isEqualTo(expected);
+        String actual = renderer.render(doc);
+        String expected = fixture.expected();
+        HtmlAssert.assertThat(actual).isEqualTo(expected);
     }
     
     public int index() {
