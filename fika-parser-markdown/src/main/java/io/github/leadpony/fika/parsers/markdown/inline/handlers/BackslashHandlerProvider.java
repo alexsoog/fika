@@ -13,23 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.model;
+package io.github.leadpony.fika.parsers.markdown.inline.handlers;
+
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
 
 /**
  * @author leadpony
  */
-public interface Image extends Block {
-    
-    String getLocation();
-    
-    void setLocation(String location);
-    
-    String getTitle();
-    
-    void setTitle(String title);
+public class BackslashHandlerProvider implements InlineHandlerProvider {
 
     @Override
-    default void accept(Visitor visitor) {
-        visitor.visit(this);
+    public InlineHandler newHandler() {
+        return new BackslashHandler();
     }
 }

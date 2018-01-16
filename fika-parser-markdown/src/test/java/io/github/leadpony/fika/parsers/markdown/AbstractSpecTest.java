@@ -52,7 +52,7 @@ public abstract class AbstractSpecTest {
         Parser parser = factory.newParser(fixture.source());
         Document doc = parser.parse();
         HtmlRenderer renderer = HtmlRenderer.builder()
-                .disable(HtmlRenderer.Option.FULL_HTML)
+                .withOption(HtmlRenderer.Option.HTML_FRAGMENT)
                 .build();
         String actual = renderer.render(doc);
         String expected = fixture.expected();

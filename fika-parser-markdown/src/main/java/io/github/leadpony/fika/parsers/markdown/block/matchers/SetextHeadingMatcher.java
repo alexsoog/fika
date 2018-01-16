@@ -22,10 +22,11 @@ import java.util.regex.Pattern;
 import io.github.leadpony.fika.core.model.Block;
 import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BasicBlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
@@ -43,8 +44,8 @@ class SetextHeadingMatcher extends AbstractBlockMatcher {
     }
 
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.SETEXT_HEADING;
+    public BlockTrait blockTrait() {
+        return BlockType.SETEXT_HEADING;
     }
 
     @Override
@@ -67,13 +68,13 @@ class SetextHeadingMatcherFactory implements BlockMatcherFactory {
     private static final Pattern UNDERLINE_PATTERN = Pattern.compile("\\u0020{0,3}(=+|-{2,})\\u0020*");
     
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.SETEXT_HEADING;
+    public BlockTrait blockTrait() {
+        return BlockType.SETEXT_HEADING;
     }
 
     @Override
-    public Set<? extends BlockType> interruptible() {
-        return EnumSet.of(BasicBlockType.PARAGRAPH);
+    public Set<? extends BlockTrait> interruptible() {
+        return EnumSet.of(BlockType.PARAGRAPH);
     }
     
     /**
@@ -86,9 +87,8 @@ class SetextHeadingMatcherFactory implements BlockMatcherFactory {
     }
 
     @Override
-    public BlockMatcher newInterrupter(InputSequence input, BlockMatcher current) {
-        ParagraphMatcher paragraphMatcher = (ParagraphMatcher)current;
-        if (paragraphMatcher.isLazy()) {
+    public BlockMatcher newInterrupter(InputSequence input, BlockMatcher current, MatcherMode mode) {
+        if (mode == MatcherMode.LAZY_CONTINUATION) {
             return null;
         }
         if (!UNDERLINE_PATTERN.matcher(input).matches()) {
@@ -100,6 +100,7 @@ class SetextHeadingMatcherFactory implements BlockMatcherFactory {
         }
         char c = input.charAt(firstIndex);
         int level = (c == '=') ? 1 : 2;
+        ParagraphMatcher paragraphMatcher = (ParagraphMatcher)current;
         String content = paragraphMatcher.buildContent(0);
         return new SetextHeadingMatcher(level, content);
     }

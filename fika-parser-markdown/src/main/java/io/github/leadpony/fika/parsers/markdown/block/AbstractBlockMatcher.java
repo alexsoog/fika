@@ -46,9 +46,9 @@ public abstract class AbstractBlockMatcher implements BlockMatcher {
     }
     
     @Override
-    public BlockMatcher interrupt(InputSequence input) {
+    public BlockMatcher interrupt(InputSequence input, MatcherMode mode) {
         if (isInterruptible()) {
-            return context().finder().findInterruptingMatcher(input, this);
+            return context().finder().findInterruptingMatcher(input, this, mode);
         } else {
             return null;
         }

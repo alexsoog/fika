@@ -18,9 +18,13 @@ package io.github.leadpony.fika.parsers.markdown.inline;
 import io.github.leadpony.fika.core.model.Text;
 
 /**
+ * Inline processor interface.
+ * 
  * @author leadpony
  */
 public interface InlineProcessor {
+  
+    final int MAX_TRIGGER_CODE = 127;
     
     /**
      * Processes all inline nodes found in the specified text node.

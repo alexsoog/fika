@@ -16,8 +16,8 @@
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
 import io.github.leadpony.fika.core.model.Document;
-import io.github.leadpony.fika.parsers.markdown.block.BasicBlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
 import io.github.leadpony.fika.parsers.markdown.block.ContainerBlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
@@ -30,8 +30,8 @@ public class DocumentMatcher extends ContainerBlockMatcher {
     }
    
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.DOCUMENT;
+    public BlockTrait blockTrait() {
+        return BlockType.DOCUMENT;
     }
     
     @Override

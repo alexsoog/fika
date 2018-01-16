@@ -23,6 +23,8 @@ import java.util.Set;
 import io.github.leadpony.fika.core.model.Document;
 
 /**
+ * HTML renderer.
+ * 
  * @author leadpony
  */
 public class HtmlRenderer implements Renderer {
@@ -38,10 +40,10 @@ public class HtmlRenderer implements Renderer {
         StringWriter writer = new StringWriter();
         HtmlFormatter formatter = createFormatter(writer); 
         HtmlRenderingVisitor visitor = null;
-        if (options.contains(Option.FULL_HTML)) {
-            visitor = new FullHtmlRenderingVisitor(formatter);
-        } else {
+        if (options.contains(Option.HTML_FRAGMENT)) {
             visitor = new HtmlRenderingVisitor(formatter);
+        } else {
+            visitor = new FullHtmlRenderingVisitor(formatter);
         }
         doc.accept(visitor);
         return writer.toString();
@@ -55,24 +57,34 @@ public class HtmlRenderer implements Renderer {
         return new MinimalHtmlFormatter(writer);
     }
     
+    /**
+     * Rendering options.
+     * 
+     * @author leadpony
+     */
     public static enum Option {
-        FULL_HTML
+        HTML_FRAGMENT
     }
 
+    /**
+     * Builder of HTML renderer.
+     * 
+     * @author leadpony
+     */
     public static class Builder {
         
-        private final Set<Option> options = EnumSet.of(Option.FULL_HTML);
+        private final Set<Option> options = EnumSet.noneOf(Option.class);
         
         public HtmlRenderer build() {
             return new HtmlRenderer(this);
         }
         
-        public Builder enable(Option option) {
+        public Builder withOption(Option option) {
             options.add(option);
             return this;
         }
 
-        public Builder disable(Option option) {
+        public Builder withoutOption(Option option) {
             options.remove(option);
             return this;
         }

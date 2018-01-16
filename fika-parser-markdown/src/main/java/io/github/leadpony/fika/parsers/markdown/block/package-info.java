@@ -15,6 +15,6 @@
  */
 
 /**
- * Provides various kinds of block matchers.
+ * Provides base components for block matchers.
  */
 package io.github.leadpony.fika.parsers.markdown.block;

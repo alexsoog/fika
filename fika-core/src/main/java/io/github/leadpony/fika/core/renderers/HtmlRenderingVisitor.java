@@ -119,7 +119,7 @@ class HtmlRenderingVisitor implements Visitor {
     public void visit(Image node) {
         String title = node.getTitle();
         Map<String, String> attributes = new HashMap<>();
-        attributes.put("src", node.getLocation().toString());
+        attributes.put("src", node.getLocation());
         if (title != null) {
             attributes.put("title", title);
         }

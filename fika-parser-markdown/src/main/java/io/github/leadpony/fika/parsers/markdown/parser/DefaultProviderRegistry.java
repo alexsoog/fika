@@ -33,6 +33,7 @@ import io.github.leadpony.fika.parsers.markdown.block.matchers.ThematicBreakMatc
 import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.AsteriskEmphasisHandlerProvider;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.AutoLinkHandlerProvider;
+import io.github.leadpony.fika.parsers.markdown.inline.handlers.BackslashHandlerProvider;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.CharacterReferenceHandlerProvider;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.CodeSpanHandlerProvider;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.ImageHandlerProvider;
@@ -104,6 +105,7 @@ class DefaultProviderRegistry implements ProviderRegistry {
         
         providers.add(new AsteriskEmphasisHandlerProvider());
         providers.add(new AutoLinkHandlerProvider());
+        providers.add(new BackslashHandlerProvider());
         providers.add(new CharacterReferenceHandlerProvider());
         providers.add(new CodeSpanHandlerProvider());
         providers.add(new ImageHandlerProvider());

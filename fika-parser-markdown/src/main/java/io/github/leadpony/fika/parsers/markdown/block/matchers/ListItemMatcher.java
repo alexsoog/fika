@@ -19,10 +19,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.github.leadpony.fika.core.model.Block;
-import io.github.leadpony.fika.parsers.markdown.block.BasicBlockType;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
+import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
 import io.github.leadpony.fika.parsers.markdown.block.ContainerBlockMatcher;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
@@ -64,8 +65,8 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
     }
     
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.LIST_ITEM;
+    public BlockTrait blockTrait() {
+        return BlockType.LIST_ITEM;
     }
 
     @Override
@@ -94,7 +95,7 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
     }
 
     @Override
-    public BlockMatcher interrupt(InputSequence input) {
+    public BlockMatcher interrupt(InputSequence input, MatcherMode mode) {
         assert(isInterruptible());
         int indentSize = input.countLeadingSpaces(0, this.indentSize);
         if (indentSize < this.indentSize) {

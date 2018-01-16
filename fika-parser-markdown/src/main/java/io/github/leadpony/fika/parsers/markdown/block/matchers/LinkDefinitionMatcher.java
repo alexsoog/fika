@@ -18,10 +18,10 @@ package io.github.leadpony.fika.parsers.markdown.block.matchers;
 import java.util.function.Consumer;
 
 import io.github.leadpony.fika.core.model.Block;
-import io.github.leadpony.fika.parsers.markdown.block.BasicBlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
 
@@ -34,8 +34,8 @@ class LinkDefinitionMatcher extends AbstractParagraphMatcher
     private final LinkDefinitionRecognizer recognizer = new LinkDefinitionRecognizer(this);
    
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.LINK_DEFINITION;
+    public BlockTrait blockTrait() {
+        return BlockType.LINK_DEFINITION;
     }
 
     @Override
@@ -76,8 +76,8 @@ class LinkDefinitionMatcher extends AbstractParagraphMatcher
 class LinkDefinitionMatcherFactory implements BlockMatcherFactory {
 
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.LINK_DEFINITION;
+    public BlockTrait blockTrait() {
+        return BlockType.LINK_DEFINITION;
     }
 
     @Override

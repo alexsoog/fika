@@ -38,11 +38,11 @@ public interface BlockMatcher {
     }
     
     /**
-     * Returns the block type this matcher will produce.
+     * Returns the trait of the block this matcher will produce.
      * 
-     * @return the block type.
+     * @return the trait of the block.
      */
-    BlockType blockType();
+    BlockTrait blockTrait();
     
     /**
      * Binds the context to this matcher.
@@ -75,7 +75,7 @@ public interface BlockMatcher {
         return false;
     }
     
-    default BlockMatcher interrupt(InputSequence content) {
+    default BlockMatcher interrupt(InputSequence content, MatcherMode mode) {
         return null;
     }
     

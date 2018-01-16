@@ -28,10 +28,11 @@ import java.util.regex.Pattern;
 
 import io.github.leadpony.fika.core.model.Block;
 import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BasicBlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherMode;
 import io.github.leadpony.fika.parsers.markdown.common.HtmlMatchers;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
@@ -47,8 +48,8 @@ class HtmlBlockMatcher extends AbstractBlockMatcher {
     }
 
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.HTML_BLOCK;
+    public BlockTrait blockTrait() {
+        return BlockType.HTML_BLOCK;
     }
 
     @Override
@@ -350,13 +351,13 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
     }
 
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.HTML_BLOCK;
+    public BlockTrait blockTrait() {
+        return BlockType.HTML_BLOCK;
     }
 
     @Override
-    public Set<? extends BlockType> interruptible() {
-        return EnumSet.of(BasicBlockType.PARAGRAPH, BasicBlockType.LINK_DEFINITION);
+    public Set<? extends BlockTrait> interruptible() {
+        return EnumSet.of(BlockType.PARAGRAPH, BlockType.LINK_DEFINITION);
     }
     
     @Override
@@ -365,7 +366,7 @@ class HtmlBlockMatcherFactory implements BlockMatcherFactory {
     }
     
     @Override
-    public BlockMatcher newInterrupter(InputSequence input, BlockMatcher current) {
+    public BlockMatcher newInterrupter(InputSequence input, BlockMatcher current, MatcherMode mode) {
         return newMatcher(input, interruptingStarters);
     }
 

@@ -20,10 +20,10 @@ import java.util.List;
 
 import io.github.leadpony.fika.core.model.CodeBlock;
 import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BasicBlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 class IndentedCodeMatcher extends AbstractBlockMatcher {
@@ -38,8 +38,8 @@ class IndentedCodeMatcher extends AbstractBlockMatcher {
     }
 
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.INDENTED_CODE;
+    public BlockTrait blockTrait() {
+        return BlockType.INDENTED_CODE;
     }
     
     @Override
@@ -82,8 +82,8 @@ class IndentedCodeMatcher extends AbstractBlockMatcher {
 class IndentedCodeMatcherFactory implements BlockMatcherFactory {
 
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.INDENTED_CODE;
+    public BlockTrait blockTrait() {
+        return BlockType.INDENTED_CODE;
     }
     
     @Override

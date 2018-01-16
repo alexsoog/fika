@@ -27,10 +27,20 @@ import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
  */
 public interface BlockMatcherFactory {
 
-    BlockType blockType();
-    
+    /**
+     * Returns the trait of the block this factory produce.
+     * 
+     * @return the trait of the block.
+     */
+    BlockTrait blockTrait();
+
+    /**
+     * Returns the precedence of this factory.
+     * 
+     * @return the precedence of this factory.
+     */
     default int precedence() {
-        return blockType().precedence();
+        return blockTrait().precedence();
     }
     
     /**
@@ -42,11 +52,11 @@ public interface BlockMatcherFactory {
      */
     BlockMatcher newMatcher(InputSequence input);
     
-    default Set<? extends BlockType> interruptible() {
+    default Set<? extends BlockTrait> interruptible() {
         return Collections.emptySet();
     }
     
-    default BlockMatcher newInterrupter(InputSequence input, BlockMatcher current) {
+    default BlockMatcher newInterrupter(InputSequence input, BlockMatcher current, MatcherMode matcherMode) {
         return null;
     }
 }

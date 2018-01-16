@@ -16,40 +16,16 @@
 package io.github.leadpony.fika.parsers.markdown.block;
 
 /**
+ * Block trait.
+ * 
  * @author leadpony
- *
  */
-public enum BasicBlockType implements BlockType {
-    /**
-     * Setext heading. 
-     * This must have higher precedence than thematic break.
-     */
-    SETEXT_HEADING(100),
-    THEMATIC_BREAK(110),
-    LIST(120),
-    LIST_ITEM(130),
-    ATX_HEADING(140),
-    BLOCK_QUOTE(150),
-    FENCED_CODE(160),
-    HTML_BLOCK(170),
-    INDENTED_CODE(180),
-    LINK_DEFINITION(190),
-    PARAGRAPH(200),
-    DOCUMENT,
-    ;
+public interface BlockTrait {
 
-    private final int precedence;
-    
-    private BasicBlockType() {
-        this.precedence = Integer.MAX_VALUE;
-    }
-    
-    private BasicBlockType(int precedence) {
-        this.precedence = precedence;
-    }
-    
-    @Override
-    public int precedence() {
-        return precedence;
-    }
+    /**
+     * Returns the precedence of this block type.
+     * 
+     * @return the precedence.
+     */
+    int precedence();
 }

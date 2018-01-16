@@ -15,8 +15,6 @@
  */
 package io.github.leadpony.fika.core.parser.support.model;
 
-import java.net.URI;
-
 import io.github.leadpony.fika.core.model.BlockQuote;
 import io.github.leadpony.fika.core.model.CodeBlock;
 import io.github.leadpony.fika.core.model.CodeSpan;
@@ -225,7 +223,7 @@ public class DefaultNodeFactory implements NodeFactory {
 
     private static class ImageImpl extends ContainerNode implements Image {
         
-        private URI location;
+        private String location;
         private String title;
 
         ImageImpl(NodeFactory factory) {
@@ -235,12 +233,12 @@ public class DefaultNodeFactory implements NodeFactory {
         }
 
         @Override
-        public URI getLocation() {
+        public String getLocation() {
             return location;
         }
 
         @Override
-        public void setLocation(URI location) {
+        public void setLocation(String location) {
             this.location = location;
         }
 

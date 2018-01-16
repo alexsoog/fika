@@ -13,8 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.leadpony.fika.parsers.markdown.block;
+
 /**
  * @author leadpony
- *
  */
-package io.github.leadpony.fika.core.util;
+public enum MatcherMode {
+    NORMAL,
+    LAZY_CONTINUATION
+    ;
+}

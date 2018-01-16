@@ -24,5 +24,5 @@ public interface BlockMatcherFinder {
     
     BlockMatcher findMatcher(InputSequence input);
     
-    BlockMatcher findInterruptingMatcher(InputSequence input, BlockMatcher current);
+    BlockMatcher findInterruptingMatcher(InputSequence input, BlockMatcher current, MatcherMode mode);
 }

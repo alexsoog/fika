@@ -16,10 +16,11 @@
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
 import io.github.leadpony.fika.core.model.Block;
-import io.github.leadpony.fika.parsers.markdown.block.BasicBlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
@@ -29,17 +30,15 @@ import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
  */
 class ParagraphMatcher extends AbstractParagraphMatcher {
     
-    private boolean lazy;
     private boolean canceled;
     
     ParagraphMatcher() {
-        this.lazy = false;
         this.canceled = false;
     }
   
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.PARAGRAPH;
+    public BlockTrait blockTrait() {
+        return BlockType.PARAGRAPH;
     }
     
     @Override
@@ -61,8 +60,8 @@ class ParagraphMatcher extends AbstractParagraphMatcher {
     }
     
     @Override
-    public BlockMatcher interrupt(InputSequence input) {
-        BlockMatcher interrupter = super.interrupt(input);
+    public BlockMatcher interrupt(InputSequence input, MatcherMode mode) {
+        BlockMatcher interrupter = super.interrupt(input, mode);
         if (interrupter instanceof SetextHeadingMatcher) {
             this.canceled = true;
         }
@@ -71,17 +70,11 @@ class ParagraphMatcher extends AbstractParagraphMatcher {
 
     @Override
     public Result continueLazily(InputSequence input) {
-        this.lazy = true;
-        BlockMatcher interrupter = interrupt(input);
-        this.lazy = false;
+        BlockMatcher interrupter = interrupt(input, MatcherMode.LAZY_CONTINUATION);
         if (interrupter != null || input.isBlank()) {
             return Result.NOT_MATCHED;
         }
         return match(input);
-    }
-    
-    public boolean isLazy() {
-        return lazy;
     }
     
     @Override
@@ -99,8 +92,8 @@ class ParagraphMatcher extends AbstractParagraphMatcher {
 class ParagraphMatcherFactory implements BlockMatcherFactory {
 
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.PARAGRAPH;
+    public BlockTrait blockTrait() {
+        return BlockType.PARAGRAPH;
     }
 
     @Override

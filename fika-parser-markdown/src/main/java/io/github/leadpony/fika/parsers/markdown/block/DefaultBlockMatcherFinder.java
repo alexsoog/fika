@@ -33,7 +33,7 @@ import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 class DefaultBlockMatcherFinder implements BlockMatcherFinder {
 
     private final List<BlockMatcherFactory> factories;
-    private final Map<BlockType, List<BlockMatcherFactory>> interrupters = new HashMap<>();
+    private final Map<BlockTrait, List<BlockMatcherFactory>> interrupters = new HashMap<>();
 
     /**
      * @param factories
@@ -58,16 +58,16 @@ class DefaultBlockMatcherFinder implements BlockMatcherFinder {
     }
     
     @Override
-    public BlockMatcher findInterruptingMatcher(InputSequence input, BlockMatcher current) {
+    public BlockMatcher findInterruptingMatcher(InputSequence input, BlockMatcher current, MatcherMode mode) {
         if (input.isBlank()) {
             return null;
         }
-        List<BlockMatcherFactory> factories = interrupters.get(current.blockType());
+        List<BlockMatcherFactory> factories = interrupters.get(current.blockTrait());
         if (factories == null) {
             return null;
         }
         for (BlockMatcherFactory factory: factories) {
-            BlockMatcher matched = factory.newInterrupter(input, current);
+            BlockMatcher matched = factory.newInterrupter(input, current, mode);
             if (matched != null) {
                 return matched;
             }
@@ -83,7 +83,7 @@ class DefaultBlockMatcherFinder implements BlockMatcherFinder {
     }
     
     private void addInterrupter(BlockMatcherFactory factory) {
-        for (BlockType type: factory.interruptible()) {
+        for (BlockTrait type: factory.interruptible()) {
             List<BlockMatcherFactory> list = interrupters.get(type);
             if (list == null) {
                 list = new ArrayList<>();

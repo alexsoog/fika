@@ -89,7 +89,7 @@ public abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
         BlockMatcher child = childMatcher();
         assert(child != null);
         if (child.isInterruptible()) {
-            BlockMatcher interrupter = child.interrupt(input);
+            BlockMatcher interrupter = child.interrupt(input, MatcherMode.NORMAL);
             if (interrupter != null) {
                 openChildMatcher(interrupter);
                 child = interrupter;

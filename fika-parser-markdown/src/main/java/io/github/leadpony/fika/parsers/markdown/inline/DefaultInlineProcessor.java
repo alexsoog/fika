@@ -15,8 +15,6 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline;
 
-import static io.github.leadpony.fika.parsers.markdown.common.Characters.isPunctuation;
-
 import java.util.List;
 
 import io.github.leadpony.fika.core.model.Node;
@@ -31,8 +29,6 @@ import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionMap;
  */
 public class DefaultInlineProcessor 
     implements InlineProcessor, InlineHandler.Context, InlineAppender {
-    
-    private static final int MAX_TRIGGER_CODE = 127;
     
     private final InlineHandler[] handlers;
   
@@ -187,9 +183,7 @@ public class DefaultInlineProcessor
         while (index < length) {
             char c = input.charAt(index);
             int consumed = 0;
-            if (c == '\\') {
-                consumed = handleBackslashEscape(input, index);
-            } else if (c < MAX_TRIGGER_CODE) {
+            if (c < MAX_TRIGGER_CODE) {
                 InlineHandler handler = this.handlers[c];
                 if (handler != null) {
                     consumed = invokeHandler(handler, index);
@@ -199,7 +193,7 @@ public class DefaultInlineProcessor
                 index += consumed;
             } else {
                 appendContent(c);
-                index++;
+                ++index;
             }
         }
         flushTextBuffer();
@@ -213,21 +207,6 @@ public class DefaultInlineProcessor
             this.currentIndex = newIndex;
         }
         return consumed;
-    }
-    
-    private int handleBackslashEscape(String input, int index) {
-        this.currentIndex = index;
-        if (index + 1 < input.length()) {
-            char c = input.charAt(index + 1);
-            if (c == '\n') {
-                appendNode(getNodeFactory().newHardLineBreak());
-                return 2;
-            } else if (isPunctuation(c)) {
-                appendContent(c);
-                return 2;
-            }
-        }
-        return 0;
     }
     
     private void appendOrInsertNode(Node child) {

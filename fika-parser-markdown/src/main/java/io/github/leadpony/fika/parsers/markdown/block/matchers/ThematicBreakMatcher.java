@@ -20,10 +20,11 @@ import java.util.Set;
 
 import io.github.leadpony.fika.core.model.Block;
 import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BasicBlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
@@ -35,8 +36,8 @@ class ThematicBreakMatcher extends AbstractBlockMatcher {
     }
 
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.THEMATIC_BREAK;
+    public BlockTrait blockTrait() {
+        return BlockType.THEMATIC_BREAK;
     }
 
     @Override
@@ -61,16 +62,16 @@ class ThematicBreakMatcherFactory implements BlockMatcherFactory {
     }
 
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.THEMATIC_BREAK;
+    public BlockTrait blockTrait() {
+        return BlockType.THEMATIC_BREAK;
     }
     
     @Override
-    public Set<? extends BlockType> interruptible() {
+    public Set<? extends BlockTrait> interruptible() {
         return EnumSet.of(
-                BasicBlockType.PARAGRAPH,
-                BasicBlockType.LINK_DEFINITION,
-                BasicBlockType.LIST);
+                BlockType.PARAGRAPH,
+                BlockType.LINK_DEFINITION,
+                BlockType.LIST);
     }
 
     @Override
@@ -79,7 +80,7 @@ class ThematicBreakMatcherFactory implements BlockMatcherFactory {
     }
 
     @Override
-    public BlockMatcher newInterrupter(InputSequence input, BlockMatcher current) {
+    public BlockMatcher newInterrupter(InputSequence input, BlockMatcher current, MatcherMode mode) {
         return newMatcher(input);
     }
     

@@ -15,8 +15,6 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
-import java.net.URI;
-
 import io.github.leadpony.fika.core.model.Image;
 import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.Text;
@@ -55,7 +53,7 @@ public class ImageHandler extends LinkHandler {
         @Override
         protected Node buildWrapNode(LinkDefinition definition) {
             Image image = getNodeFactory().newImage(); 
-            image.setLocation(URI.create(definition.destination()));
+            image.setLocation(definition.destination());
             image.setTitle(definition.title());
             return image;
         }

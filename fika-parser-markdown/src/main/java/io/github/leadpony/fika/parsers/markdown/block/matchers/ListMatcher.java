@@ -25,11 +25,12 @@ import io.github.leadpony.fika.core.model.ListType;
 import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.OrderedList;
 import io.github.leadpony.fika.core.model.Paragraph;
-import io.github.leadpony.fika.parsers.markdown.block.BasicBlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
 import io.github.leadpony.fika.parsers.markdown.block.ContainerBlockMatcher;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
@@ -60,10 +61,10 @@ abstract class ListMatcher extends ContainerBlockMatcher {
     }
     
     boolean canInterrupt(BlockMatcher matcher) {
-        BlockType type = matcher.blockType();
-        if (type == BasicBlockType.PARAGRAPH) {
+        BlockTrait type = matcher.blockTrait();
+        if (type == BlockType.PARAGRAPH) {
             return firstItemMatcher.canInterruptParagraph();
-        } else if (type == BasicBlockType.LIST) {
+        } else if (type == BlockType.LIST) {
             return !isSameTypeAs((ListMatcher)matcher);
         }
         return true;
@@ -74,8 +75,8 @@ abstract class ListMatcher extends ContainerBlockMatcher {
     }
     
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.LIST;
+    public BlockTrait blockTrait() {
+        return BlockType.LIST;
     }
     
     @Override
@@ -105,16 +106,16 @@ abstract class ListMatcher extends ContainerBlockMatcher {
     }
     
     @Override
-    public BlockMatcher interrupt(InputSequence input) {
+    public BlockMatcher interrupt(InputSequence input, MatcherMode mode) {
         if (hasChildMatcher()) {
             ListItemMatcher child = (ListItemMatcher)childMatcher();
             if (input.hasLeadingSpaces(child.indentSize())) {
                 return null;
             }
         }
-        BlockMatcher matcher = context().finder().findInterruptingMatcher(input, this);
+        BlockMatcher matcher = context().finder().findInterruptingMatcher(input, this, mode);
         if (matcher == null) {
-            matcher = this.factory.newInterrupter(input, this);
+            matcher = this.factory.newInterrupter(input, this, mode);
         }
         return matcher;
     }
@@ -221,13 +222,13 @@ class ListMatcherFactory implements BlockMatcherFactory {
     }
 
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.LIST;
+    public BlockTrait blockTrait() {
+        return BlockType.LIST;
     }
   
     @Override
-    public Set<? extends BlockType> interruptible() {
-        return EnumSet.of(BasicBlockType.PARAGRAPH, BasicBlockType.LINK_DEFINITION);
+    public Set<? extends BlockTrait> interruptible() {
+        return EnumSet.of(BlockType.PARAGRAPH, BlockType.LINK_DEFINITION);
     }
     
     @Override
@@ -236,7 +237,7 @@ class ListMatcherFactory implements BlockMatcherFactory {
     }
     
     @Override
-    public BlockMatcher newInterrupter(InputSequence input, BlockMatcher current) {
+    public BlockMatcher newInterrupter(InputSequence input, BlockMatcher current, MatcherMode mode) {
         ListMatcher matcher = newListMatcher(input);
         if (matcher == null) {
             return null;
