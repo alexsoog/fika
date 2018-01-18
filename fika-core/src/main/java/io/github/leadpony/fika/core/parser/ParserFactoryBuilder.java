@@ -15,29 +15,14 @@
  */
 package io.github.leadpony.fika.core.parser;
 
-import java.io.Reader;
-import java.io.StringReader;
-
 /**
  * @author leadpony
  */
-public interface ParserFactory {
+public interface ParserFactoryBuilder {
     
-    static ParserFactory newInstance(String mediaType) {
-        return builder(mediaType).build();
-    }
-    
-    static ParserFactoryBuilder builder(String mediaType) {
-        ParserFactoryService service = ParserFactoryService.findService(mediaType);
-        if (service != null) {
-            return service.newBuilder(mediaType);
-        }
-        return null;
-    }
-    
-    default Parser newParser(String text) {
-        return newParser(new StringReader(text));
-    }
+    ParserFactoryBuilder withFeature(String feature);
 
-    Parser newParser(Reader reader);
+    ParserFactoryBuilder withoutFeature(String feature);
+   
+    ParserFactory build();
 }

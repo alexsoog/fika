@@ -43,5 +43,5 @@ public abstract class ParserFactoryService {
     
     public abstract boolean supports(String mediaType);
 
-    public abstract ParserFactory newFactory(String mediaType);
+    public abstract ParserFactoryBuilder newBuilder(String mediaType);
 }

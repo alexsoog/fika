@@ -13,23 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.renderers;
-
-import java.io.StringWriter;
-import java.io.Writer;
-
-import io.github.leadpony.fika.core.model.Node;
-
 /**
  * @author leadpony
+ *
  */
-public interface Renderer {
-    
-    void render(Node node, Writer writer);
-    
-    default String render(Node node) {
-        StringWriter writer = new StringWriter();
-        render(node, writer);
-        return writer.toString();
-    }
-}
+package io.github.leadpony.fika.parsers.markdown.parser.features.inline;

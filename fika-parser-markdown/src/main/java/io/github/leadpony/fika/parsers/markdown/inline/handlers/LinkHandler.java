@@ -24,7 +24,7 @@ import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 /**
  * @author leadpony
  */
-class LinkHandler extends AbstractInlineHandler {
+public class LinkHandler extends AbstractInlineHandler {
 
     public static final String OPENING_CONTENT = "[";
 

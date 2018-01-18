@@ -15,16 +15,25 @@
  */
 package io.github.leadpony.fika.parsers.markdown.parser;
 
-import io.github.leadpony.fika.core.parser.ParserFactory;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import io.github.leadpony.fika.core.parser.ParserFactoryBuilder;
 import io.github.leadpony.fika.core.parser.ParserFactoryService;
 
 /**
  * @author leadpony
- *
  */
 public class MarkdownParserFactoryService extends ParserFactoryService {
     
     private static final String TARGET_MEDIA_TYPE = "text/markdown";
+    
+    private final Map<String, Feature> featureMap;
+    
+    public MarkdownParserFactoryService() {
+        this.featureMap = loadFeatures();
+    }
 
     @Override
     public boolean supports(String mediaType) {
@@ -32,11 +41,20 @@ public class MarkdownParserFactoryService extends ParserFactoryService {
     }
 
     @Override
-    public ParserFactory newFactory(String mediaType) {
-        ParserFactory factory = null;
-        if (TARGET_MEDIA_TYPE.equals(mediaType)) {
-            factory = new MarkdownParserFactory(ProviderRegistry.getDefault());
+    public ParserFactoryBuilder newBuilder(String mediaType) {
+        if (!supports(mediaType)) {
+            return null;
         }
-        return factory;
+        return new MarkdownParserFactory.Builder(featureMap);
+    }
+    
+    private static Map<String, Feature> loadFeatures() {
+        Map<String, Feature> map = new HashMap<>();
+        Iterator<Feature> it = Feature.features();
+        while (it.hasNext()) {
+            Feature feature = it.next();
+            map.put(feature.name(), feature);
+        }
+        return map;
     }
 }

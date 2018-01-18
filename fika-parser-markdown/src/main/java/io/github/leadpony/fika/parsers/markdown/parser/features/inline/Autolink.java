@@ -13,18 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.inline.handlers;
+package io.github.leadpony.fika.parsers.markdown.parser.features.inline;
 
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
+import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherRegistry;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerRegistry;
+import io.github.leadpony.fika.parsers.markdown.inline.handlers.AutolinkHandler;
+import io.github.leadpony.fika.parsers.markdown.parser.Feature;
 
 /**
  * @author leadpony
  */
-public class BackslashHandlerProvider implements InlineHandlerProvider {
+public class Autolink implements Feature {
 
     @Override
-    public InlineHandler newHandler() {
-        return new BackslashHandler();
+    public String name() {
+        return "autolink";
+    }
+
+    @Override
+    public void install(BlockMatcherRegistry blockRegistry, InlineHandlerRegistry inlineRegistry) {
+        inlineRegistry.installInlineHandler(new AutolinkHandler());
     }
 }

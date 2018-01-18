@@ -30,18 +30,6 @@ import io.github.leadpony.fika.parsers.markdown.block.matchers.ListMatcherProvid
 import io.github.leadpony.fika.parsers.markdown.block.matchers.ParagraphMatcherProvider;
 import io.github.leadpony.fika.parsers.markdown.block.matchers.SetextHeadingMatcherProvider;
 import io.github.leadpony.fika.parsers.markdown.block.matchers.ThematicBreakMatcherProvider;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.AsteriskEmphasisHandlerProvider;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.AutoLinkHandlerProvider;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.BackslashHandlerProvider;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.CharacterReferenceHandlerProvider;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.CodeSpanHandlerProvider;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.ImageHandlerProvider;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.LineBreakHandlerProvider;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkCloserHandlerProvider;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkHandlerProvider;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.RawHtmlHandlerProvider;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.UnderscoreEmphasisHandlerProvider;
 
 /**
  * @author leadpony
@@ -50,7 +38,6 @@ import io.github.leadpony.fika.parsers.markdown.inline.handlers.UnderscoreEmphas
 class DefaultProviderRegistry implements ProviderRegistry {
 
     private final List<BlockMatcherProvider> blockProviders;
-    private final List<InlineHandlerProvider> inlineProviders;
     
     private static final ProviderRegistry defaultRegistry = new DefaultProviderRegistry();
     
@@ -60,7 +47,6 @@ class DefaultProviderRegistry implements ProviderRegistry {
     
     private DefaultProviderRegistry() {
         this.blockProviders = populateBlockProviders();
-        this.inlineProviders = populateInlineProviders();
     }
 
     @Override
@@ -68,21 +54,6 @@ class DefaultProviderRegistry implements ProviderRegistry {
         return blockProviders;
     }
 
-    @Override
-    public Iterable<InlineHandlerProvider> inlineHandlerProviders() {
-        return inlineProviders;
-    }
-
-    @Override
-    public ProviderRegistry register(BlockMatcherProvider blockProvider) {
-        return this;
-    }
-
-    @Override
-    public ProviderRegistry register(InlineHandlerProvider inlineProvider) {
-        return this;
-    }
-    
     private List<BlockMatcherProvider> populateBlockProviders() {
         List<BlockMatcherProvider> providers = new ArrayList<>();
 
@@ -97,24 +68,6 @@ class DefaultProviderRegistry implements ProviderRegistry {
         providers.add(new SetextHeadingMatcherProvider());
         providers.add(new ThematicBreakMatcherProvider());
 
-        return Collections.unmodifiableList(providers);
-    }
-
-    private List<InlineHandlerProvider> populateInlineProviders() {
-        List<InlineHandlerProvider> providers = new ArrayList<>();
-        
-        providers.add(new AsteriskEmphasisHandlerProvider());
-        providers.add(new AutoLinkHandlerProvider());
-        providers.add(new BackslashHandlerProvider());
-        providers.add(new CharacterReferenceHandlerProvider());
-        providers.add(new CodeSpanHandlerProvider());
-        providers.add(new ImageHandlerProvider());
-        providers.add(new LineBreakHandlerProvider());
-        providers.add(new LinkCloserHandlerProvider());
-        providers.add(new LinkHandlerProvider());
-        providers.add(new RawHtmlHandlerProvider());
-        providers.add(new UnderscoreEmphasisHandlerProvider());
-        
         return Collections.unmodifiableList(providers);
     }
 }

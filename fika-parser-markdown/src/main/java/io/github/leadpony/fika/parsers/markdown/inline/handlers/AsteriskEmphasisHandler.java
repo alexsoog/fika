@@ -15,16 +15,23 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
+import io.github.leadpony.fika.core.model.Text;
+import io.github.leadpony.fika.parsers.markdown.inline.Delimiter;
 
 /**
  * @author leadpony
+ *
  */
-public class AutoLinkHandlerProvider implements InlineHandlerProvider {
+public class AsteriskEmphasisHandler extends AbstractEmphasisHandler {
 
+    public AsteriskEmphasisHandler() {
+        super('*');
+    }
+    
     @Override
-    public InlineHandler newHandler() {
-        return new AutolinkHandler();
+    protected Delimiter buildDelimiterRun(Text text, int preceding, int following) {
+        boolean opener = calculateLeftFlanking(preceding, following);
+        boolean closer = calculateRightFlanking(preceding, following);
+        return createDelimiterRun(text, opener, closer);
     }
 }

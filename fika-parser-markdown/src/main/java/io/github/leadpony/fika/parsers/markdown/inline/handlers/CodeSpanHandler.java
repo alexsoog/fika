@@ -24,7 +24,7 @@ import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 /**
  * @author leadpony
  */
-class CodeSpanHandler extends AbstractInlineHandler {
+public class CodeSpanHandler extends AbstractInlineHandler {
 
     private static final char BACKTICK = '`';
     private static final Pattern LEADING_SPACE_OR_LINE_ENDING = 

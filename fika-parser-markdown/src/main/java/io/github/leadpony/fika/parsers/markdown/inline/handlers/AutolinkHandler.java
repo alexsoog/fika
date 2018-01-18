@@ -29,7 +29,7 @@ import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
  * 
  * @author leadpony
  */
-class AutolinkHandler extends AbstractInlineHandler {
+public class AutolinkHandler extends AbstractInlineHandler {
 
     private static final char TRIGGER_LETTER = '<';
     

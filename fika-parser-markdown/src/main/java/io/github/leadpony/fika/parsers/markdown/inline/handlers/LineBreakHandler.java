@@ -21,7 +21,7 @@ import io.github.leadpony.fika.parsers.markdown.inline.InlineAppender;
 /**
  * @author leadpony
  */
-class LineBreakHandler extends AbstractInlineHandler {
+public class LineBreakHandler extends AbstractInlineHandler {
 
     private static final char TRIGGER_LETTER = '\n';
     

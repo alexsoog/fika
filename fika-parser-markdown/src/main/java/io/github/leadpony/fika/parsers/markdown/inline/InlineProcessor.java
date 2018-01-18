@@ -22,7 +22,7 @@ import io.github.leadpony.fika.core.model.Text;
  * 
  * @author leadpony
  */
-public interface InlineProcessor {
+public interface InlineProcessor extends InlineHandlerRegistry {
   
     final int MAX_TRIGGER_CODE = 127;
     

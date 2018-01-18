@@ -15,12 +15,11 @@
  */
 package io.github.leadpony.fika.core.renderers;
 
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.EnumSet;
 import java.util.Set;
 
-import io.github.leadpony.fika.core.model.Document;
+import io.github.leadpony.fika.core.model.Node;
 
 /**
  * HTML renderer.
@@ -36,8 +35,7 @@ public class HtmlRenderer implements Renderer {
     }
 
     @Override
-    public String render(Document doc) {
-        StringWriter writer = new StringWriter();
+    public void render(Node node, Writer writer) {
         HtmlFormatter formatter = createFormatter(writer); 
         HtmlRenderingVisitor visitor = null;
         if (options.contains(Option.HTML_FRAGMENT)) {
@@ -45,8 +43,7 @@ public class HtmlRenderer implements Renderer {
         } else {
             visitor = new FullHtmlRenderingVisitor(formatter);
         }
-        doc.accept(visitor);
-        return writer.toString();
+        node.accept(visitor);
     }
     
     protected HtmlRenderer(Builder builder) {
@@ -75,10 +72,6 @@ public class HtmlRenderer implements Renderer {
         
         private final Set<Option> options = EnumSet.noneOf(Option.class);
         
-        public HtmlRenderer build() {
-            return new HtmlRenderer(this);
-        }
-        
         public Builder withOption(Option option) {
             options.add(option);
             return this;
@@ -87,6 +80,10 @@ public class HtmlRenderer implements Renderer {
         public Builder withoutOption(Option option) {
             options.remove(option);
             return this;
+        }
+
+        public HtmlRenderer build() {
+            return new HtmlRenderer(this);
         }
     }
 }

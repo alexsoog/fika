@@ -16,28 +16,82 @@
 package io.github.leadpony.fika.parsers.markdown.parser;
 
 import java.io.Reader;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import io.github.leadpony.fika.core.model.NodeFactory;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserFactory;
+import io.github.leadpony.fika.core.parser.ParserFactoryBuilder;
 import io.github.leadpony.fika.core.parser.support.model.DefaultNodeFactory;
 
 /**
  * @author leadpony
- *
  */
-public class MarkdownParserFactory implements ParserFactory {
+class MarkdownParserFactory implements ParserFactory {
     
     private final ProviderRegistry providers;
+    private final Set<Feature> featureSet;
     private final NodeFactory nodeFactory;
     
-    public MarkdownParserFactory(ProviderRegistry providers) {
-        this.providers = providers;
+    MarkdownParserFactory(Builder builder) {
+        this.providers = builder.providers;
+        this.featureSet = builder.activeFeatureSet;
         this.nodeFactory = new DefaultNodeFactory();
     }
 
     @Override
     public Parser newParser(Reader reader) {
-        return new MarkdownParser(reader, this.nodeFactory, this.providers);
+        return new MarkdownParser(reader, this.nodeFactory, this.providers, this.featureSet);
+    }
+    
+    /**
+     * Builder of {@link MarkdownParserFactory}.
+     * 
+     * @author leadpony
+     */
+    static class Builder implements ParserFactoryBuilder {
+        
+        private final Map<String, Feature> featureMap;
+        private final Set<Feature> activeFeatureSet;
+        private ProviderRegistry providers;
+        
+        Builder(Map<String, Feature> featureMap) {
+            this.featureMap = featureMap;
+            this.activeFeatureSet = defaultizeFeatureSet(featureMap);
+            this.providers = ProviderRegistry.getDefault();
+        }
+
+        @Override
+        public ParserFactoryBuilder withFeature(String feature) {
+            Feature found = featureMap.get(feature);
+            if (found != null) {
+                return this;
+            }
+            activeFeatureSet.add(found);
+            return this;
+        }
+
+        @Override
+        public ParserFactoryBuilder withoutFeature(String feature) {
+            Feature found = featureMap.get(feature);
+            if (found != null) {
+                return this;
+            }
+            activeFeatureSet.remove(found);
+            return this;
+        }
+
+        @Override
+        public ParserFactory build() {
+            return new MarkdownParserFactory(this);
+        }
+        
+        protected Set<Feature> defaultizeFeatureSet(Map<String, Feature> featureMap) {
+            Set<Feature> featureSet = new HashSet<>();
+            featureSet.addAll(featureMap.values());
+            return featureSet;
+        }
     }
 }

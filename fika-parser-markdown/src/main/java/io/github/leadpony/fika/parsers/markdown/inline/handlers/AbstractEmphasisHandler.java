@@ -27,13 +27,13 @@ import io.github.leadpony.fika.parsers.markdown.inline.DelimiterRun;
 /**
  * @author leadpony
  */
-abstract class EmphasisHandler extends AbstractInlineHandler {
+abstract class AbstractEmphasisHandler extends AbstractInlineHandler {
     
     private static final int MAX_LENGTH_TO_PAIR = 2;
    
     private final char letter;
     
-    protected EmphasisHandler(char letter) {
+    protected AbstractEmphasisHandler(char letter) {
         this.letter = letter;
     }
 
@@ -206,41 +206,5 @@ abstract class EmphasisHandler extends AbstractInlineHandler {
         protected Node buildWrapNode(int lengthPaired) {
             return getNodeFactory().newEmphasis(lengthPaired);
         }
-    }
-}
-
-/**
- * @author leadpony
- */
-class AsteriskEmphasisHandler extends EmphasisHandler {
-
-    AsteriskEmphasisHandler() {
-        super('*');
-    }
-    
-    @Override
-    protected Delimiter buildDelimiterRun(Text text, int preceding, int following) {
-        boolean opener = calculateLeftFlanking(preceding, following);
-        boolean closer = calculateRightFlanking(preceding, following);
-        return createDelimiterRun(text, opener, closer);
-    }
-}
-
-/**
- * @author leadpony
- */
-class UnderscoreEmphasisHandler extends EmphasisHandler {
-
-    UnderscoreEmphasisHandler() {
-        super('_');
-    }
-
-    @Override
-    protected Delimiter buildDelimiterRun(Text text, int preceding, int following) {
-        boolean leftFlanking = calculateLeftFlanking(preceding, following);
-        boolean rightFlanking = calculateRightFlanking(preceding, following);
-        boolean opener = leftFlanking && (!rightFlanking || isUnicodePunctuation(preceding));
-        boolean closer = rightFlanking && (!leftFlanking || isUnicodePunctuation(following));
-        return createDelimiterRun(text, opener, closer);
     }
 }

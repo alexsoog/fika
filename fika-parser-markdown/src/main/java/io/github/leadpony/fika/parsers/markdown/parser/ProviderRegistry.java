@@ -16,7 +16,6 @@
 package io.github.leadpony.fika.parsers.markdown.parser;
 
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherProvider;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
 
 /**
  * Registry for block matcher and inline handler providers.
@@ -40,15 +39,4 @@ public interface ProviderRegistry {
      * @return block matcher providers.
      */
     Iterable<BlockMatcherProvider> blockMatcherProviders();
-
-    /**
-     * Returns the registered inline handler providers.
-     * 
-     * @return inline handler providers.
-     */
-    Iterable<InlineHandlerProvider> inlineHandlerProviders();
-    
-    ProviderRegistry register(BlockMatcherProvider blockProvider);
-
-    ProviderRegistry register(InlineHandlerProvider inlineProvider);
 }

@@ -13,18 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.inline.handlers;
+package io.github.leadpony.fika.parsers.markdown.parser.features.inline;
 
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerProvider;
+import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherRegistry;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerRegistry;
+import io.github.leadpony.fika.parsers.markdown.inline.handlers.ImageHandler;
+import io.github.leadpony.fika.parsers.markdown.parser.Feature;
 
 /**
  * @author leadpony
  */
-public class CodeSpanHandlerProvider implements InlineHandlerProvider {
+public class Image implements Feature {
 
     @Override
-    public InlineHandler newHandler() {
-        return new CodeSpanHandler();
+    public String name() {
+        return "image";
+    }
+
+    @Override
+    public void install(BlockMatcherRegistry blockRegistry, InlineHandlerRegistry inlineRegistry) {
+        inlineRegistry.installInlineHandler(new ImageHandler());
     }
 }
