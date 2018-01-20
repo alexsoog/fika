@@ -15,32 +15,37 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
-import static io.github.leadpony.fika.parsers.markdown.common.Characters.isUnicodePunctuation;
+import static io.github.leadpony.fika.parsers.markdown.common.Characters.isPunctuation;
 
-import io.github.leadpony.fika.core.model.Text;
-import io.github.leadpony.fika.parsers.markdown.inline.Delimiter;
+import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.HandlerType;
 
 /**
  * @author leadpony
  */
-public class UnderscoreEmphasisHandler extends AbstractEmphasisHandler {
+public class BackslashEscapeHandler extends AbstractInlineHandler {
 
-    public UnderscoreEmphasisHandler() {
-        super('_');
+    private static final char TRIGGER_LETTER = '\\';
+    
+    @Override
+    public char[] triggerLetters() {
+        return new char[] { TRIGGER_LETTER };
     }
 
     @Override
     public HandlerType handlerType() {
-        return BasicHandlerType.UNDERSCORE_EMPHASIS;
+        return BasicHandlerType.BACKSLASH_ESCAPE;
     }
     
     @Override
-    protected Delimiter buildDelimiterRun(Text text, int preceding, int following) {
-        boolean leftFlanking = calculateLeftFlanking(preceding, following);
-        boolean rightFlanking = calculateRightFlanking(preceding, following);
-        boolean opener = leftFlanking && (!rightFlanking || isUnicodePunctuation(preceding));
-        boolean closer = rightFlanking && (!leftFlanking || isUnicodePunctuation(following));
-        return createDelimiterRun(text, opener, closer);
+    public int handleContent(String input, int currentIndex) {
+        if (currentIndex + 1 < input.length()) {
+            char c = input.charAt(currentIndex + 1);
+            if (isPunctuation(c)) {
+                getAppender().appendContent(c);
+                return 2;
+            }
+        }
+        return 0;
     }
 }

@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import io.github.leadpony.fika.core.model.CodeSpan;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
+import io.github.leadpony.fika.parsers.markdown.inline.HandlerType;
 
 /**
  * @author leadpony
@@ -38,6 +39,11 @@ public class CodeSpanHandler extends AbstractInlineHandler {
         return new char[] { BACKTICK };
     }
 
+    @Override
+    public HandlerType handlerType() {
+        return BasicHandlerType.CODE_SPAN;
+    }
+    
     @Override
     public int handleContent(InputSequence input) {
         final int backticks = input.countLeading(BACKTICK);

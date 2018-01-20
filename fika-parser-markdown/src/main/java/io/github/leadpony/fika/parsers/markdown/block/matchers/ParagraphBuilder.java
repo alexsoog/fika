@@ -16,9 +16,8 @@
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
 import io.github.leadpony.fika.core.model.Block;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
-import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherType;
 import io.github.leadpony.fika.parsers.markdown.block.BuilderMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
@@ -36,8 +35,8 @@ class ParagraphBuilder extends AbstractParagraphBuilder {
     }
   
     @Override
-    public BlockTrait blockTrait() {
-        return BlockType.PARAGRAPH;
+    public MatcherType matcherType() {
+        return BasicMatcherType.PARAGRAPH;
     }
     
     @Override

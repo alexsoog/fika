@@ -40,11 +40,11 @@ public interface BlockBuilder {
     }
     
     /**
-     * Returns the trait of the block this builder will produce.
+     * Returns the type of the block matcher.
      * 
-     * @return the trait of the block.
+     * @return the type of the block matcher.
      */
-    BlockTrait blockTrait();
+    MatcherType matcherType();
     
     /**
      * Binds the context to this builder.

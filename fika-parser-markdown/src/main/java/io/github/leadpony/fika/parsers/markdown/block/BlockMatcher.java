@@ -28,11 +28,11 @@ import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 public interface BlockMatcher {
 
     /**
-     * Returns the trait of the block this matcher produce.
+     * Returns the type of this block matcher.
      * 
-     * @return the trait of the block.
+     * @return the type of this block matcher.
      */
-    BlockTrait blockTrait();
+    MatcherType matcherType();
 
     /**
      * Returns the precedence of this matcher.
@@ -40,7 +40,7 @@ public interface BlockMatcher {
      * @return the precedence of this matcher.
      */
     default int precedence() {
-        return blockTrait().precedence();
+        return matcherType().precedence();
     }
     
     /**
@@ -52,7 +52,7 @@ public interface BlockMatcher {
      */
     BlockBuilder newBuilder(InputSequence input);
     
-    default Set<? extends BlockTrait> interruptible() {
+    default Set<? extends MatcherType> interruptible() {
         return Collections.emptySet();
     }
     

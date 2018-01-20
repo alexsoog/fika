@@ -28,12 +28,17 @@ class CompositeInlineHandler implements InlineHandler {
     private final List<InlineHandler> handlers = new ArrayList<>();
     
     CompositeInlineHandler(InlineHandler first, InlineHandler second) {
-        this.handlers.add(first);
-        this.handlers.add(second);
+        addHandler(first);
+        addHandler(second);
     }
     
     @Override
     public char[] triggerLetters() {
+        throw new UnsupportedOperationException();
+    }
+    
+    @Override
+    public HandlerType handlerType() {
         throw new UnsupportedOperationException();
     }
 
@@ -61,7 +66,17 @@ class CompositeInlineHandler implements InlineHandler {
     
     @Override
     public InlineHandler or(InlineHandler other) {
-        this.handlers.add(other);
+        addHandler(other);
         return this;
+    }
+    
+    private void addHandler(InlineHandler newHandler) {
+        int i = 0;
+        for (; i < handlers.size(); ++i) {
+            if (handlers.get(i).precedence() >= newHandler.precedence()) {
+                break;
+            }
+        }
+        handlers.add(i, newHandler);
     }
 }

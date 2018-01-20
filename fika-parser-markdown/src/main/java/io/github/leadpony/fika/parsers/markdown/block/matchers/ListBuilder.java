@@ -23,10 +23,9 @@ import io.github.leadpony.fika.core.model.ListType;
 import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.OrderedList;
 import io.github.leadpony.fika.core.model.Paragraph;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherType;
 import io.github.leadpony.fika.parsers.markdown.block.ContainerBlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BuilderMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
@@ -58,12 +57,12 @@ abstract class ListBuilder extends ContainerBlockBuilder {
         return !isLoose();
     }
     
-    boolean canInterrupt(BlockBuilder matcher) {
-        BlockTrait type = matcher.blockTrait();
-        if (type == BlockType.PARAGRAPH) {
+    boolean canInterrupt(BlockBuilder builder) {
+        MatcherType type = builder.matcherType();
+        if (type == BasicMatcherType.PARAGRAPH) {
             return firstItemBuilder.canInterruptParagraph();
-        } else if (type == BlockType.LIST) {
-            return !isSameTypeAs((ListBuilder)matcher);
+        } else if (type == BasicMatcherType.LIST) {
+            return !isSameTypeAs((ListBuilder)builder);
         }
         return true;
     }
@@ -73,8 +72,8 @@ abstract class ListBuilder extends ContainerBlockBuilder {
     }
     
     @Override
-    public BlockTrait blockTrait() {
-        return BlockType.LIST;
+    public MatcherType matcherType() {
+        return BasicMatcherType.LIST;
     }
     
     @Override

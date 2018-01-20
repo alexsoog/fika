@@ -25,13 +25,29 @@ import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionMap;
  * @author leadpony
  */
 public interface InlineHandler {
-
+    
     /**
      * Returns the letters which will trigger this handler.
      * 
      * @return triggering letters of this handler.
      */
     char[] triggerLetters();
+
+    /**
+     * Returns the type of this handler.
+     * 
+     * @return the type of this handler.
+     */
+    HandlerType handlerType();
+    
+    /**
+     * Returns the precedence of this handler.
+     * 
+     * @return the precedence of this handler.
+     */
+    default int precedence() {
+        return handlerType().precedence();
+    }
     
     void bind(Context context);
 

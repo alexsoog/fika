@@ -17,8 +17,9 @@ package io.github.leadpony.fika.parsers.markdown.parser.features.inline;
 
 import io.github.leadpony.fika.core.parser.BasicFeature;
 import io.github.leadpony.fika.core.parser.Feature;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherRegistry;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerRegistry;
+import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
+import io.github.leadpony.fika.parsers.markdown.common.ComponentSet;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.AsteriskEmphasisHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.UnderscoreEmphasisHandler;
 import io.github.leadpony.fika.parsers.markdown.parser.FeatureProvider;
@@ -34,8 +35,8 @@ public class Emphasis implements FeatureProvider {
     }
 
     @Override
-    public void install(BlockMatcherRegistry blockRegistry, InlineHandlerRegistry inlineRegistry) {
-        inlineRegistry.installInlineHandler(new AsteriskEmphasisHandler());
-        inlineRegistry.installInlineHandler(new UnderscoreEmphasisHandler());
+    public void install(ComponentSet<BlockMatcher> matchers, ComponentSet<InlineHandler> handlers) {
+        handlers.add(new AsteriskEmphasisHandler());
+        handlers.add(new UnderscoreEmphasisHandler());
     }
 }

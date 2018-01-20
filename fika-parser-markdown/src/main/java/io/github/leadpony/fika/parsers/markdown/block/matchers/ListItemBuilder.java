@@ -19,9 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.github.leadpony.fika.core.model.Block;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
-import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherType;
 import io.github.leadpony.fika.parsers.markdown.block.ContainerBlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BuilderMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
@@ -65,8 +64,8 @@ abstract class ListItemBuilder extends ContainerBlockBuilder {
     }
     
     @Override
-    public BlockTrait blockTrait() {
-        return BlockType.LIST_ITEM;
+    public MatcherType matcherType() {
+        return BasicMatcherType.LIST_ITEM;
     }
 
     @Override

@@ -13,12 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.inline;
+package io.github.leadpony.fika.parsers.markdown.block;
 
 /**
+ * Block matcher type.
+ * 
  * @author leadpony
  */
-public interface InlineHandlerRegistry {
-    
-    void installInlineHandler(InlineHandler inlineHandler);
+public interface MatcherType {
+
+    /**
+     * Returns the precedence of this matcher.
+     * 
+     * @return the precedence of this matcher.
+     */
+    int precedence();
 }

@@ -18,8 +18,7 @@ package io.github.leadpony.fika.parsers.markdown.block.matchers;
 import java.util.function.Consumer;
 
 import io.github.leadpony.fika.core.model.Block;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
-import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherType;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
 
@@ -31,8 +30,8 @@ class LinkDefinitionBuilder extends AbstractParagraphBuilder implements Consumer
     private final LinkDefinitionRecognizer recognizer = new LinkDefinitionRecognizer(this);
    
     @Override
-    public BlockTrait blockTrait() {
-        return BlockType.LINK_DEFINITION;
+    public MatcherType matcherType() {
+        return BasicMatcherType.LINK_DEFINITION;
     }
 
     @Override

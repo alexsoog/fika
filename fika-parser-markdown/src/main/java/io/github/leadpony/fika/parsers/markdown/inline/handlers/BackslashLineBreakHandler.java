@@ -15,15 +15,13 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
-import static io.github.leadpony.fika.parsers.markdown.common.Characters.isPunctuation;
-
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
+import io.github.leadpony.fika.parsers.markdown.inline.HandlerType;
 
 /**
  * @author leadpony
- *
  */
-public class BackslashHandler extends AbstractInlineHandler {
+public class BackslashLineBreakHandler extends AbstractInlineHandler {
 
     private static final char TRIGGER_LETTER = '\\';
     
@@ -33,14 +31,16 @@ public class BackslashHandler extends AbstractInlineHandler {
     }
 
     @Override
+    public HandlerType handlerType() {
+        return BasicHandlerType.BACKSLASH_LINE_BREAK;
+    }
+
+    @Override
     public int handleContent(String input, int currentIndex) {
         if (currentIndex + 1 < input.length()) {
             char c = input.charAt(currentIndex + 1);
             if (c == '\n') {
                 getAppender().appendNode(getNodeFactory().newHardLineBreak());
-                return 2;
-            } else if (isPunctuation(c)) {
-                getAppender().appendContent(c);
                 return 2;
             }
         }

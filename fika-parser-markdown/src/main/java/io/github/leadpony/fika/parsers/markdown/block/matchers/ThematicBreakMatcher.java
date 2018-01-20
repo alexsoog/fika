@@ -18,10 +18,9 @@ package io.github.leadpony.fika.parsers.markdown.block.matchers;
 import java.util.EnumSet;
 import java.util.Set;
 
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherType;
 import io.github.leadpony.fika.parsers.markdown.block.BuilderMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
@@ -33,16 +32,16 @@ public class ThematicBreakMatcher implements BlockMatcher {
     private final ThematicBreakBuilder builder = new ThematicBreakBuilder();
 
     @Override
-    public BlockTrait blockTrait() {
-        return BlockType.THEMATIC_BREAK;
+    public MatcherType matcherType() {
+        return BasicMatcherType.THEMATIC_BREAK;
     }
     
     @Override
-    public Set<? extends BlockTrait> interruptible() {
+    public Set<? extends MatcherType> interruptible() {
         return EnumSet.of(
-                BlockType.PARAGRAPH,
-                BlockType.LINK_DEFINITION,
-                BlockType.LIST);
+                BasicMatcherType.PARAGRAPH,
+                BasicMatcherType.LINK_DEFINITION,
+                BasicMatcherType.LIST);
     }
 
     @Override

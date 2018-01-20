@@ -23,6 +23,7 @@ import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.common.UrlEncoder;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
+import io.github.leadpony.fika.parsers.markdown.inline.HandlerType;
 
 /**
  * Handler for Autolinks.
@@ -50,6 +51,11 @@ public class AutolinkHandler extends AbstractInlineHandler {
         return new char[] { TRIGGER_LETTER };
     }
 
+    @Override
+    public HandlerType handlerType() {
+        return BasicHandlerType.AUTOLINK;
+    }
+    
     @Override
     public int handleContent(InputSequence input) {
         int end = 0;

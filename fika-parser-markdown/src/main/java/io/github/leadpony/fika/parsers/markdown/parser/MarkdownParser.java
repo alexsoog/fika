@@ -25,11 +25,16 @@ import io.github.leadpony.fika.core.model.NodeFactory;
 import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserException;
+import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockProcessor;
 import io.github.leadpony.fika.parsers.markdown.block.DefaultBlockProcessor;
+import io.github.leadpony.fika.parsers.markdown.common.ComponentSet;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionMap;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineProcessor;
+import io.github.leadpony.fika.parsers.markdown.inline.handlers.BackslashEscapeHandler;
+import io.github.leadpony.fika.parsers.markdown.inline.handlers.CharacterReferenceHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.DefaultInlineProcessor;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
 
 /**
  * The parser to parse source written in Markdown.
@@ -53,9 +58,11 @@ class MarkdownParser implements Parser {
     public MarkdownParser(Reader reader, NodeFactory nodeFactory, Set<FeatureProvider> featureSet) {
         this.reader = reader;
         this.linkDefinitions = new LinkDefinitionMap();
-        this.blockProcessor = buildBlockProcessor(nodeFactory);
-        this.inlineProcessor = buildInlineProcessor(nodeFactory);
-        installFeatures(featureSet);
+        ComponentSet<BlockMatcher> matchers = createBlockMatcherRegistry();
+        ComponentSet<InlineHandler> handlers = createInlineHandlerRegistry();
+        registerFeatures(featureSet, matchers, handlers);
+        this.blockProcessor = buildBlockProcessor(nodeFactory, matchers);
+        this.inlineProcessor = buildInlineProcessor(nodeFactory, handlers);
     }
 
     @Override
@@ -70,7 +77,6 @@ class MarkdownParser implements Parser {
     private Document processAllBlocks() throws IOException {
         BlockProcessor processor = this.blockProcessor;
         BufferedReader reader = new BufferedReader(this.reader);
-        processor.open();
         String line = null;
         while ((line = reader.readLine()) != null) {
             processor.process(line);
@@ -90,17 +96,32 @@ class MarkdownParser implements Parser {
         inlineProcessor.processInlines(text);
     }
     
-    protected BlockProcessor buildBlockProcessor(NodeFactory nodeFactory) {
-        return new DefaultBlockProcessor(nodeFactory, linkDefinitions);
+    protected ComponentSet<BlockMatcher> createBlockMatcherRegistry() {
+        return new ComponentSet<BlockMatcher>();
     }
     
-    protected InlineProcessor buildInlineProcessor(NodeFactory nodeFactory) {
-        return new DefaultInlineProcessor(nodeFactory, linkDefinitions);
+    protected ComponentSet<InlineHandler> createInlineHandlerRegistry() {
+        ComponentSet<InlineHandler> handlers = new ComponentSet<>();
+        handlers.add(new BackslashEscapeHandler());
+        handlers.add(new CharacterReferenceHandler());
+        return handlers;
+    }
+
+    protected BlockProcessor buildBlockProcessor(NodeFactory nodeFactory, ComponentSet<BlockMatcher> matchers) {
+        return new DefaultBlockProcessor(nodeFactory, linkDefinitions, matchers);
     }
     
-    protected void installFeatures(Set<FeatureProvider> features) {
+    protected InlineProcessor buildInlineProcessor(NodeFactory nodeFactory, ComponentSet<InlineHandler> handlers) {
+        return new DefaultInlineProcessor(nodeFactory, linkDefinitions, handlers);
+    }
+    
+    protected void registerFeatures(
+            Set<FeatureProvider> features,
+            ComponentSet<BlockMatcher> matchers,
+            ComponentSet<InlineHandler> handlers
+            ) {
         for (FeatureProvider feature: features) {
-            feature.install(this.blockProcessor, this.inlineProcessor);
+            feature.install(matchers, handlers);
         }
     }
 }

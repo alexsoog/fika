@@ -13,14 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.block;
+package io.github.leadpony.fika.parsers.markdown.block.matchers;
+
+import io.github.leadpony.fika.parsers.markdown.block.MatcherType;
 
 /**
- * Predefined block types.
- * 
  * @author leadpony
  */
-public enum BlockType implements BlockTrait {
+public enum BasicMatcherType implements MatcherType {
+
     /**
      * Setext heading. 
      * This must have higher precedence than thematic break.
@@ -35,21 +36,15 @@ public enum BlockType implements BlockTrait {
     HTML_BLOCK(170),
     INDENTED_CODE(180),
     LINK_DEFINITION(190),
-    PARAGRAPH(200),
-    DOCUMENT,
+    PARAGRAPH(200)
     ;
-
+    
     private final int precedence;
     
-    private BlockType() {
-        this.precedence = Integer.MAX_VALUE;
-    }
-    
-    private BlockType(int precedence) {
+    private BasicMatcherType(int precedence) {
         this.precedence = precedence;
     }
-    
-    @Override
+
     public int precedence() {
         return precedence;
     }

@@ -33,11 +33,10 @@ import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 class DefaultBlockBuilderFinder implements BlockBuilderFinder {
 
     private final List<BlockMatcher> matchers;
-    private final Map<BlockTrait, List<BlockMatcher>> interrupters = new HashMap<>();
+    private final Map<MatcherType, List<BlockMatcher>> interrupters = new HashMap<>();
 
-    DefaultBlockBuilderFinder(List<BlockMatcher> matchers) {
-        this.matchers = matchers;
-        setUpMatchers();
+    DefaultBlockBuilderFinder(Iterable<BlockMatcher> matchers) {
+        this.matchers = setUpMatchers(matchers);
     }
 
     @Override
@@ -59,7 +58,7 @@ class DefaultBlockBuilderFinder implements BlockBuilderFinder {
         if (input.isBlank()) {
             return null;
         }
-        List<BlockMatcher> matchers = interrupters.get(current.blockTrait());
+        List<BlockMatcher> matchers = interrupters.get(current.matcherType());
         if (matchers == null) {
             return null;
         }
@@ -72,15 +71,20 @@ class DefaultBlockBuilderFinder implements BlockBuilderFinder {
         return null;
     }
     
-    private void setUpMatchers() {
-        Collections.sort(this.matchers, comparing(BlockMatcher::precedence));
-        for (BlockMatcher matcher: this.matchers) {
+    private List<BlockMatcher> setUpMatchers(Iterable<BlockMatcher> matchers) {
+        List<BlockMatcher> list = new ArrayList<>();
+        for (BlockMatcher matcher: matchers) {
+            list.add(matcher);
+        }
+        Collections.sort(list, comparing(BlockMatcher::precedence));
+        for (BlockMatcher matcher: list) {
             addInterrupter(matcher);
         }
+        return list;
     }
     
     private void addInterrupter(BlockMatcher matcher) {
-        for (BlockTrait type: matcher.interruptible()) {
+        for (MatcherType type: matcher.interruptible()) {
             List<BlockMatcher> list = interrupters.get(type);
             if (list == null) {
                 list = new ArrayList<>();

@@ -15,10 +15,9 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherType;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
@@ -27,10 +26,10 @@ import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 public class IndentedCodeMatcher implements BlockMatcher {
 
     @Override
-    public BlockTrait blockTrait() {
-        return BlockType.INDENTED_CODE;
+    public MatcherType matcherType() {
+        return BasicMatcherType.INDENTED_CODE;
     }
-    
+ 
     @Override
     public BlockBuilder newBuilder(InputSequence input) {
         if (!input.hasLeadingSpaces(IndentedCodeBuilder.INDENT_SIZE)) {

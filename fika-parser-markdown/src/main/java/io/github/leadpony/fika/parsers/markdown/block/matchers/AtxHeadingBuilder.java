@@ -18,8 +18,7 @@ package io.github.leadpony.fika.parsers.markdown.block.matchers;
 import io.github.leadpony.fika.core.model.Heading;
 import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockBuilder;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
-import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherType;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
@@ -38,8 +37,8 @@ class AtxHeadingBuilder extends AbstractBlockBuilder {
     }
 
     @Override
-    public BlockTrait blockTrait() {
-        return BlockType.ATX_HEADING;
+    public MatcherType matcherType() {
+        return BasicMatcherType.ATX_HEADING;
     }
     
     @Override

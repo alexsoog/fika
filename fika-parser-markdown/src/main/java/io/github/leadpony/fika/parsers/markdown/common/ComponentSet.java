@@ -13,31 +13,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.block;
+package io.github.leadpony.fika.parsers.markdown.common;
 
-import io.github.leadpony.fika.core.model.Document;
-import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
- * Builder of document node.
+ * Registry of components.
  * 
  * @author leadpony
  */
-public class DocumentBuilder extends ContainerBlockBuilder {
+public class ComponentSet<T> implements Iterable<T> {
+
+    private final Set<T> components = new HashSet<>();
+    private final Set<Class<?>> classes = new HashSet<>();
     
-    @Override
-    public MatcherType matcherType() {
-        throw new UnsupportedOperationException();
+    public boolean containsTypeOf(Class<? extends T> clazz) {
+        return classes.contains(clazz);
     }
     
-    @Override
-    public Result match(InputSequence input) {
-        super.match(input);
-        return Result.CONTINUED;
+    public void add(T component) {
+        if (component != null) {
+            components.add(component);
+            classes.add(component.getClass());
+        }
     }
-    
+
     @Override
-    protected Document buildBlock() {
-        return getNodeFactory().newDocument();
+    public Iterator<T> iterator() {
+        return components.iterator();
     }
 }

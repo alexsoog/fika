@@ -18,10 +18,9 @@ package io.github.leadpony.fika.parsers.markdown.block.matchers;
 import java.util.EnumSet;
 import java.util.Set;
 
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherType;
 import io.github.leadpony.fika.parsers.markdown.block.BuilderMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
@@ -34,13 +33,13 @@ public class FencedCodeMatcher implements BlockMatcher {
     }
 
     @Override
-    public BlockTrait blockTrait() {
-        return BlockType.FENCED_CODE;
+    public MatcherType matcherType() {
+        return BasicMatcherType.FENCED_CODE;
     }
-    
+ 
     @Override
-    public Set<? extends BlockTrait> interruptible() {
-        return EnumSet.of(BlockType.PARAGRAPH, BlockType.LINK_DEFINITION);
+    public Set<? extends MatcherType> interruptible() {
+        return EnumSet.of(BasicMatcherType.PARAGRAPH, BasicMatcherType.LINK_DEFINITION);
     }
 
     @Override

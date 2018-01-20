@@ -23,9 +23,7 @@ import io.github.leadpony.fika.core.model.Text;
 /**
  * @author leadpony
  */
-public interface BlockProcessor extends BlockMatcherRegistry {
-    
-    void open();
+public interface BlockProcessor {
     
     void process(String line);
     

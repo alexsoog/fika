@@ -15,17 +15,16 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherType;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 public class LinkDefinitionMatcher implements BlockMatcher {
 
     @Override
-    public BlockTrait blockTrait() {
-        return BlockType.LINK_DEFINITION;
+    public MatcherType matcherType() {
+        return BasicMatcherType.LINK_DEFINITION;
     }
 
     @Override

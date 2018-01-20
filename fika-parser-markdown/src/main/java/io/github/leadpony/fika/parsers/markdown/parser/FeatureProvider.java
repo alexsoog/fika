@@ -20,8 +20,9 @@ import java.util.Map;
 import java.util.ServiceLoader;
 
 import io.github.leadpony.fika.core.parser.Feature;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherRegistry;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerRegistry;
+import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
+import io.github.leadpony.fika.parsers.markdown.common.ComponentSet;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
 
 /**
  * Feature provider interface.
@@ -37,7 +38,7 @@ public interface FeatureProvider {
      */
     Feature feature();
     
-    void install(BlockMatcherRegistry blockRegistry, InlineHandlerRegistry inlineRegistry);
+    void install(ComponentSet<BlockMatcher> matchers, ComponentSet<InlineHandler> handlers);
 
     static Map<String, FeatureProvider> features() {
         ServiceLoader<FeatureProvider> loader = ServiceLoader.load(FeatureProvider.class);

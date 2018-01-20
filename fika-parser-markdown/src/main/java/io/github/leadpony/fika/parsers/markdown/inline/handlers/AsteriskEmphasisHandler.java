@@ -17,6 +17,7 @@ package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
 import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.parsers.markdown.inline.Delimiter;
+import io.github.leadpony.fika.parsers.markdown.inline.HandlerType;
 
 /**
  * @author leadpony
@@ -26,6 +27,11 @@ public class AsteriskEmphasisHandler extends AbstractEmphasisHandler {
 
     public AsteriskEmphasisHandler() {
         super('*');
+    }
+    
+    @Override
+    public HandlerType handlerType() {
+        return BasicHandlerType.ASTERISK_EMPHASIS;
     }
     
     @Override

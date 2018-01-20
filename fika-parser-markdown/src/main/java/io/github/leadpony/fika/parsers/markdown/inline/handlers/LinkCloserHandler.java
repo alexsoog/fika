@@ -26,6 +26,7 @@ import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.Delimiter;
 import io.github.leadpony.fika.parsers.markdown.inline.DelimiterStack;
+import io.github.leadpony.fika.parsers.markdown.inline.HandlerType;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkHandler.LinkDelimiter;
 
 /**
@@ -39,7 +40,12 @@ public class LinkCloserHandler extends AbstractInlineHandler {
     public char[] triggerLetters() {
         return new char[] { TRIGGER_LETTER };
     }
-    
+ 
+    @Override
+    public HandlerType handlerType() {
+        return BasicHandlerType.LINK_CLOSER;
+    }
+   
     @Override
     public int handleContent(String input, int currentIndex) {
         Text text = buildNode(AbstractLinkDelimiter.CLOSING_CONTENT);

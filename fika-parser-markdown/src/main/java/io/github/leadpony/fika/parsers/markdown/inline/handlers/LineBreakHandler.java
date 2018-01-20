@@ -16,6 +16,7 @@
 package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
+import io.github.leadpony.fika.parsers.markdown.inline.HandlerType;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineAppender;
 
 /**
@@ -30,6 +31,11 @@ public class LineBreakHandler extends AbstractInlineHandler {
         return new char[] { TRIGGER_LETTER };
     }
 
+    @Override
+    public HandlerType handlerType() {
+        return BasicHandlerType.HARD_LINE_BREAK;
+    }
+    
     @Override
     public int handleContent(String input, int currentIndex) {
         InlineAppender appender = getAppender();

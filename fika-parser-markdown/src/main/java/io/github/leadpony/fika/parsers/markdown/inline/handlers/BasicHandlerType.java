@@ -13,31 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.block;
+package io.github.leadpony.fika.parsers.markdown.inline.handlers;
 
-import io.github.leadpony.fika.core.model.Document;
-import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
+import io.github.leadpony.fika.parsers.markdown.inline.HandlerType;
 
 /**
- * Builder of document node.
- * 
  * @author leadpony
  */
-public class DocumentBuilder extends ContainerBlockBuilder {
+enum BasicHandlerType implements HandlerType {
     
-    @Override
-    public MatcherType matcherType() {
-        throw new UnsupportedOperationException();
+    ASTERISK_EMPHASIS(100),
+    AUTOLINK(100),
+    BACKSLASH_ESCAPE(200),
+    BACKSLASH_LINE_BREAK(100),
+    CHARACTER_REFERENCE(200),
+    CODE_SPAN(100),
+    IMAGE(100),
+    HARD_LINE_BREAK(100),
+    LINK(100),
+    LINK_CLOSER(100),
+    RAW_HTML(110),
+    UNDERSCORE_EMPHASIS(100)
+    ;
+
+    private final int precedence;
+    
+    private BasicHandlerType(int precedence) {
+        this.precedence = precedence;
     }
     
     @Override
-    public Result match(InputSequence input) {
-        super.match(input);
-        return Result.CONTINUED;
-    }
-    
-    @Override
-    protected Document buildBlock() {
-        return getNodeFactory().newDocument();
+    public int precedence() {
+        return precedence;
     }
 }

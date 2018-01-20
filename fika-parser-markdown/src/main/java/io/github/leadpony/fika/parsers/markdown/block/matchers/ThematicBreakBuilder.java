@@ -17,8 +17,7 @@ package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
 import io.github.leadpony.fika.core.model.Block;
 import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockBuilder;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
-import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherType;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
@@ -30,8 +29,8 @@ class ThematicBreakBuilder extends AbstractBlockBuilder {
     }
 
     @Override
-    public BlockTrait blockTrait() {
-        return BlockType.THEMATIC_BREAK;
+    public MatcherType matcherType() {
+        return BasicMatcherType.THEMATIC_BREAK;
     }
 
     @Override

@@ -19,8 +19,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import io.github.leadpony.fika.core.model.BlockQuote;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
-import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherType;
 import io.github.leadpony.fika.parsers.markdown.block.ContainerBlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
@@ -31,12 +30,9 @@ class BlockQuoteBuilder extends ContainerBlockBuilder {
     
     static final Pattern BLOCK_QUOTE_MARKER = Pattern.compile("^\\u0020{0,3}>\\u0020?");
 
-    BlockQuoteBuilder() {
-    }
-
     @Override
-    public BlockTrait blockTrait() {
-        return BlockType.BLOCK_QUOTE;
+    public MatcherType matcherType() {
+        return BasicMatcherType.BLOCK_QUOTE;
     }
    
     @Override

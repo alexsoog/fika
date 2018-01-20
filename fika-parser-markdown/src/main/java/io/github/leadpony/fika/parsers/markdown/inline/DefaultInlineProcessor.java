@@ -45,10 +45,14 @@ public class DefaultInlineProcessor
     private int appendedNodeCount;
     private StringBuilder textBuffer = null;
     
-    public DefaultInlineProcessor(NodeFactory nodeFactory, LinkDefinitionMap linkDefinitionMap) {
+    public DefaultInlineProcessor(
+            NodeFactory nodeFactory, 
+            LinkDefinitionMap linkDefinitionMap,
+            Iterable<InlineHandler> handlers) {
         this.nodeFactory = nodeFactory;
         this.linkDefinitionMap = linkDefinitionMap; 
         this.handlers = new InlineHandler[MAX_TRIGGER_CODE + 1];
+        installHandlers(handlers);
     }
     
     @Override
@@ -56,13 +60,6 @@ public class DefaultInlineProcessor
         resetProcessor(text);
         parseInlines();
         processDelimiters();
-    }
-    
-    /* InlineHandlerRegistry interface */
-    
-    @Override
-    public void installInlineHandler(InlineHandler inlineHandler) {
-        installHandler(inlineHandler);
     }
     
     /* InlinerHandler.Context interface */
@@ -143,6 +140,12 @@ public class DefaultInlineProcessor
     }
 
     /* helper methods */
+    
+    private void installHandlers(Iterable<InlineHandler> handlers) {
+        for (InlineHandler handler: handlers) {
+            installHandler(handler);
+        }
+    }
     
     /**
      * Installs an inline handler.

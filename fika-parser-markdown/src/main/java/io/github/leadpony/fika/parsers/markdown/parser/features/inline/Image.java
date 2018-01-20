@@ -17,9 +17,11 @@ package io.github.leadpony.fika.parsers.markdown.parser.features.inline;
 
 import io.github.leadpony.fika.core.parser.BasicFeature;
 import io.github.leadpony.fika.core.parser.Feature;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherRegistry;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerRegistry;
+import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
+import io.github.leadpony.fika.parsers.markdown.common.ComponentSet;
+import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.ImageHandler;
+import io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkCloserHandler;
 import io.github.leadpony.fika.parsers.markdown.parser.FeatureProvider;
 
 /**
@@ -33,7 +35,10 @@ public class Image implements FeatureProvider {
     }
 
     @Override
-    public void install(BlockMatcherRegistry blockRegistry, InlineHandlerRegistry inlineRegistry) {
-        inlineRegistry.installInlineHandler(new ImageHandler());
+    public void install(ComponentSet<BlockMatcher> matchers, ComponentSet<InlineHandler> handlers) {
+        handlers.add(new ImageHandler());
+        if (!handlers.containsTypeOf(LinkCloserHandler.class)) {
+            handlers.add(new LinkCloserHandler());
+        }
     }
 }

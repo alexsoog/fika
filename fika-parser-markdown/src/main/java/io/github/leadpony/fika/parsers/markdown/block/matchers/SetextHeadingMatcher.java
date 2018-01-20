@@ -19,10 +19,9 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherType;
 import io.github.leadpony.fika.parsers.markdown.block.BuilderMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
@@ -31,13 +30,13 @@ public class SetextHeadingMatcher implements BlockMatcher {
     private static final Pattern UNDERLINE_PATTERN = Pattern.compile("\\u0020{0,3}(=+|-{2,})\\u0020*");
     
     @Override
-    public BlockTrait blockTrait() {
-        return BlockType.SETEXT_HEADING;
+    public MatcherType matcherType() {
+        return BasicMatcherType.SETEXT_HEADING;
     }
 
     @Override
-    public Set<? extends BlockTrait> interruptible() {
-        return EnumSet.of(BlockType.PARAGRAPH);
+    public Set<? extends MatcherType> interruptible() {
+        return EnumSet.of(BasicMatcherType.PARAGRAPH);
     }
     
     /**

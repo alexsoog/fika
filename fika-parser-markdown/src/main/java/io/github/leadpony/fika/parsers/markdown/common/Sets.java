@@ -13,19 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.block;
+package io.github.leadpony.fika.parsers.markdown.common;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Block trait.
- * 
  * @author leadpony
  */
-public interface BlockTrait {
+public final class Sets {
+    
+    @SafeVarargs
+    public static <T> Set<T> of(T... elements) {
+        Set<T> set = new HashSet<>();
+        for (T element: elements) {
+            set.add(element);
+        }
+        return set;
+    }
 
-    /**
-     * Returns the precedence of this block type.
-     * 
-     * @return the precedence.
-     */
-    int precedence();
+    private Sets() {
+    }
 }

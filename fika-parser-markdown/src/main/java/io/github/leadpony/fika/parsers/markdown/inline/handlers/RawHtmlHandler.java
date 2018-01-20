@@ -21,6 +21,7 @@ import io.github.leadpony.fika.core.model.HtmlInline;
 import io.github.leadpony.fika.parsers.markdown.common.HtmlMatchers;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
+import io.github.leadpony.fika.parsers.markdown.inline.HandlerType;
 
 /**
  * @author leadpony
@@ -34,6 +35,11 @@ public class RawHtmlHandler extends AbstractInlineHandler {
         return new char[] { TRIGGER_LETTER };
     }
 
+    @Override
+    public HandlerType handlerType() {
+        return BasicHandlerType.RAW_HTML;
+    }
+    
     @Override
     public int handleContent(InputSequence input) {
         Matcher m = HtmlMatchers.newHtmlMatcher(input);

@@ -20,6 +20,7 @@ import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
+import io.github.leadpony.fika.parsers.markdown.inline.HandlerType;
 
 /**
  * @author leadpony
@@ -33,6 +34,11 @@ public class LinkHandler extends AbstractInlineHandler {
     @Override
     public char[] triggerLetters() {
         return new char[] { TRIGGER_LETTER };
+    }
+   
+    @Override
+    public HandlerType handlerType() {
+        return BasicHandlerType.LINK;
     }
     
     @Override

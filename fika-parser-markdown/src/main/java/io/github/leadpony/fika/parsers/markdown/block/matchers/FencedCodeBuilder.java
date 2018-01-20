@@ -22,8 +22,7 @@ import static io.github.leadpony.fika.parsers.markdown.common.Strings.expandRefe
 import io.github.leadpony.fika.core.model.Block;
 import io.github.leadpony.fika.core.model.CodeBlock;
 import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockBuilder;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
-import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherType;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 class FencedCodeBuilder extends AbstractBlockBuilder {
@@ -44,8 +43,8 @@ class FencedCodeBuilder extends AbstractBlockBuilder {
     }
   
     @Override
-    public BlockTrait blockTrait() {
-        return BlockType.FENCED_CODE;
+    public MatcherType matcherType() {
+        return BasicMatcherType.FENCED_CODE;
     }
     
     @Override

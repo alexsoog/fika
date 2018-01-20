@@ -20,8 +20,7 @@ import java.util.List;
 
 import io.github.leadpony.fika.core.model.CodeBlock;
 import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockBuilder;
-import io.github.leadpony.fika.parsers.markdown.block.BlockType;
-import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.block.MatcherType;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 class IndentedCodeBuilder extends AbstractBlockBuilder {
@@ -36,8 +35,8 @@ class IndentedCodeBuilder extends AbstractBlockBuilder {
     }
 
     @Override
-    public BlockTrait blockTrait() {
-        return BlockType.INDENTED_CODE;
+    public MatcherType matcherType() {
+        return BasicMatcherType.INDENTED_CODE;
     }
     
     @Override

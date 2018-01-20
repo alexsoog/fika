@@ -23,6 +23,7 @@ import java.util.regex.Matcher;
 import io.github.leadpony.fika.parsers.markdown.common.EntityResolver;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.inline.AbstractInlineHandler;
+import io.github.leadpony.fika.parsers.markdown.inline.HandlerType;
 
 /**
  * @author leadpony
@@ -38,6 +39,11 @@ public class CharacterReferenceHandler extends AbstractInlineHandler {
         return new char[] { TRIGGER_LETTER };
     }
 
+    @Override
+    public HandlerType handlerType() {
+        return BasicHandlerType.CHARACTER_REFERENCE;
+    }
+    
     @Override
     public int handleContent(InputSequence input) {
         Matcher m = CHARACTER_REFERENCE_PATTERN.matcher(input);

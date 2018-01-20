@@ -15,9 +15,7 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import io.github.leadpony.fika.core.model.Document;
@@ -35,37 +33,25 @@ public class DefaultBlockProcessor implements BlockProcessor, BlockBuilder.Conte
 
     private final NodeFactory nodeFactory;
     private final LinkDefinitionMap linkDefinitions;
-    private final List<BlockMatcher> matchers;
     private final Set<Text> inlines = new HashSet<>();
     private final DocumentBuilder rootBuilder;
 
     private DefaultBlockBuilderFinder builderFinder;
     private int lineNumber;
     
-    public DefaultBlockProcessor(NodeFactory nodeFactory, LinkDefinitionMap linkDefinitions) {
+    public DefaultBlockProcessor(
+            NodeFactory nodeFactory, 
+            LinkDefinitionMap linkDefinitions,
+            Iterable<BlockMatcher> matchers) {
         this.nodeFactory = nodeFactory;
         this.linkDefinitions = linkDefinitions; 
-        this.matchers = new ArrayList<>();
+        this.builderFinder = new DefaultBlockBuilderFinder(matchers);
         this.rootBuilder = new DocumentBuilder();
         this.rootBuilder.bind(this);
         this.lineNumber = 0;
     }
     
-    /* BlockMatcherRegistry interface */
-    
-    @Override
-    public void installBlockMatcher(BlockMatcher matcher) {
-        if (matcher != null) {
-            this.matchers.add(matcher);
-        }
-    }
-    
     /* BlockProcessor interface */
-
-    @Override
-    public void open() {
-        this.builderFinder = new DefaultBlockBuilderFinder(this.matchers);
-    }
 
     @Override
     public void process(String line) {
