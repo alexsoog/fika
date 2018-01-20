@@ -18,6 +18,7 @@ package io.github.leadpony.fika.parsers.markdown.parser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.List;
 import java.util.Set;
 
 import io.github.leadpony.fika.core.model.Document;
@@ -28,11 +29,8 @@ import io.github.leadpony.fika.core.parser.ParserException;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockProcessor;
 import io.github.leadpony.fika.parsers.markdown.block.DefaultBlockProcessor;
-import io.github.leadpony.fika.parsers.markdown.common.ComponentSet;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionMap;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineProcessor;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.BackslashEscapeHandler;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.CharacterReferenceHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.DefaultInlineProcessor;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
 
@@ -58,11 +56,10 @@ class MarkdownParser implements Parser {
     public MarkdownParser(Reader reader, NodeFactory nodeFactory, Set<FeatureProvider> featureSet) {
         this.reader = reader;
         this.linkDefinitions = new LinkDefinitionMap();
-        ComponentSet<BlockMatcher> matchers = createBlockMatcherRegistry();
-        ComponentSet<InlineHandler> handlers = createInlineHandlerRegistry();
-        registerFeatures(featureSet, matchers, handlers);
-        this.blockProcessor = buildBlockProcessor(nodeFactory, matchers);
-        this.inlineProcessor = buildInlineProcessor(nodeFactory, handlers);
+        ParserBuilder builder = new ParserBuilder();
+        registerFeatures(featureSet, builder);
+        this.blockProcessor = buildBlockProcessor(nodeFactory, builder.matchers());
+        this.inlineProcessor = buildInlineProcessor(nodeFactory, builder.handlers());
     }
 
     @Override
@@ -96,32 +93,17 @@ class MarkdownParser implements Parser {
         inlineProcessor.processInlines(text);
     }
     
-    protected ComponentSet<BlockMatcher> createBlockMatcherRegistry() {
-        return new ComponentSet<BlockMatcher>();
-    }
-    
-    protected ComponentSet<InlineHandler> createInlineHandlerRegistry() {
-        ComponentSet<InlineHandler> handlers = new ComponentSet<>();
-        handlers.add(new BackslashEscapeHandler());
-        handlers.add(new CharacterReferenceHandler());
-        return handlers;
-    }
-
-    protected BlockProcessor buildBlockProcessor(NodeFactory nodeFactory, ComponentSet<BlockMatcher> matchers) {
+    protected BlockProcessor buildBlockProcessor(NodeFactory nodeFactory, List<BlockMatcher> matchers) {
         return new DefaultBlockProcessor(nodeFactory, linkDefinitions, matchers);
     }
     
-    protected InlineProcessor buildInlineProcessor(NodeFactory nodeFactory, ComponentSet<InlineHandler> handlers) {
+    protected InlineProcessor buildInlineProcessor(NodeFactory nodeFactory, List<InlineHandler> handlers) {
         return new DefaultInlineProcessor(nodeFactory, linkDefinitions, handlers);
     }
     
-    protected void registerFeatures(
-            Set<FeatureProvider> features,
-            ComponentSet<BlockMatcher> matchers,
-            ComponentSet<InlineHandler> handlers
-            ) {
+    protected void registerFeatures(Set<FeatureProvider> features, ParserBuilder builder) {
         for (FeatureProvider feature: features) {
-            feature.install(matchers, handlers);
+            feature.provide(builder);
         }
     }
 }

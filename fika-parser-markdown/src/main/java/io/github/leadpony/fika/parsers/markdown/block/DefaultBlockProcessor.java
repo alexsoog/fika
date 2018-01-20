@@ -16,6 +16,7 @@
 package io.github.leadpony.fika.parsers.markdown.block;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import io.github.leadpony.fika.core.model.Document;
@@ -42,7 +43,7 @@ public class DefaultBlockProcessor implements BlockProcessor, BlockBuilder.Conte
     public DefaultBlockProcessor(
             NodeFactory nodeFactory, 
             LinkDefinitionMap linkDefinitions,
-            Iterable<BlockMatcher> matchers) {
+            List<BlockMatcher> matchers) {
         this.nodeFactory = nodeFactory;
         this.linkDefinitions = linkDefinitions; 
         this.builderFinder = new DefaultBlockBuilderFinder(matchers);

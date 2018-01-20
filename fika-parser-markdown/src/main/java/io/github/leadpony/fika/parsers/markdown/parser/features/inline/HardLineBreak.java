@@ -17,12 +17,10 @@ package io.github.leadpony.fika.parsers.markdown.parser.features.inline;
 
 import io.github.leadpony.fika.core.parser.BasicFeature;
 import io.github.leadpony.fika.core.parser.Feature;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.common.ComponentSet;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.BackslashLineBreakHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.LineBreakHandler;
 import io.github.leadpony.fika.parsers.markdown.parser.FeatureProvider;
+import io.github.leadpony.fika.parsers.markdown.parser.ParserBuilder;
 
 /**
  * @author leadpony
@@ -35,8 +33,8 @@ public class HardLineBreak implements FeatureProvider {
     }
 
     @Override
-    public void install(ComponentSet<BlockMatcher> matchers, ComponentSet<InlineHandler> handlers) {
-        handlers.add(new LineBreakHandler());
-        handlers.add(new BackslashLineBreakHandler());
+    public void provide(ParserBuilder builder) {
+        builder.add(new LineBreakHandler());
+        builder.add(new BackslashLineBreakHandler());
     }
 }

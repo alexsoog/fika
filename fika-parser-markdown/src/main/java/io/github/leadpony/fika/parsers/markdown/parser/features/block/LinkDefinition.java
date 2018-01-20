@@ -17,11 +17,9 @@ package io.github.leadpony.fika.parsers.markdown.parser.features.block;
 
 import io.github.leadpony.fika.core.parser.BasicFeature;
 import io.github.leadpony.fika.core.parser.Feature;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.matchers.LinkDefinitionMatcher;
-import io.github.leadpony.fika.parsers.markdown.common.ComponentSet;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandler;
 import io.github.leadpony.fika.parsers.markdown.parser.FeatureProvider;
+import io.github.leadpony.fika.parsers.markdown.parser.ParserBuilder;
 
 /**
  * @author leadpony
@@ -34,7 +32,7 @@ public class LinkDefinition implements FeatureProvider {
     }
 
     @Override
-    public void install(ComponentSet<BlockMatcher> matchers, ComponentSet<InlineHandler> handlers) {
-        matchers.add(new LinkDefinitionMatcher());
+    public void provide(ParserBuilder builder) {
+        builder.add(new LinkDefinitionMatcher());
     }
 }

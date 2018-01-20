@@ -15,6 +15,8 @@
  */
 package io.github.leadpony.fika.parsers.markdown.inline;
 
+import java.util.List;
+
 import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.core.model.NodeFactory;
 import io.github.leadpony.fika.core.model.Text;
@@ -48,7 +50,7 @@ public class DefaultInlineProcessor
     public DefaultInlineProcessor(
             NodeFactory nodeFactory, 
             LinkDefinitionMap linkDefinitionMap,
-            Iterable<InlineHandler> handlers) {
+            List<InlineHandler> handlers) {
         this.nodeFactory = nodeFactory;
         this.linkDefinitionMap = linkDefinitionMap; 
         this.handlers = new InlineHandler[MAX_TRIGGER_CODE + 1];
@@ -141,7 +143,7 @@ public class DefaultInlineProcessor
 
     /* helper methods */
     
-    private void installHandlers(Iterable<InlineHandler> handlers) {
+    private void installHandlers(List<InlineHandler> handlers) {
         for (InlineHandler handler: handlers) {
             installHandler(handler);
         }

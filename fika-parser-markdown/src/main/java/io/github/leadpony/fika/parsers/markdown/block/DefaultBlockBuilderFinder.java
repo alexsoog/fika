@@ -35,7 +35,7 @@ class DefaultBlockBuilderFinder implements BlockBuilderFinder {
     private final List<BlockMatcher> matchers;
     private final Map<MatcherType, List<BlockMatcher>> interrupters = new HashMap<>();
 
-    DefaultBlockBuilderFinder(Iterable<BlockMatcher> matchers) {
+    DefaultBlockBuilderFinder(List<BlockMatcher> matchers) {
         this.matchers = setUpMatchers(matchers);
     }
 
@@ -71,16 +71,12 @@ class DefaultBlockBuilderFinder implements BlockBuilderFinder {
         return null;
     }
     
-    private List<BlockMatcher> setUpMatchers(Iterable<BlockMatcher> matchers) {
-        List<BlockMatcher> list = new ArrayList<>();
+    private List<BlockMatcher> setUpMatchers(List<BlockMatcher> matchers) {
+        Collections.sort(matchers, comparing(BlockMatcher::precedence));
         for (BlockMatcher matcher: matchers) {
-            list.add(matcher);
-        }
-        Collections.sort(list, comparing(BlockMatcher::precedence));
-        for (BlockMatcher matcher: list) {
             addInterrupter(matcher);
         }
-        return list;
+        return matchers;
     }
     
     private void addInterrupter(BlockMatcher matcher) {
