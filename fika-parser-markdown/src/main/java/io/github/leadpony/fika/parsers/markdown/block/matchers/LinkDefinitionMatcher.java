@@ -15,65 +15,13 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
-import java.util.function.Consumer;
-
-import io.github.leadpony.fika.core.model.Block;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
 import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
-import io.github.leadpony.fika.parsers.markdown.common.LinkDefinition;
 
-/**
- * @author leadpony
- */
-class LinkDefinitionMatcher extends AbstractParagraphMatcher 
-    implements Consumer<LinkDefinition> {
-    
-    private final LinkDefinitionRecognizer recognizer = new LinkDefinitionRecognizer(this);
-   
-    @Override
-    public BlockTrait blockTrait() {
-        return BlockType.LINK_DEFINITION;
-    }
-
-    @Override
-    public Result match(InputSequence input) {
-        if (lineNo() > 1 && input.isBlank()) {
-            return Result.COMPLETED;
-        }
-        appendLine(input);
-        if (recognizer.acceptLine(input)) {
-            return Result.COMPLETED;
-        }
-        return Result.CONTINUED;
-    }
-    
-    @Override
-    public boolean isInterruptible() {
-        return lineNo() > 1;
-    }
-   
-    @Override
-    protected Block buildBlock() {
-        int linesConsumed = recognizer.flush();
-        return buildParagraph(linesConsumed);
-    }
-
-    /**
-     * Processes the link definition found.
-     * 
-     * @param definition the link definition found.
-     */
-    @Override
-    public void accept(LinkDefinition definition) {
-        context().getLinkDefinitionMap()
-            .put(definition.label(), definition);
-    }
-}
-
-class LinkDefinitionMatcherFactory implements BlockMatcherFactory {
+public class LinkDefinitionMatcher implements BlockMatcher {
 
     @Override
     public BlockTrait blockTrait() {
@@ -81,10 +29,10 @@ class LinkDefinitionMatcherFactory implements BlockMatcherFactory {
     }
 
     @Override
-    public BlockMatcher newMatcher(InputSequence input) {
+    public BlockBuilder newBuilder(InputSequence input) {
         int spaces = input.countLeadingSpaces(0,  3);
         if (input.length() > spaces && input.charAt(spaces) == '[') {
-            return new LinkDefinitionMatcher();
+            return new LinkDefinitionBuilder();
         } else {
             return null;
         }

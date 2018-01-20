@@ -18,59 +18,21 @@ package io.github.leadpony.fika.parsers.markdown.block.matchers;
 import java.util.EnumSet;
 import java.util.Set;
 
-import io.github.leadpony.fika.core.model.Heading;
-import io.github.leadpony.fika.core.model.Text;
-import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
 import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
-import io.github.leadpony.fika.parsers.markdown.block.MatcherMode;
+import io.github.leadpony.fika.parsers.markdown.block.BuilderMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
- * Matcher for ATX headings.
- * 
  * @author leadpony
  */
-class AtxHeadingMatcher extends AbstractBlockMatcher {
-
-    private final int level;
-    private final String title;
-  
-    AtxHeadingMatcher(int level, String title) {
-        this.level = level;
-        this.title = title;
-    }
-
-    @Override
-    public BlockTrait blockTrait() {
-        return BlockType.ATX_HEADING;
-    }
-    
-    @Override
-    public Result match(InputSequence input) {
-        return Result.COMPLETED;
-    }
-    
-    @Override
-    protected Heading buildBlock() {
-        Heading block = getNodeFactory().newHeading(this.level);
-        Text text = getNodeFactory().newText(this.title);
-        block.appendChild(text);
-        context().addInline(text);
-        return block;
-    }
-}
-
-/**
- * @author leadpony
- */
-class AtxHeadingMatcherFactory implements BlockMatcherFactory {
+public class AtxHeadingMatcher implements BlockMatcher {
     
     private static final int MAX_LEVEL = 6;
 
-    AtxHeadingMatcherFactory() {
+    public AtxHeadingMatcher() {
     }
 
     @Override
@@ -84,7 +46,7 @@ class AtxHeadingMatcherFactory implements BlockMatcherFactory {
     }
     
     @Override
-    public BlockMatcher newMatcher(InputSequence input) {
+    public BlockBuilder newBuilder(InputSequence input) {
         int i = input.countLeadingSpaces(0, 3);
         int level = 0;
         for (; i < input.length(); i++) {
@@ -105,12 +67,12 @@ class AtxHeadingMatcherFactory implements BlockMatcherFactory {
                 return null;
             }
         }
-        return new AtxHeadingMatcher(level, extractTitle(input.subSequence(i)));
+        return new AtxHeadingBuilder(level, extractTitle(input.subSequence(i)));
     }
 
     @Override
-    public BlockMatcher newInterrupter(InputSequence input, BlockMatcher current, MatcherMode mode) {
-        return newMatcher(input);
+    public BlockBuilder newInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
+        return newBuilder(input);
     }
     
     private static String extractTitle(InputSequence input) {

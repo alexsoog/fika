@@ -15,99 +15,48 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
-import io.github.leadpony.fika.core.model.Block;
-import io.github.leadpony.fika.core.model.NodeFactory;
-import io.github.leadpony.fika.core.model.Text;
+import java.util.Collections;
+import java.util.Set;
+
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
-import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionMap;
 
 /**
+ * Matcher for blocks.
+ * 
  * @author leadpony
  */
 public interface BlockMatcher {
-    
+
     /**
-     * Matching result.
-     * 
-     * @author leadpony
-     */
-    public enum Result {
-        NOT_MATCHED,
-        CONTINUED,
-        COMPLETED
-    }
-    
-    /**
-     * Returns the trait of the block this matcher will produce.
+     * Returns the trait of the block this matcher produce.
      * 
      * @return the trait of the block.
      */
     BlockTrait blockTrait();
-    
-    /**
-     * Binds the context to this matcher.
-     * 
-     * @param context the matching context.
-     */
-    void bind(Context context);
-    
-    default boolean hasChildMatcher() {
-        return false;
-    }
-    
-    default BlockMatcher childMatcher() {
-        return null;
-    }
-    
-    default BlockMatcher lastMatcher() {
-        BlockMatcher matcher = this;
-        while (matcher.hasChildMatcher()) {
-            matcher = matcher.childMatcher();
-        }
-        return matcher;
-    }
-    
-    int lineNo();
 
-    Result match(InputSequence input);
-
-    default boolean isInterruptible() {
-        return false;
-    }
-    
-    default BlockMatcher interrupt(InputSequence content, MatcherMode mode) {
-        return null;
-    }
-    
-    default Result continueLazily(InputSequence content) {
-        return Result.NOT_MATCHED;
-    }
-    
     /**
-     * Closes this matcher.
+     * Returns the precedence of this matcher.
      * 
-     * @return the block found by this matcher.
+     * @return the precedence of this matcher.
      */
-    Block close();
+    default int precedence() {
+        return blockTrait().precedence();
+    }
     
     /**
-     * Context for block matchers.
+     * Creates a new block builder for the given content.
+     * 
+     * @param input the content of the line.
+     * 
+     * @return new block builder if matched, or {@code null} if not matched.
      */
-    interface Context {
-        
-        /**
-         * Return the current line number.
-         * 
-         * @return current line number, starting from one.
-         */
-        int lineNo();
-        
-        NodeFactory getNodeFactory();
-        
-        BlockMatcherFinder finder();
-        
-        LinkDefinitionMap getLinkDefinitionMap();
-        
-        void addInline(Text text);
+    BlockBuilder newBuilder(InputSequence input);
+    
+    default Set<? extends BlockTrait> interruptible() {
+        return Collections.emptySet();
+    }
+    
+    default BlockBuilder newInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
+        return null;
     }
 }

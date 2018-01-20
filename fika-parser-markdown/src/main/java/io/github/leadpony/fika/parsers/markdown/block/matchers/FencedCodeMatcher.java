@@ -15,116 +15,22 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
-import static io.github.leadpony.fika.parsers.markdown.common.Characters.SPACE;
-import static io.github.leadpony.fika.parsers.markdown.common.Strings.unescape;
-import static io.github.leadpony.fika.parsers.markdown.common.Strings.expandReferences;
-
 import java.util.EnumSet;
 import java.util.Set;
 
-import io.github.leadpony.fika.core.model.Block;
-import io.github.leadpony.fika.core.model.CodeBlock;
-import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
 import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
-import io.github.leadpony.fika.parsers.markdown.block.MatcherMode;
+import io.github.leadpony.fika.parsers.markdown.block.BuilderMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
-
-class FencedCodeMatcher extends AbstractBlockMatcher {
-    
-    private final int indentSize;
-    private final char fenceChar;
-    private final int fenceLength;
-    private final String infoString;
-    
-    private final StringBuilder builder;
-    
-    FencedCodeMatcher(int indentSize, char fenceChar, int fenceLength, String infoString) {
-        this.indentSize = indentSize;
-        this.fenceChar = fenceChar;
-        this.fenceLength = fenceLength;
-        this.infoString = infoString;
-        this.builder = new StringBuilder();
-    }
-  
-    @Override
-    public BlockTrait blockTrait() {
-        return BlockType.FENCED_CODE;
-    }
-    
-    @Override
-    public Result match(InputSequence input) {
-        if (lineNo() <= 1) {
-            return Result.CONTINUED;
-        }
-        if (testClosingFence(input)) {
-            return Result.COMPLETED;
-        }
-        appendLine(input);
-        return Result.CONTINUED;
-    }
-
-    @Override
-    protected Block buildBlock() {
-        CodeBlock block = getNodeFactory().newCodeBlock(builder.toString());
-        String infoString = unescape(expandReferences(this.infoString));
-        String[] words = infoString.split("\\s+");
-        String language = words[0];
-        if (!language.isEmpty()) {
-            block.setLanguage(language);
-        }
-        return block;
-    }
-
-    private boolean testClosingFence(InputSequence input) {
-        int i = input.countLeadingSpaces(0, 3);
-        if (i >= input.length()) {
-            return false;
-        }
-        char c = input.charAt(i);
-        if (c != fenceChar) {
-            return false;
-        }
-        int length = 1;
-        while (++i < input.length()) {
-            c = input.charAt(i);
-            if (c == fenceChar) {
-                ++length;    
-            } else if (c == SPACE) {
-                break;
-            } else {
-                return false;
-            }
-        }
-        if (length < fenceLength) {
-            return false;
-        }
-        while (++i < input.length()) {
-            c = input.charAt(i);
-            if (c != SPACE) {
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    private void appendLine(InputSequence input) {
-        if (indentSize > 0) {
-            int beginIndex = input.countLeadingSpaces(0,  indentSize);
-            input = input.subSequence(beginIndex);
-        }
-        builder.append(input.toSourceString()).append('\n');
-    }
-}
 
 /**
  * @author leadpony
  */
-class FencedCodeMatcherFactory implements BlockMatcherFactory { 
+public class FencedCodeMatcher implements BlockMatcher { 
     
-    FencedCodeMatcherFactory() {
+    public FencedCodeMatcher() {
     }
 
     @Override
@@ -138,7 +44,7 @@ class FencedCodeMatcherFactory implements BlockMatcherFactory {
     }
 
     @Override
-    public BlockMatcher newMatcher(InputSequence input) {
+    public BlockBuilder newBuilder(InputSequence input) {
         int indentSize = input.countLeadingSpaces(0, 3);
         int i = indentSize;
         char fenceChar = input.charAt(i);
@@ -160,12 +66,12 @@ class FencedCodeMatcherFactory implements BlockMatcherFactory {
         if (infoString.contains("`")) {
             return null;
         }
-        return new FencedCodeMatcher(indentSize, fenceChar, fenceLength, infoString);
+        return new FencedCodeBuilder(indentSize, fenceChar, fenceLength, infoString);
     }
 
     @Override
-    public BlockMatcher newInterrupter(InputSequence input, BlockMatcher current, MatcherMode mode) {
-        return newMatcher(input);
+    public BlockBuilder newInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
+        return newBuilder(input);
     }
     
     private String extractInfoString(InputSequence input, int offset) {

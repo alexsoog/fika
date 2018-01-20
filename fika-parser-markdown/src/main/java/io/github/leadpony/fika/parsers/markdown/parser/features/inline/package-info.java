@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
+ * Provides inline features.
+ * 
  * @author leadpony
- *
  */
 package io.github.leadpony.fika.parsers.markdown.parser.features.inline;

@@ -15,6 +15,7 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,44 +23,60 @@ import java.util.Set;
 import io.github.leadpony.fika.core.model.Document;
 import io.github.leadpony.fika.core.model.NodeFactory;
 import io.github.leadpony.fika.core.model.Text;
-import io.github.leadpony.fika.parsers.markdown.block.matchers.DocumentMatcher;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionMap;
 
 /**
+ * Default implementation of {@link BlockProcessor}.
+ * 
  * @author leadpony
  */
-public class DefaultBlockMatcherChain implements BlockMatcherChain, BlockMatcher.Context {
+public class DefaultBlockProcessor implements BlockProcessor, BlockBuilder.Context {
 
     private final NodeFactory nodeFactory;
     private final LinkDefinitionMap linkDefinitions;
-    private final BlockMatcherFinder matcherFinder;
+    private final List<BlockMatcher> matchers;
     private final Set<Text> inlines = new HashSet<>();
-    private final DocumentMatcher rootMatcher;
+    private final DocumentBuilder rootBuilder;
+
+    private DefaultBlockBuilderFinder builderFinder;
     private int lineNumber;
     
-    public DefaultBlockMatcherChain(NodeFactory nodeFactory, 
-            LinkDefinitionMap linkDefinitions,
-            List<BlockMatcherFactory> factories) {
+    public DefaultBlockProcessor(NodeFactory nodeFactory, LinkDefinitionMap linkDefinitions) {
         this.nodeFactory = nodeFactory;
         this.linkDefinitions = linkDefinitions; 
-        this.matcherFinder = new DefaultBlockMatcherFinder(factories);
-        this.rootMatcher = new DocumentMatcher();
-        this.rootMatcher.bind(this);
+        this.matchers = new ArrayList<>();
+        this.rootBuilder = new DocumentBuilder();
+        this.rootBuilder.bind(this);
         this.lineNumber = 0;
     }
     
-    /* BlockMatcherChain interface */
+    /* BlockMatcherRegistry interface */
+    
+    @Override
+    public void installBlockMatcher(BlockMatcher matcher) {
+        if (matcher != null) {
+            this.matchers.add(matcher);
+        }
+    }
+    
+    /* BlockProcessor interface */
 
     @Override
-    public void match(String line) {
-        BlockInputSequence content = BlockInputSequence.of(line);
+    public void open() {
+        this.builderFinder = new DefaultBlockBuilderFinder(this.matchers);
+    }
+
+    @Override
+    public void process(String line) {
+        InputSequence content = BlockInputSequence.of(line);
         lineNumber++;
-        rootMatcher.match(content);
+        rootBuilder.match(content);
     }
     
     @Override
     public Document close() {
-        return (Document)rootMatcher.close();
+        return (Document)rootBuilder.close();
     }
     
     @Override
@@ -80,8 +97,8 @@ public class DefaultBlockMatcherChain implements BlockMatcherChain, BlockMatcher
     }
 
     @Override
-    public BlockMatcherFinder finder() {
-        return matcherFinder;
+    public BlockBuilderFinder finder() {
+        return builderFinder;
     }
 
     @Override

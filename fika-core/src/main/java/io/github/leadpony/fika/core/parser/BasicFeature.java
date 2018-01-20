@@ -23,12 +23,21 @@ package io.github.leadpony.fika.core.parser;
 public enum BasicFeature implements Feature {
     AUTO_LINK,
     BACKSLASH_ESCAPE,
+    BLOCK_QUOTE,
     CHARACTER_REFERENCE,
+    CODE_BLOCK,
     CODE_SPAN,
     EMPHASIS,
     HARD_LINE_BREAK,
+    HEADING,
+    HTML_BLOCK,
     IMAGE,
+    INLINE_HTML,
     LINK,
-    RAW_HTML
+    LINK_DEFINITION,
+    LIST,
+    PARAGRAPH,
+    SOFT_LINE_BREAK,
+    THEMATIC_BREAK
     ;
 }

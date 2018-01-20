@@ -19,51 +19,14 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import io.github.leadpony.fika.core.model.Block;
-import io.github.leadpony.fika.core.model.Text;
-import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
 import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
-import io.github.leadpony.fika.parsers.markdown.block.MatcherMode;
+import io.github.leadpony.fika.parsers.markdown.block.BuilderMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
-/**
- * @author leadpony
- *
- */
-class SetextHeadingMatcher extends AbstractBlockMatcher {
-    
-    private final int level;
-    private final String title;
-    
-    SetextHeadingMatcher(int level, String title) {
-        this.level = level;
-        this.title = title;
-    }
-
-    @Override
-    public BlockTrait blockTrait() {
-        return BlockType.SETEXT_HEADING;
-    }
-
-    @Override
-    public Result match(InputSequence input) {
-        return Result.COMPLETED;
-    }
-
-    @Override
-    protected Block buildBlock() {
-        Block heading = getNodeFactory().newHeading(this.level);
-        Text text = getNodeFactory().newText(this.title);
-        context().addInline(text);
-        heading.appendChild(text);
-        return heading;
-    }
-}
-
-class SetextHeadingMatcherFactory implements BlockMatcherFactory {
+public class SetextHeadingMatcher implements BlockMatcher {
 
     private static final Pattern UNDERLINE_PATTERN = Pattern.compile("\\u0020{0,3}(=+|-{2,})\\u0020*");
     
@@ -82,13 +45,13 @@ class SetextHeadingMatcherFactory implements BlockMatcherFactory {
      * This matcher only interrupts paragraphs.
      */
     @Override
-    public BlockMatcher newMatcher(InputSequence input) {
+    public BlockBuilder newBuilder(InputSequence input) {
         return null;
     }
 
     @Override
-    public BlockMatcher newInterrupter(InputSequence input, BlockMatcher current, MatcherMode mode) {
-        if (mode == MatcherMode.LAZY_CONTINUATION) {
+    public BlockBuilder newInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
+        if (mode == BuilderMode.LAZY_CONTINUATION) {
             return null;
         }
         if (!UNDERLINE_PATTERN.matcher(input).matches()) {
@@ -100,8 +63,8 @@ class SetextHeadingMatcherFactory implements BlockMatcherFactory {
         }
         char c = input.charAt(firstIndex);
         int level = (c == '=') ? 1 : 2;
-        ParagraphMatcher paragraphMatcher = (ParagraphMatcher)current;
-        String content = paragraphMatcher.buildContent(0);
-        return new SetextHeadingMatcher(level, content);
+        ParagraphBuilder paragraphBuilder = (ParagraphBuilder)current;
+        String content = paragraphBuilder.buildContent(0);
+        return new SetextHeadingBuilder(level, content);
     }
 }

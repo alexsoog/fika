@@ -20,9 +20,9 @@ import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 /**
  * @author leadpony
  */
-public interface BlockMatcherFinder {
+public interface BlockBuilderFinder {
     
-    BlockMatcher findMatcher(InputSequence input);
+    BlockBuilder findBuilder(InputSequence input);
     
-    BlockMatcher findInterruptingMatcher(InputSequence input, BlockMatcher current, MatcherMode mode);
+    BlockBuilder findInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode);
 }

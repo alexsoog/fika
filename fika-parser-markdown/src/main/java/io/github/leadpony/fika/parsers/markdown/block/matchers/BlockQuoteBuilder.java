@@ -15,33 +15,44 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
-import io.github.leadpony.fika.core.model.Document;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import io.github.leadpony.fika.core.model.BlockQuote;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
 import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
-import io.github.leadpony.fika.parsers.markdown.block.ContainerBlockMatcher;
+import io.github.leadpony.fika.parsers.markdown.block.ContainerBlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * @author leadpony
  */
-public class DocumentMatcher extends ContainerBlockMatcher {
+class BlockQuoteBuilder extends ContainerBlockBuilder {
     
-    public DocumentMatcher() {
+    static final Pattern BLOCK_QUOTE_MARKER = Pattern.compile("^\\u0020{0,3}>\\u0020?");
+
+    BlockQuoteBuilder() {
+    }
+
+    @Override
+    public BlockTrait blockTrait() {
+        return BlockType.BLOCK_QUOTE;
     }
    
     @Override
-    public BlockTrait blockTrait() {
-        return BlockType.DOCUMENT;
-    }
-    
-    @Override
     public Result match(InputSequence input) {
-        super.match(input);
-        return Result.CONTINUED;
+        Matcher m = BLOCK_QUOTE_MARKER.matcher(input);
+        if (m.find()) {
+            int skip = m.group(0).length();
+            findAndInvokeChildBuilder(input.subSequence(skip));
+            return Result.CONTINUED;
+        } else {
+            return matchLazyContinuationLine(input);
+        }
     }
-    
+
     @Override
-    protected Document buildBlock() {
-        return getNodeFactory().newDocument();
+    protected BlockQuote buildBlock() {
+        return getNodeFactory().newBlockQuote();
     }
 }

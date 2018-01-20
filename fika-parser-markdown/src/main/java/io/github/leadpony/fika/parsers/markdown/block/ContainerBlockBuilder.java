@@ -23,37 +23,37 @@ import io.github.leadpony.fika.core.model.Node;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
- * Matcher for container blocks such as documents, block quotes, and lists.
+ * Builder of container blocks such as documents, block quotes, and lists.
  * 
  * @author leadpony
  */
-public abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
+public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
     
-    private BlockMatcher childMatcher;
+    private BlockBuilder childBuilder;
     private final List<Node> childNodes = new ArrayList<>();
     
-    protected ContainerBlockMatcher() {
+    protected ContainerBlockBuilder() {
     }
 
     @Override
-    public boolean hasChildMatcher() {
-        return this.childMatcher != null;
+    public boolean hasChildBuilder() {
+        return this.childBuilder != null;
     }
     
     @Override
-    public BlockMatcher childMatcher() {
-        return childMatcher;
+    public BlockBuilder childBuilder() {
+        return childBuilder;
     }
     
     @Override
     public Result match(InputSequence input) {
-        return findAndInvokeChildMatcher(input);
+        return findAndInvokeChildBuilder(input);
     }
 
     @Override
     public final Block close() {
-        if (hasChildMatcher()) {
-            closeCurrentChildMatcher();
+        if (hasChildBuilder()) {
+            closeCurrentChildBuilder();
         }
         Block block = buildBlock();
         block.appendChildren(childNodes());
@@ -61,82 +61,82 @@ public abstract class ContainerBlockMatcher extends AbstractBlockMatcher {
     }
     
     protected Result matchLazyContinuationLine(InputSequence input) {
-        BlockMatcher last = lastMatcher();
+        BlockBuilder last = lastBuilder();
         return last.continueLazily(input);
     }
     
-    protected Result findAndInvokeChildMatcher(InputSequence input) {
-        if (!hasChildMatcher()) {
-            if (findChildMatcher(input) == null) {
+    protected Result findAndInvokeChildBuilder(InputSequence input) {
+        if (!hasChildBuilder()) {
+            if (findChildBuilder(input) == null) {
                 return Result.NOT_MATCHED;
             }
         }
-        return invokeChildMatcherAndRetry(input);
+        return invokeChildBuilderAndRetry(input);
     }
     
-    protected Result invokeChildMatcherAndRetry(InputSequence input) {
-        Result result = invokeChildMatcher(input);
+    protected Result invokeChildBuilderAndRetry(InputSequence input) {
+        Result result = invokeChildBuilder(input);
         if (result == Result.NOT_MATCHED) {
-            if (findChildMatcher(input) == null) {
+            if (findChildBuilder(input) == null) {
                 return Result.NOT_MATCHED;
             }
-            result = invokeChildMatcher(input);
+            result = invokeChildBuilder(input);
         }
         return result;
     }
     
-    protected Result invokeChildMatcher(InputSequence input) {
-        BlockMatcher child = childMatcher();
+    protected Result invokeChildBuilder(InputSequence input) {
+        BlockBuilder child = childBuilder();
         assert(child != null);
         if (child.isInterruptible()) {
-            BlockMatcher interrupter = child.interrupt(input, MatcherMode.NORMAL);
+            BlockBuilder interrupter = child.interrupt(input, BuilderMode.NORMAL);
             if (interrupter != null) {
-                openChildMatcher(interrupter);
+                openChildBuilder(interrupter);
                 child = interrupter;
             }
         }
-        Result result = callMatcherDirect(child, input);
+        Result result = callBuilderDirect(child, input);
         if (result == Result.COMPLETED || result == Result.NOT_MATCHED) {
-            closeCurrentChildMatcher();
+            closeCurrentChildBuilder();
         }
         return result;
     }
     
-    protected BlockMatcher findChildMatcher(InputSequence input) {
-        BlockMatcher matched = context().finder().findMatcher(input);
+    protected BlockBuilder findChildBuilder(InputSequence input) {
+        BlockBuilder matched = context().finder().findBuilder(input);
         if (matched != null) {
-            openChildMatcher(matched);
+            openChildBuilder(matched);
         }
         return matched;
     }
     
-    private Result callMatcherDirect(BlockMatcher matcher, InputSequence input) {
+    private Result callBuilderDirect(BlockBuilder matcher, InputSequence input) {
         return matcher.match(input);
     }
     
-    protected void openChildMatcher(BlockMatcher childMatcher) {
-        if (childMatcher == null) {
+    protected void openChildBuilder(BlockBuilder childBuilder) {
+        if (childBuilder == null) {
             throw new NullPointerException();
         }
-        closeCurrentChildMatcher();
-        this.childMatcher = childMatcher;
-        childMatcher.bind(context());
+        closeCurrentChildBuilder();
+        this.childBuilder = childBuilder;
+        childBuilder.bind(context());
     }
     
-    protected void closeChildMatcher(BlockMatcher childMatcher) {
-        if (childMatcher == null) {
+    protected void closeChildBuilder(BlockBuilder childBuilder) {
+        if (childBuilder == null) {
             throw new NullPointerException();
         }
-        Node node = childMatcher.close();
+        Node node = childBuilder.close();
         if (node != null) {
             this.childNodes.add(node);
         }
-        this.childMatcher = null;
+        this.childBuilder = null;
     }
     
-    protected void closeCurrentChildMatcher() {
-        if (this.childMatcher != null) {
-            closeChildMatcher(this.childMatcher);
+    protected void closeCurrentChildBuilder() {
+        if (this.childBuilder != null) {
+            closeChildBuilder(this.childBuilder);
         }
     }
     

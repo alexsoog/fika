@@ -23,13 +23,13 @@ import java.util.List;
 
 import io.github.leadpony.fika.core.model.Paragraph;
 import io.github.leadpony.fika.core.model.Text;
-import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockMatcher;
+import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * @author leadpony
  */
-abstract class AbstractParagraphMatcher extends AbstractBlockMatcher {
+abstract class AbstractParagraphBuilder extends AbstractBlockBuilder {
 
     private final List<String> lines = new ArrayList<>();
     

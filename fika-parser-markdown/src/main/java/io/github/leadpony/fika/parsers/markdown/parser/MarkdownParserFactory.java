@@ -33,12 +33,10 @@ import io.github.leadpony.fika.core.parser.support.model.DefaultNodeFactory;
  */
 class MarkdownParserFactory implements ParserFactory {
     
-    private final ProviderRegistry providers;
     private final Set<FeatureProvider> featureSet;
     private final NodeFactory nodeFactory;
     
     MarkdownParserFactory(Builder builder) {
-        this.providers = builder.providers;
         this.featureSet = builder.activeFeatureSet;
         this.nodeFactory = new DefaultNodeFactory();
     }
@@ -48,7 +46,7 @@ class MarkdownParserFactory implements ParserFactory {
         if (reader == null) {
             throw new NullPointerException("reader must not be null");
         }
-        return new MarkdownParser(reader, this.nodeFactory, this.providers, this.featureSet);
+        return new MarkdownParser(reader, this.nodeFactory, this.featureSet);
     }
     
     /**
@@ -60,12 +58,10 @@ class MarkdownParserFactory implements ParserFactory {
         
         private final Map<String, FeatureProvider> featureMap;
         private final Set<FeatureProvider> activeFeatureSet;
-        private ProviderRegistry providers;
         
         Builder(Map<String, FeatureProvider> featureMap) {
             this.featureMap = featureMap;
             this.activeFeatureSet = defaultizeFeatureSet(featureMap);
-            this.providers = ProviderRegistry.getDefault();
         }
 
         @Override

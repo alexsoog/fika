@@ -15,71 +15,16 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import io.github.leadpony.fika.core.model.CodeBlock;
-import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
 import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
-
-class IndentedCodeMatcher extends AbstractBlockMatcher {
-   
-    static final int INDENT_SIZE = 4;
-    
-    private final List<String> lines;
-    private int lastNonBlankLineNo;
-
-    IndentedCodeMatcher() {
-        this.lines = new ArrayList<>();
-    }
-
-    @Override
-    public BlockTrait blockTrait() {
-        return BlockType.INDENTED_CODE;
-    }
-    
-    @Override
-    public Result match(InputSequence input) {
-        if (lineNo() <= 1 || input.hasLeadingSpaces(INDENT_SIZE)) {
-            appendLine(input);
-            return Result.CONTINUED;
-        } else if (input.isBlank()) {
-            appendBlank();
-            return Result.CONTINUED;
-        }
-        return Result.NOT_MATCHED;
-    }
-
-    @Override
-    protected CodeBlock buildBlock() {
-        StringBuilder builder = new StringBuilder();
-        for (int i = 1; i <= lastNonBlankLineNo; ++i) {
-            builder.append(lines.get(i - 1)).append('\n');
-        }
-        return getNodeFactory().newCodeBlock(builder.toString());
-    }
-
-    private void appendLine(InputSequence input) {
-        input = input.subSequence(INDENT_SIZE);
-        this.lines.add(input.toSourceString());
-        if (!input.isBlank()) {
-            this.lastNonBlankLineNo = lineNo();
-        }
-    }
-    
-    private void appendBlank() {
-        this.lines.add("");
-    }
-}
 
 /**
  * @author leadpony
  */
-class IndentedCodeMatcherFactory implements BlockMatcherFactory {
+public class IndentedCodeMatcher implements BlockMatcher {
 
     @Override
     public BlockTrait blockTrait() {
@@ -87,10 +32,10 @@ class IndentedCodeMatcherFactory implements BlockMatcherFactory {
     }
     
     @Override
-    public BlockMatcher newMatcher(InputSequence input) {
-        if (!input.hasLeadingSpaces(IndentedCodeMatcher.INDENT_SIZE)) {
+    public BlockBuilder newBuilder(InputSequence input) {
+        if (!input.hasLeadingSpaces(IndentedCodeBuilder.INDENT_SIZE)) {
             return null;
         }
-        return new IndentedCodeMatcher();
+        return new IndentedCodeBuilder();
     }
 }

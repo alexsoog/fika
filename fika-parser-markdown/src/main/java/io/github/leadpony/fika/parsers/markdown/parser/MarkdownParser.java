@@ -18,8 +18,6 @@ package io.github.leadpony.fika.parsers.markdown.parser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import io.github.leadpony.fika.core.model.Document;
@@ -27,53 +25,58 @@ import io.github.leadpony.fika.core.model.NodeFactory;
 import io.github.leadpony.fika.core.model.Text;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserException;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherChain;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherProvider;
-import io.github.leadpony.fika.parsers.markdown.block.DefaultBlockMatcherChain;
+import io.github.leadpony.fika.parsers.markdown.block.BlockProcessor;
+import io.github.leadpony.fika.parsers.markdown.block.DefaultBlockProcessor;
 import io.github.leadpony.fika.parsers.markdown.common.LinkDefinitionMap;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineProcessor;
 import io.github.leadpony.fika.parsers.markdown.inline.DefaultInlineProcessor;
 
 /**
+ * The parser to parse source written in Markdown.
+ * 
  * @author leadpony
  */
 class MarkdownParser implements Parser {
     
+    // reader of the source.
     private final Reader reader;
 
+    // link reference definitions.
     private final LinkDefinitionMap linkDefinitions;
     
-    private final BlockMatcherChain blockMatcherChain;
+    // block processor.
+    private final BlockProcessor blockProcessor;
+    
+    // inline processor.
     private final InlineProcessor inlineProcessor;
     
-    public MarkdownParser(Reader reader, NodeFactory nodeFactory, ProviderRegistry providers, 
-            Set<FeatureProvider> featureSet) {
+    public MarkdownParser(Reader reader, NodeFactory nodeFactory, Set<FeatureProvider> featureSet) {
         this.reader = reader;
         this.linkDefinitions = new LinkDefinitionMap();
-        this.blockMatcherChain = buildBlockMatcherChain(nodeFactory, providers);
+        this.blockProcessor = buildBlockProcessor(nodeFactory);
         this.inlineProcessor = buildInlineProcessor(nodeFactory);
-        activateFeatures(featureSet);
+        installFeatures(featureSet);
     }
 
     @Override
     public Document parse() {
         try {
-            return parseBlocks();
+            return processAllBlocks();
         } catch (IOException e) {
             throw new ParserException(e);
         }
     }
     
-    private Document parseBlocks() throws IOException {
-        BlockMatcherChain chain = this.blockMatcherChain;
+    private Document processAllBlocks() throws IOException {
+        BlockProcessor processor = this.blockProcessor;
         BufferedReader reader = new BufferedReader(this.reader);
+        processor.open();
         String line = null;
         while ((line = reader.readLine()) != null) {
-            chain.match(line);
+            processor.process(line);
         }
-        Document doc = chain.close();
-        processAllInlines(chain.getInlines());
+        Document doc = processor.close();
+        processAllInlines(processor.getInlines());
         return doc;
     }
     
@@ -87,21 +90,17 @@ class MarkdownParser implements Parser {
         inlineProcessor.processInlines(text);
     }
     
-    protected BlockMatcherChain buildBlockMatcherChain(NodeFactory nodeFactory, ProviderRegistry providers) {
-        List<BlockMatcherFactory> factories = new ArrayList<>();
-        for (BlockMatcherProvider provider: providers.blockMatcherProviders()) {
-            factories.add(provider.newMatcherFactory());
-        }
-        return new DefaultBlockMatcherChain(nodeFactory, linkDefinitions, factories);
+    protected BlockProcessor buildBlockProcessor(NodeFactory nodeFactory) {
+        return new DefaultBlockProcessor(nodeFactory, linkDefinitions);
     }
     
     protected InlineProcessor buildInlineProcessor(NodeFactory nodeFactory) {
         return new DefaultInlineProcessor(nodeFactory, linkDefinitions);
     }
     
-    protected void activateFeatures(Set<FeatureProvider> features) {
+    protected void installFeatures(Set<FeatureProvider> features) {
         for (FeatureProvider feature: features) {
-            feature.install(null, this.inlineProcessor);
+            feature.install(this.blockProcessor, this.inlineProcessor);
         }
     }
 }

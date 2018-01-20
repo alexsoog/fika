@@ -15,11 +15,21 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block;
 
+import java.util.Set;
+
+import io.github.leadpony.fika.core.model.Document;
+import io.github.leadpony.fika.core.model.Text;
+
 /**
  * @author leadpony
  */
-public enum MatcherMode {
-    NORMAL,
-    LAZY_CONTINUATION
-    ;
+public interface BlockProcessor extends BlockMatcherRegistry {
+    
+    void open();
+    
+    void process(String line);
+    
+    Document close();
+
+    Set<Text> getInlines();
 }

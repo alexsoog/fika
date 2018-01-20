@@ -13,18 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.block.matchers;
+package io.github.leadpony.fika.parsers.markdown.block;
 
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherProvider;
+import io.github.leadpony.fika.core.model.Document;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * @author leadpony
  */
-public class AtxHeadingMatcherProvider implements BlockMatcherProvider {
-
+public class DocumentBuilder extends ContainerBlockBuilder {
+    
+    public DocumentBuilder() {
+    }
+   
     @Override
-    public BlockMatcherFactory newMatcherFactory() {
-        return new AtxHeadingMatcherFactory();
+    public BlockTrait blockTrait() {
+        return BlockType.DOCUMENT;
+    }
+    
+    @Override
+    public Result match(InputSequence input) {
+        super.match(input);
+        return Result.CONTINUED;
+    }
+    
+    @Override
+    protected Document buildBlock() {
+        return getNodeFactory().newDocument();
     }
 }

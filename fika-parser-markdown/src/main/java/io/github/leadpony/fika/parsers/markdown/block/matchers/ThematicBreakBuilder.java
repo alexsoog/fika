@@ -15,16 +15,32 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherProvider;
+import io.github.leadpony.fika.core.model.Block;
+import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockBuilder;
+import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
+import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * @author leadpony
  */
-public class BlockQuoteMatcherProvider implements BlockMatcherProvider {
+class ThematicBreakBuilder extends AbstractBlockBuilder {
+
+    ThematicBreakBuilder() {
+    }
 
     @Override
-    public BlockMatcherFactory newMatcherFactory() {
-        return new BlockQuoteMatcherFactory();
+    public BlockTrait blockTrait() {
+        return BlockType.THEMATIC_BREAK;
+    }
+
+    @Override
+    public Result match(InputSequence input) {
+        return Result.COMPLETED;
+    }
+    
+    @Override
+    protected Block buildBlock() {
+        return getNodeFactory().newThematicBreak();
     }
 }

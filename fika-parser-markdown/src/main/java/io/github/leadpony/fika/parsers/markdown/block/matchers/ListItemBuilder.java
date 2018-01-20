@@ -20,18 +20,18 @@ import java.util.regex.Pattern;
 
 import io.github.leadpony.fika.core.model.Block;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
+import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
-import io.github.leadpony.fika.parsers.markdown.block.ContainerBlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.MatcherMode;
+import io.github.leadpony.fika.parsers.markdown.block.ContainerBlockBuilder;
+import io.github.leadpony.fika.parsers.markdown.block.BuilderMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
- * Matcher for list items.
+ * Builder of list items.
  * 
  * @author leadpony
  */
-abstract class ListItemMatcher extends ContainerBlockMatcher {
+abstract class ListItemBuilder extends ContainerBlockBuilder {
     
     private final int indentSize;
     private final boolean empty;
@@ -39,7 +39,7 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
     private int lastBlankLineNo;
     private int linesNotMatched;
     
-    protected ListItemMatcher(int indentSize, boolean empty) {
+    protected ListItemBuilder(int indentSize, boolean empty) {
         this.indentSize = indentSize;
         this.empty = empty;
         this.loose = false;
@@ -78,7 +78,7 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
             // Not indented.
             return matchLazyContinuationLine(input);
         }
-        Result result = findAndInvokeChildMatcher(contentAfterMarker(input));
+        Result result = findAndInvokeChildBuilder(contentAfterMarker(input));
         if (result == Result.NOT_MATCHED) {
             if (++linesNotMatched >= 2) {
                 return Result.COMPLETED;
@@ -95,7 +95,7 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
     }
 
     @Override
-    public BlockMatcher interrupt(InputSequence input, MatcherMode mode) {
+    public BlockBuilder interrupt(InputSequence input, BuilderMode mode) {
         assert(isInterruptible());
         int indentSize = input.countLeadingSpaces(0, this.indentSize);
         if (indentSize < this.indentSize) {
@@ -105,11 +105,11 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
     }
     
     @Override
-    protected void openChildMatcher(BlockMatcher childMatcher) {
+    protected void openChildBuilder(BlockBuilder childMatcher) {
         if (lineNo() == this.lastBlankLineNo + 1) {
             this.loose = true;
         }
-        super.openChildMatcher(childMatcher);
+        super.openChildBuilder(childMatcher);
     }
     
     @Override
@@ -141,21 +141,21 @@ abstract class ListItemMatcher extends ContainerBlockMatcher {
         return spaces;
     }
 
-    abstract boolean isSameTypeAs(ListItemMatcher other);
+    abstract boolean isSameTypeAs(ListItemBuilder other);
     
-    abstract BlockMatcher interrupterOfSameType(InputSequence input);
+    abstract BlockBuilder interrupterOfSameType(InputSequence input);
 }
 
 /**
  * @author leadpony
  */
-class BulletListItemMatcher extends ListItemMatcher {
+class BulletListItemBuilder extends ListItemBuilder {
 
     private final char bullet;
 
     private static final String MARKERS = "+-*";
 
-    static BulletListItemMatcher matcher(InputSequence input, int maxIndent) {
+    static BulletListItemBuilder matcher(InputSequence input, int maxIndent) {
         if (input.isEmpty()) {
             return null;
         }
@@ -170,26 +170,26 @@ class BulletListItemMatcher extends ListItemMatcher {
         }
         int indentSize = leadingSpaces + 1 + trailingSpaces;
         boolean empty = indentSize >= input.length();
-        return new BulletListItemMatcher(indentSize, c, empty);
+        return new BulletListItemBuilder(indentSize, c, empty);
     }
     
-    private BulletListItemMatcher(int indentSize, char bullet, boolean empty) {
+    private BulletListItemBuilder(int indentSize, char bullet, boolean empty) {
         super(indentSize, empty);
         this.bullet = bullet;
     }
     
     @Override
-    boolean isSameTypeAs(ListItemMatcher other) {
-        if (other == null || !(other instanceof BulletListItemMatcher)) {
+    boolean isSameTypeAs(ListItemBuilder other) {
+        if (other == null || !(other instanceof BulletListItemBuilder)) {
             return false;
         }
-        BulletListItemMatcher casted = (BulletListItemMatcher)other;
+        BulletListItemBuilder casted = (BulletListItemBuilder)other;
         return this.bullet == casted.bullet;
     }
     
     @Override
-    BlockMatcher interrupterOfSameType(InputSequence input) {
-        BulletListItemMatcher m = matcher(input, indentSize() + 3);
+    BlockBuilder interrupterOfSameType(InputSequence input) {
+        BulletListItemBuilder m = matcher(input, indentSize() + 3);
         if (m != null && m.bullet == this.bullet) {
             return m;
         }
@@ -200,14 +200,14 @@ class BulletListItemMatcher extends ListItemMatcher {
 /**
  * @author leadpony
  */
-class OrderedListItemMatcher extends ListItemMatcher {
+class OrderedListItemBuilder extends ListItemBuilder {
 
     private final int number;
     private final String delimiter;
     
     private static final Pattern MARKER_PATTERN = Pattern.compile("^(\\d{1,9})([.)])");
     
-    static OrderedListItemMatcher matcher(InputSequence input, int maxIndent) {
+    static OrderedListItemBuilder matcher(InputSequence input, int maxIndent) {
         int leadingSpaces = input.countLeadingSpaces(0, maxIndent);
         Matcher m = MARKER_PATTERN.matcher(input.subSequence(leadingSpaces));
         if (!m.find()) {
@@ -221,10 +221,10 @@ class OrderedListItemMatcher extends ListItemMatcher {
         int indentSize = leadingSpaces + length + trailingSpace;
         int number = Integer.parseInt(m.group(1));
         boolean empty = indentSize >= input.length();
-        return new OrderedListItemMatcher(indentSize, number, m.group(2), empty);
+        return new OrderedListItemBuilder(indentSize, number, m.group(2), empty);
     }
 
-    private OrderedListItemMatcher(int indentSize, int number, String delimiter, boolean empty) {
+    private OrderedListItemBuilder(int indentSize, int number, String delimiter, boolean empty) {
         super(indentSize, empty);
         this.number = number;
         this.delimiter = delimiter;
@@ -239,11 +239,11 @@ class OrderedListItemMatcher extends ListItemMatcher {
     }
 
     @Override
-    boolean isSameTypeAs(ListItemMatcher other) {
-        if (other == null || !(other instanceof OrderedListItemMatcher)) {
+    boolean isSameTypeAs(ListItemBuilder other) {
+        if (other == null || !(other instanceof OrderedListItemBuilder)) {
             return false;
         }
-        OrderedListItemMatcher casted = (OrderedListItemMatcher)other;
+        OrderedListItemBuilder casted = (OrderedListItemBuilder)other;
         return this.delimiter.equals(casted.delimiter);
     }
 
@@ -253,8 +253,8 @@ class OrderedListItemMatcher extends ListItemMatcher {
     }
 
     @Override
-    BlockMatcher interrupterOfSameType(InputSequence input) {
-        OrderedListItemMatcher m = matcher(input, indentSize());
+    BlockBuilder interrupterOfSameType(InputSequence input) {
+        OrderedListItemBuilder m = matcher(input, indentSize());
         if (m != null && m.delimiter.equals(this.delimiter)) {
             return m;
         }

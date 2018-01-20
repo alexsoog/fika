@@ -15,81 +15,16 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
-import io.github.leadpony.fika.core.model.Block;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
 import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
-import io.github.leadpony.fika.parsers.markdown.block.MatcherMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
- * Matcher for paragraphs.
- * 
  * @author leadpony
  */
-class ParagraphMatcher extends AbstractParagraphMatcher {
-    
-    private boolean canceled;
-    
-    ParagraphMatcher() {
-        this.canceled = false;
-    }
-  
-    @Override
-    public BlockTrait blockTrait() {
-        return BlockType.PARAGRAPH;
-    }
-    
-    @Override
-    public Result match(InputSequence input) {
-        if (lineNo() <= 1) {
-            appendLine(input);
-            return Result.CONTINUED;
-        } else if (input.isBlank()) {
-            return Result.COMPLETED;
-        } else {
-            appendLine(input);
-            return Result.CONTINUED;
-        }
-    }
-
-    @Override
-    public boolean isInterruptible() {
-        return lineNo() > 1;
-    }
-    
-    @Override
-    public BlockMatcher interrupt(InputSequence input, MatcherMode mode) {
-        BlockMatcher interrupter = super.interrupt(input, mode);
-        if (interrupter instanceof SetextHeadingMatcher) {
-            this.canceled = true;
-        }
-        return interrupter;
-    }
-
-    @Override
-    public Result continueLazily(InputSequence input) {
-        BlockMatcher interrupter = interrupt(input, MatcherMode.LAZY_CONTINUATION);
-        if (interrupter != null || input.isBlank()) {
-            return Result.NOT_MATCHED;
-        }
-        return match(input);
-    }
-    
-    @Override
-    protected Block buildBlock() {
-        if (canceled) {
-            return null;
-        }
-        return buildParagraph(0);
-    }
-}    
-
-/**
- * @author leadpony
- */
-class ParagraphMatcherFactory implements BlockMatcherFactory {
+public class ParagraphMatcher implements BlockMatcher {
 
     @Override
     public BlockTrait blockTrait() {
@@ -97,7 +32,7 @@ class ParagraphMatcherFactory implements BlockMatcherFactory {
     }
 
     @Override
-    public BlockMatcher newMatcher(InputSequence input) {
-        return new ParagraphMatcher();
+    public BlockBuilder newBuilder(InputSequence input) {
+        return new ParagraphBuilder();
     }
 }

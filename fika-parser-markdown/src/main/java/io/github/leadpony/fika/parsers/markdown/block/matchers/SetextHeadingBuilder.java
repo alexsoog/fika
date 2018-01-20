@@ -15,46 +15,43 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
-import java.util.EnumSet;
-import java.util.Set;
-
+import io.github.leadpony.fika.core.model.Block;
+import io.github.leadpony.fika.core.model.Text;
+import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
-import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
-import io.github.leadpony.fika.parsers.markdown.block.BuilderMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * @author leadpony
+ *
  */
-public class BlockQuoteMatcher implements BlockMatcher {
+class SetextHeadingBuilder extends AbstractBlockBuilder {
     
-    public BlockQuoteMatcher() {
+    private final int level;
+    private final String title;
+    
+    SetextHeadingBuilder(int level, String title) {
+        this.level = level;
+        this.title = title;
     }
-    
+
     @Override
     public BlockTrait blockTrait() {
-        return BlockType.BLOCK_QUOTE;
+        return BlockType.SETEXT_HEADING;
     }
 
     @Override
-    public Set<? extends BlockTrait> interruptible() {
-        return EnumSet.of(BlockType.PARAGRAPH, BlockType.LINK_DEFINITION);
-    }
-    
-    @Override
-    public BlockBuilder newBuilder(InputSequence input) {
-        if (BlockQuoteBuilder.BLOCK_QUOTE_MARKER.matcher(input).find()) {
-            return new BlockQuoteBuilder();
-        } else {
-            return null;
-        }
+    public Result match(InputSequence input) {
+        return Result.COMPLETED;
     }
 
     @Override
-    public BlockBuilder newInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
-        return newBuilder(input);
+    protected Block buildBlock() {
+        Block heading = getNodeFactory().newHeading(this.level);
+        Text text = getNodeFactory().newText(this.title);
+        context().addInline(text);
+        heading.appendChild(text);
+        return heading;
     }
 }
-

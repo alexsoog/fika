@@ -18,48 +18,19 @@ package io.github.leadpony.fika.parsers.markdown.block.matchers;
 import java.util.EnumSet;
 import java.util.Set;
 
-import io.github.leadpony.fika.core.model.Block;
-import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
 import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
-import io.github.leadpony.fika.parsers.markdown.block.MatcherMode;
+import io.github.leadpony.fika.parsers.markdown.block.BuilderMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
  * @author leadpony
  */
-class ThematicBreakMatcher extends AbstractBlockMatcher {
-
-    ThematicBreakMatcher() {
-    }
-
-    @Override
-    public BlockTrait blockTrait() {
-        return BlockType.THEMATIC_BREAK;
-    }
-
-    @Override
-    public Result match(InputSequence input) {
-        return Result.COMPLETED;
-    }
+public class ThematicBreakMatcher implements BlockMatcher {
     
-    @Override
-    protected Block buildBlock() {
-        return getNodeFactory().newThematicBreak();
-    }
-}
-
-/**
- * @author leadpony
- */
-class ThematicBreakMatcherFactory implements BlockMatcherFactory {
-    
-    private final ThematicBreakMatcher matcher = new ThematicBreakMatcher();
-
-    ThematicBreakMatcherFactory() {
-    }
+    private final ThematicBreakBuilder builder = new ThematicBreakBuilder();
 
     @Override
     public BlockTrait blockTrait() {
@@ -75,13 +46,13 @@ class ThematicBreakMatcherFactory implements BlockMatcherFactory {
     }
 
     @Override
-    public BlockMatcher newMatcher(InputSequence input) {
-        return testLine(input) ? matcher : null;
+    public BlockBuilder newBuilder(InputSequence input) {
+        return testLine(input) ? builder : null;
     }
 
     @Override
-    public BlockMatcher newInterrupter(InputSequence input, BlockMatcher current, MatcherMode mode) {
-        return newMatcher(input);
+    public BlockBuilder newInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
+        return newBuilder(input);
     }
     
     private static boolean testLine(InputSequence input) {

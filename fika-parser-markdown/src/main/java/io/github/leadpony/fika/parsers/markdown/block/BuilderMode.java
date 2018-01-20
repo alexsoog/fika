@@ -13,18 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.block.matchers;
-
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherProvider;
+package io.github.leadpony.fika.parsers.markdown.block;
 
 /**
  * @author leadpony
  */
-public class HtmlBlockMatcherProvider implements BlockMatcherProvider {
-
-    @Override
-    public BlockMatcherFactory newMatcherFactory() {
-        return new HtmlBlockMatcherFactory();
-    }
+public enum BuilderMode {
+    NORMAL,
+    LAZY_CONTINUATION
+    ;
 }

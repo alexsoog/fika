@@ -20,11 +20,11 @@ import io.github.leadpony.fika.core.model.NodeFactory;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
- * Skeletal implementation of {@link BlockMatcher}.
+ * Skeletal implementation of {@link BlockBuilder}.
  * 
  * @author leadpony
  */
-public abstract class AbstractBlockMatcher implements BlockMatcher {
+public abstract class AbstractBlockBuilder implements BlockBuilder {
 
     private Context context;
     private int firstLineNo;
@@ -46,9 +46,9 @@ public abstract class AbstractBlockMatcher implements BlockMatcher {
     }
     
     @Override
-    public BlockMatcher interrupt(InputSequence input, MatcherMode mode) {
+    public BlockBuilder interrupt(InputSequence input, BuilderMode mode) {
         if (isInterruptible()) {
-            return context().finder().findInterruptingMatcher(input, this, mode);
+            return context().finder().findInterruptingBuilder(input, this, mode);
         } else {
             return null;
         }

@@ -15,46 +15,44 @@
  */
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
-import java.util.EnumSet;
-import java.util.Set;
-
+import io.github.leadpony.fika.core.model.Heading;
+import io.github.leadpony.fika.core.model.Text;
+import io.github.leadpony.fika.parsers.markdown.block.AbstractBlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
-import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
 import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
-import io.github.leadpony.fika.parsers.markdown.block.BuilderMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
+ * Builder of ATX headings.
+ * 
  * @author leadpony
  */
-public class BlockQuoteMatcher implements BlockMatcher {
-    
-    public BlockQuoteMatcher() {
+class AtxHeadingBuilder extends AbstractBlockBuilder {
+
+    private final int level;
+    private final String title;
+  
+    AtxHeadingBuilder(int level, String title) {
+        this.level = level;
+        this.title = title;
     }
-    
+
     @Override
     public BlockTrait blockTrait() {
-        return BlockType.BLOCK_QUOTE;
-    }
-
-    @Override
-    public Set<? extends BlockTrait> interruptible() {
-        return EnumSet.of(BlockType.PARAGRAPH, BlockType.LINK_DEFINITION);
+        return BlockType.ATX_HEADING;
     }
     
     @Override
-    public BlockBuilder newBuilder(InputSequence input) {
-        if (BlockQuoteBuilder.BLOCK_QUOTE_MARKER.matcher(input).find()) {
-            return new BlockQuoteBuilder();
-        } else {
-            return null;
-        }
+    public Result match(InputSequence input) {
+        return Result.COMPLETED;
     }
-
+    
     @Override
-    public BlockBuilder newInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
-        return newBuilder(input);
+    protected Heading buildBlock() {
+        Heading block = getNodeFactory().newHeading(this.level);
+        Text text = getNodeFactory().newText(this.title);
+        block.appendChild(text);
+        context().addInline(text);
+        return block;
     }
 }
-

@@ -16,211 +16,20 @@
 package io.github.leadpony.fika.parsers.markdown.block.matchers;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Set;
 
-import io.github.leadpony.fika.core.model.Block;
-import io.github.leadpony.fika.core.model.ListItem;
-import io.github.leadpony.fika.core.model.ListType;
-import io.github.leadpony.fika.core.model.Node;
-import io.github.leadpony.fika.core.model.OrderedList;
-import io.github.leadpony.fika.core.model.Paragraph;
 import io.github.leadpony.fika.parsers.markdown.block.BlockType;
+import io.github.leadpony.fika.parsers.markdown.block.BlockBuilder;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherFactory;
 import io.github.leadpony.fika.parsers.markdown.block.BlockTrait;
-import io.github.leadpony.fika.parsers.markdown.block.ContainerBlockMatcher;
-import io.github.leadpony.fika.parsers.markdown.block.MatcherMode;
+import io.github.leadpony.fika.parsers.markdown.block.BuilderMode;
 import io.github.leadpony.fika.parsers.markdown.common.InputSequence;
 
 /**
- * Block matcher for lists.
- * 
  * @author leadpony
  */
-abstract class ListMatcher extends ContainerBlockMatcher {
+public class ListMatcher implements BlockMatcher {
     
-    private final BlockMatcherFactory factory;
-    private final ListItemMatcher firstItemMatcher;
-    private boolean loose;
-    private int lastBlankLineNo;
-
-    protected ListMatcher(BlockMatcherFactory factory, ListItemMatcher firstItemMatcher) {
-        this.factory = factory;
-        this.firstItemMatcher = firstItemMatcher;
-        this.loose = false;
-        this.lastBlankLineNo = -1;
-    }
-    
-    boolean isLoose() {
-        return loose;
-    }
-    
-    boolean isTight() {
-        return !isLoose();
-    }
-    
-    boolean canInterrupt(BlockMatcher matcher) {
-        BlockTrait type = matcher.blockTrait();
-        if (type == BlockType.PARAGRAPH) {
-            return firstItemMatcher.canInterruptParagraph();
-        } else if (type == BlockType.LIST) {
-            return !isSameTypeAs((ListMatcher)matcher);
-        }
-        return true;
-    }
-    
-    boolean isSameTypeAs(ListMatcher other) {
-        return firstItemMatcher.isSameTypeAs(other.firstItemMatcher);
-    }
-    
-    @Override
-    public BlockTrait blockTrait() {
-        return BlockType.LIST;
-    }
-    
-    @Override
-    public void bind(Context context) {
-        super.bind(context);
-        openChildMatcher(this.firstItemMatcher);
-    }
-    
-    @Override
-    public Result match(InputSequence input) {
-        boolean isBlank = input.isBlank();
-        if (isBlank) {
-            this.lastBlankLineNo = lineNo();
-        }
-        Result result = findAndInvokeChildMatcher(input);
-        if (result == Result.NOT_MATCHED) {
-            if (!isBlank) {
-                return result;
-            }
-        }
-        return Result.CONTINUED;
-    }
-    
-    @Override
-    public boolean isInterruptible() {
-        return lineNo() > 1;
-    }
-    
-    @Override
-    public BlockMatcher interrupt(InputSequence input, MatcherMode mode) {
-        if (hasChildMatcher()) {
-            ListItemMatcher child = (ListItemMatcher)childMatcher();
-            if (input.hasLeadingSpaces(child.indentSize())) {
-                return null;
-            }
-        }
-        BlockMatcher matcher = context().finder().findInterruptingMatcher(input, this, mode);
-        if (matcher == null) {
-            matcher = this.factory.newInterrupter(input, this, mode);
-        }
-        return matcher;
-    }
-    
-    @Override
-    protected BlockMatcher findChildMatcher(InputSequence input) {
-        BlockMatcher matched = firstItemMatcher.interrupterOfSameType(input);
-        if (matched != null) {
-            openChildMatcher(matched);
-        }
-        return matched;
-    }
-    
-    @Override
-    protected void openChildMatcher(BlockMatcher childMatcher) {
-        if (lineNo() == lastBlankLineNo + 1) {
-            this.loose = true;
-        }
-        super.openChildMatcher(childMatcher);
-    }
-    
-    @Override
-    protected void closeChildMatcher(BlockMatcher childMatcher) {
-        ListItemMatcher itemMatcher = (ListItemMatcher)childMatcher;
-        if (itemMatcher.isLoose()) {
-            this.loose = true;
-        }
-        super.closeChildMatcher(childMatcher);
-    }
-    
-    @Override
-    protected List<Node> childNodes() {
-        return buildChildNodes();
-    }
-    
-    private List<Node> buildChildNodes() {
-        List<Node> items = super.childNodes();
-        if (isTight()) {
-            for (Node item: items) {
-                tightenListItem((ListItem)item);
-            }
-        }
-        return items;
-    }
-    
-    private void tightenListItem(ListItem item) {
-        Node child = item.firstChildNode();
-        while (child != null) {
-            if (child instanceof Paragraph) {
-                Node text = child.firstChildNode();
-                item.replaceChild(text, child);
-                child = text;
-            }
-            child = child.nextNode();
-        }
-    }
-}
-
-/**
- * Block matcher for bullet-type lists.
- * 
- * @author leadpony
- */
-class BulletListMatcher extends ListMatcher {
-    
-    BulletListMatcher(BlockMatcherFactory factory, BulletListItemMatcher itemMatcher) {
-        super(factory, itemMatcher);
-    }
-    
-    @Override
-    protected Block buildBlock() {
-        return getNodeFactory().newLiskBlock(ListType.UNORDERED);
-    }
-}
-
-/**
- * Block matcher for ordered item lists.
- * 
- * @author leadpony
- */
-class OrderedListMatcher extends ListMatcher {
-    
-    private final int startNumber;
-    
-    OrderedListMatcher(BlockMatcherFactory factory, OrderedListItemMatcher itemMatcher) {
-        super(factory, itemMatcher);
-        this.startNumber = itemMatcher.number();
-    }
-    
-    @Override
-    protected Block buildBlock() {
-        OrderedList block = (OrderedList)getNodeFactory().newLiskBlock(ListType.ORDERED);
-        block.setStartNumber(startNumber);
-        return block;
-    }
-}
-
-/**
- * @author leadpony
- */
-class ListMatcherFactory implements BlockMatcherFactory {
-    
-    ListMatcherFactory() {
-    }
-
     @Override
     public BlockTrait blockTrait() {
         return BlockType.LIST;
@@ -232,35 +41,34 @@ class ListMatcherFactory implements BlockMatcherFactory {
     }
     
     @Override
-    public BlockMatcher newMatcher(InputSequence input) {
-        return newListMatcher(input);
+    public BlockBuilder newBuilder(InputSequence input) {
+        return newListBuilder(input);
     }
     
     @Override
-    public BlockMatcher newInterrupter(InputSequence input, BlockMatcher current, MatcherMode mode) {
-        ListMatcher matcher = newListMatcher(input);
+    public BlockBuilder newInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
+        ListBuilder matcher = newListBuilder(input);
         if (matcher == null) {
             return null;
         }
         return matcher.canInterrupt(current) ? matcher : null;
     }
     
-    private ListMatcher newListMatcher(InputSequence input) {
-        ListMatcher matcher = null;
-        matcher = newBulletListMatcher(input);
-        if (matcher == null) {
-            matcher = newOrderedListMatcher(input);
+    private ListBuilder newListBuilder(InputSequence input) {
+        ListBuilder builder = newBulletListBuilder(input);
+        if (builder == null) {
+            builder = newOrderedListBuilder(input);
         }
-        return matcher;
+        return builder;
     }
 
-    private BulletListMatcher newBulletListMatcher(InputSequence input) {
-        BulletListItemMatcher itemMatcher = BulletListItemMatcher.matcher(input, 3);
-        return (itemMatcher != null) ? new BulletListMatcher(this, itemMatcher) : null;
+    private BulletListBuilder newBulletListBuilder(InputSequence input) {
+        BulletListItemBuilder itemMatcher = BulletListItemBuilder.matcher(input, 3);
+        return (itemMatcher != null) ? new BulletListBuilder(this, itemMatcher) : null;
     }
 
-    private OrderedListMatcher newOrderedListMatcher(InputSequence input) {
-        OrderedListItemMatcher itemMatcher = OrderedListItemMatcher.matcher(input, 3);
-        return (itemMatcher != null) ? new OrderedListMatcher(this, itemMatcher) : null;
+    private OrderedListBuilder newOrderedListBuilder(InputSequence input) {
+        OrderedListItemBuilder itemMatcher = OrderedListItemBuilder.matcher(input, 3);
+        return (itemMatcher != null) ? new OrderedListBuilder(this, itemMatcher) : null;
     }
 }

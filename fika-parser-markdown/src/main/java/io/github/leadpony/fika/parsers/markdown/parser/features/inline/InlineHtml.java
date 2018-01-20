@@ -25,11 +25,11 @@ import io.github.leadpony.fika.parsers.markdown.parser.FeatureProvider;
 /**
  * @author leadpony
  */
-public class RawHtml implements FeatureProvider {
+public class InlineHtml implements FeatureProvider {
 
     @Override
     public Feature feature() {
-        return BasicFeature.RAW_HTML;
+        return BasicFeature.INLINE_HTML;
     }
 
     @Override
