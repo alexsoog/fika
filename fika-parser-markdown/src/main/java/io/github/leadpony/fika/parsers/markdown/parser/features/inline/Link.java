@@ -15,20 +15,22 @@
  */
 package io.github.leadpony.fika.parsers.markdown.parser.features.inline;
 
+import io.github.leadpony.fika.core.parser.BasicFeature;
+import io.github.leadpony.fika.core.parser.Feature;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherRegistry;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerRegistry;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkCloserHandler;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.LinkHandler;
-import io.github.leadpony.fika.parsers.markdown.parser.Feature;
+import io.github.leadpony.fika.parsers.markdown.parser.FeatureProvider;
 
 /**
  * @author leadpony
  */
-public class Link implements Feature {
+public class Link implements FeatureProvider {
 
     @Override
-    public String name() {
-        return "link";
+    public Feature feature() {
+        return BasicFeature.LINK;
     }
 
     @Override

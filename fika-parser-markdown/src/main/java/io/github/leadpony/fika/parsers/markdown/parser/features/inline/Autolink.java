@@ -15,19 +15,21 @@
  */
 package io.github.leadpony.fika.parsers.markdown.parser.features.inline;
 
+import io.github.leadpony.fika.core.parser.BasicFeature;
+import io.github.leadpony.fika.core.parser.Feature;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherRegistry;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerRegistry;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.AutolinkHandler;
-import io.github.leadpony.fika.parsers.markdown.parser.Feature;
+import io.github.leadpony.fika.parsers.markdown.parser.FeatureProvider;
 
 /**
  * @author leadpony
  */
-public class Autolink implements Feature {
+public class Autolink implements FeatureProvider {
 
     @Override
-    public String name() {
-        return "autolink";
+    public Feature feature() {
+        return BasicFeature.AUTO_LINK;
     }
 
     @Override

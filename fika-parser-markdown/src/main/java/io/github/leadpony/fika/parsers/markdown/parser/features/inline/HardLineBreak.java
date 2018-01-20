@@ -15,19 +15,21 @@
  */
 package io.github.leadpony.fika.parsers.markdown.parser.features.inline;
 
+import io.github.leadpony.fika.core.parser.BasicFeature;
+import io.github.leadpony.fika.core.parser.Feature;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherRegistry;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerRegistry;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.LineBreakHandler;
-import io.github.leadpony.fika.parsers.markdown.parser.Feature;
+import io.github.leadpony.fika.parsers.markdown.parser.FeatureProvider;
 
 /**
  * @author leadpony
  */
-public class HardLineBreak implements Feature {
+public class HardLineBreak implements FeatureProvider {
 
     @Override
-    public String name() {
-        return "hard-line-break";
+    public Feature feature() {
+        return BasicFeature.HARD_LINE_BREAK;
     }
 
     @Override

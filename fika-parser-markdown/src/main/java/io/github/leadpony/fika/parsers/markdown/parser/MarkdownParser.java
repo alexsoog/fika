@@ -48,7 +48,7 @@ class MarkdownParser implements Parser {
     private final InlineProcessor inlineProcessor;
     
     public MarkdownParser(Reader reader, NodeFactory nodeFactory, ProviderRegistry providers, 
-            Set<Feature> featureSet) {
+            Set<FeatureProvider> featureSet) {
         this.reader = reader;
         this.linkDefinitions = new LinkDefinitionMap();
         this.blockMatcherChain = buildBlockMatcherChain(nodeFactory, providers);
@@ -99,8 +99,8 @@ class MarkdownParser implements Parser {
         return new DefaultInlineProcessor(nodeFactory, linkDefinitions);
     }
     
-    protected void activateFeatures(Set<Feature> features) {
-        for (Feature feature: features) {
+    protected void activateFeatures(Set<FeatureProvider> features) {
+        for (FeatureProvider feature: features) {
             feature.install(null, this.inlineProcessor);
         }
     }

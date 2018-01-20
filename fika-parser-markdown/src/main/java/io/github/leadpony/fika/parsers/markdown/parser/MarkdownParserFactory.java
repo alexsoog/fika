@@ -27,12 +27,14 @@ import io.github.leadpony.fika.core.parser.ParserFactoryBuilder;
 import io.github.leadpony.fika.core.parser.support.model.DefaultNodeFactory;
 
 /**
+ * Factory of markdown parsers.
+ * 
  * @author leadpony
  */
 class MarkdownParserFactory implements ParserFactory {
     
     private final ProviderRegistry providers;
-    private final Set<Feature> featureSet;
+    private final Set<FeatureProvider> featureSet;
     private final NodeFactory nodeFactory;
     
     MarkdownParserFactory(Builder builder) {
@@ -43,6 +45,9 @@ class MarkdownParserFactory implements ParserFactory {
 
     @Override
     public Parser newParser(Reader reader) {
+        if (reader == null) {
+            throw new NullPointerException("reader must not be null");
+        }
         return new MarkdownParser(reader, this.nodeFactory, this.providers, this.featureSet);
     }
     
@@ -53,11 +58,11 @@ class MarkdownParserFactory implements ParserFactory {
      */
     static class Builder implements ParserFactoryBuilder {
         
-        private final Map<String, Feature> featureMap;
-        private final Set<Feature> activeFeatureSet;
+        private final Map<String, FeatureProvider> featureMap;
+        private final Set<FeatureProvider> activeFeatureSet;
         private ProviderRegistry providers;
         
-        Builder(Map<String, Feature> featureMap) {
+        Builder(Map<String, FeatureProvider> featureMap) {
             this.featureMap = featureMap;
             this.activeFeatureSet = defaultizeFeatureSet(featureMap);
             this.providers = ProviderRegistry.getDefault();
@@ -65,7 +70,7 @@ class MarkdownParserFactory implements ParserFactory {
 
         @Override
         public ParserFactoryBuilder withFeature(String feature) {
-            Feature found = featureMap.get(feature);
+            FeatureProvider found = featureMap.get(feature);
             if (found != null) {
                 return this;
             }
@@ -75,7 +80,7 @@ class MarkdownParserFactory implements ParserFactory {
 
         @Override
         public ParserFactoryBuilder withoutFeature(String feature) {
-            Feature found = featureMap.get(feature);
+            FeatureProvider found = featureMap.get(feature);
             if (found != null) {
                 return this;
             }
@@ -88,8 +93,8 @@ class MarkdownParserFactory implements ParserFactory {
             return new MarkdownParserFactory(this);
         }
         
-        protected Set<Feature> defaultizeFeatureSet(Map<String, Feature> featureMap) {
-            Set<Feature> featureSet = new HashSet<>();
+        protected Set<FeatureProvider> defaultizeFeatureSet(Map<String, FeatureProvider> featureMap) {
+            Set<FeatureProvider> featureSet = new HashSet<>();
             featureSet.addAll(featureMap.values());
             return featureSet;
         }

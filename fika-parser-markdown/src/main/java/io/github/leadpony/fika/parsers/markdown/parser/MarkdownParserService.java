@@ -15,46 +15,35 @@
  */
 package io.github.leadpony.fika.parsers.markdown.parser;
 
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
+import io.github.leadpony.fika.core.parser.MarkupLanguage;
 import io.github.leadpony.fika.core.parser.ParserFactoryBuilder;
-import io.github.leadpony.fika.core.parser.ParserFactoryService;
+import io.github.leadpony.fika.core.parser.ParserService;
 
 /**
+ * The implementation of {@link ParserService}.
+ * 
  * @author leadpony
  */
-public class MarkdownParserFactoryService extends ParserFactoryService {
+public class MarkdownParserService extends ParserService {
     
-    private static final String TARGET_MEDIA_TYPE = "text/markdown";
+    private final Map<String, FeatureProvider> featureMap;
     
-    private final Map<String, Feature> featureMap;
-    
-    public MarkdownParserFactoryService() {
-        this.featureMap = loadFeatures();
+    public MarkdownParserService() {
+        this.featureMap = FeatureProvider.features();
     }
 
     @Override
-    public boolean supports(String mediaType) {
-        return TARGET_MEDIA_TYPE.equals(mediaType);
+    public boolean supports(MarkupLanguage language) {
+        return MarkupLanguage.MARKDOWN.equals(language);
     }
 
     @Override
-    public ParserFactoryBuilder newBuilder(String mediaType) {
-        if (!supports(mediaType)) {
+    public ParserFactoryBuilder newBuilder(MarkupLanguage language) {
+        if (!supports(language)) {
             return null;
         }
         return new MarkdownParserFactory.Builder(featureMap);
-    }
-    
-    private static Map<String, Feature> loadFeatures() {
-        Map<String, Feature> map = new HashMap<>();
-        Iterator<Feature> it = Feature.features();
-        while (it.hasNext()) {
-            Feature feature = it.next();
-            map.put(feature.name(), feature);
-        }
-        return map;
     }
 }

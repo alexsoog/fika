@@ -15,21 +15,23 @@
  */
 package io.github.leadpony.fika.parsers.markdown.parser.features.inline;
 
+import io.github.leadpony.fika.core.parser.BasicFeature;
+import io.github.leadpony.fika.core.parser.Feature;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherRegistry;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerRegistry;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.BackslashHandler;
-import io.github.leadpony.fika.parsers.markdown.parser.Feature;
+import io.github.leadpony.fika.parsers.markdown.parser.FeatureProvider;
 
 /**
  * @author leadpony
  */
-public class BackslashEscape implements Feature {
+public class BackslashEscape implements FeatureProvider {
 
     @Override
-    public String name() {
-        return "backslash-escape";
+    public Feature feature() {
+        return BasicFeature.BACKSLASH_ESCAPE;
     }
-
+   
     @Override
     public void install(BlockMatcherRegistry blockRegistry, InlineHandlerRegistry inlineRegistry) {
         inlineRegistry.installInlineHandler(new BackslashHandler());

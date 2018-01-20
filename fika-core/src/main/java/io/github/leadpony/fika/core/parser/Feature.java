@@ -13,25 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.parser;
-
-import java.util.Iterator;
-import java.util.ServiceLoader;
-
-import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherRegistry;
-import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerRegistry;
+package io.github.leadpony.fika.core.parser;
 
 /**
+ * Feature provided by markup languages.
+ * 
  * @author leadpony
  */
 public interface Feature {
-    
-    String name();
-    
-    void install(BlockMatcherRegistry blockRegistry, InlineHandlerRegistry inlineRegistry);
 
-    static Iterator<Feature> features() {
-        ServiceLoader<Feature> loader = ServiceLoader.load(Feature.class);
-        return loader.iterator();
-    }
+    /**
+     * Returns the name of this feature.
+     * The name must be unique in all features.
+     * 
+     * @return the name of this feature.
+     */
+    String name();
 }

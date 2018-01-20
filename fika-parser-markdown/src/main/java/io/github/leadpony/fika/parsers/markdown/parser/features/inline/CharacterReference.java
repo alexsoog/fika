@@ -15,21 +15,23 @@
  */
 package io.github.leadpony.fika.parsers.markdown.parser.features.inline;
 
+import io.github.leadpony.fika.core.parser.BasicFeature;
+import io.github.leadpony.fika.core.parser.Feature;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherRegistry;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerRegistry;
 import io.github.leadpony.fika.parsers.markdown.inline.handlers.CharacterReferenceHandler;
-import io.github.leadpony.fika.parsers.markdown.parser.Feature;
+import io.github.leadpony.fika.parsers.markdown.parser.FeatureProvider;
 
 /**
  * @author leadpony
  */
-public class CharacterReference implements Feature {
+public class CharacterReference implements FeatureProvider {
 
     @Override
-    public String name() {
-        return "character-reference";
+    public Feature feature() {
+        return BasicFeature.CHARACTER_REFERENCE;
     }
-
+    
     @Override
     public void install(BlockMatcherRegistry blockRegistry, InlineHandlerRegistry inlineRegistry) {
         inlineRegistry.installInlineHandler(new CharacterReferenceHandler());

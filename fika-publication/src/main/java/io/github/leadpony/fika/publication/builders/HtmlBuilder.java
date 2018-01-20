@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import io.github.leadpony.fika.core.model.Document;
+import io.github.leadpony.fika.core.parser.MarkupLanguage;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserFactory;
 import io.github.leadpony.fika.publication.project.PageSource;
@@ -35,7 +36,7 @@ class HtmlBuilder extends BaseBuilder {
     
     private static final Logger log = Logger.getLogger(HtmlBuilder.class.getName());
     
-    private final Map<String, ParserFactory> parserFactories = new HashMap<>();
+    private final Map<MarkupLanguage, ParserFactory> parserFactories = new HashMap<>();
 
     @Override
     public void doBuild() {
@@ -56,7 +57,7 @@ class HtmlBuilder extends BaseBuilder {
         Path path = source.path();
         String mediaType = source.mediaType();
         log.fine("Compiling source: " + path + " [" + mediaType + "]");
-        ParserFactory factory = getParserFactory(mediaType);
+        ParserFactory factory = getParserFactory(MarkupLanguage.MARKDOWN);
         if (factory == null) {
             return;
         }
@@ -66,12 +67,12 @@ class HtmlBuilder extends BaseBuilder {
         }
     }
     
-    private ParserFactory getParserFactory(String mediaType) {
-        ParserFactory factory = parserFactories.get(mediaType);
+    private ParserFactory getParserFactory(MarkupLanguage language) {
+        ParserFactory factory = parserFactories.get(language);
         if (factory == null) {
-            factory = ParserFactory.newInstance(mediaType);
+            factory = ParserFactory.newInstance(language);
             if (factory != null) {
-                parserFactories.put(mediaType, factory);
+                parserFactories.put(language, factory);
             }
         }
         return factory;

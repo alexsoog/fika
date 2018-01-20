@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
+ * Provides the components supporting parser implementations.
+ * 
  * @author leadpony
- *
  */
 package io.github.leadpony.fika.core.parser.support;

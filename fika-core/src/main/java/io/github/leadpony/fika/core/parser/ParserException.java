@@ -16,6 +16,8 @@
 package io.github.leadpony.fika.core.parser;
 
 /**
+ * The exception thrown during parsing.
+ * 
  * @author leadpony
  */
 @SuppressWarnings("serial")

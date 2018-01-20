@@ -13,27 +13,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.parsers.markdown.parser.features.inline;
+package io.github.leadpony.fika.parsers.markdown.parser;
 
-import io.github.leadpony.fika.core.parser.BasicFeature;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.ServiceLoader;
+
 import io.github.leadpony.fika.core.parser.Feature;
 import io.github.leadpony.fika.parsers.markdown.block.BlockMatcherRegistry;
 import io.github.leadpony.fika.parsers.markdown.inline.InlineHandlerRegistry;
-import io.github.leadpony.fika.parsers.markdown.inline.handlers.CodeSpanHandler;
-import io.github.leadpony.fika.parsers.markdown.parser.FeatureProvider;
 
 /**
+ * Feature provider interface.
+ * 
  * @author leadpony
  */
-public class CodeSpan implements FeatureProvider {
+public interface FeatureProvider {
+    
+    /**
+     * Returns the feature provided by this provider.
+     * 
+     * @return the feature provided by this provider.
+     */
+    Feature feature();
+    
+    void install(BlockMatcherRegistry blockRegistry, InlineHandlerRegistry inlineRegistry);
 
-    @Override
-    public Feature feature() {
-        return BasicFeature.CODE_SPAN;
-    }
-
-    @Override
-    public void install(BlockMatcherRegistry blockRegistry, InlineHandlerRegistry inlineRegistry) {
-        inlineRegistry.installInlineHandler(new CodeSpanHandler());
+    static Map<String, FeatureProvider> features() {
+        ServiceLoader<FeatureProvider> loader = ServiceLoader.load(FeatureProvider.class);
+        Map<String, FeatureProvider> featureMap = new HashMap<>();
+        for (FeatureProvider provider: loader) {
+            featureMap.put(provider.feature().name(), provider);
+        }
+        return featureMap;
     }
 }

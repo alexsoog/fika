@@ -19,25 +19,65 @@ import java.io.Reader;
 import java.io.StringReader;
 
 /**
+ * Factory of {@link Parser} instances.
+ * 
  * @author leadpony
  */
 public interface ParserFactory {
     
-    static ParserFactory newInstance(String mediaType) {
-        return builder(mediaType).build();
+    /**
+     * Creates an instance of this type.
+     * 
+     * @param language the markup language to parse.
+     * @return newly created instance of this type.
+     * @throws NullPointerException if specified language is {@code null}.
+     */
+    static ParserFactory newInstance(MarkupLanguage language) {
+        if (language == null) {
+            throw new NullPointerException("language must not be null");
+        }
+        return builder(language).build();
     }
     
-    static ParserFactoryBuilder builder(String mediaType) {
-        ParserFactoryService service = ParserFactoryService.findService(mediaType);
+    /**
+     * Creates an instance the builder of this type.
+     * 
+     * @param language the markup language to parse.
+     * @return newly created instance of the builder.
+     * @throws NullPointerException if specified language is {@code null}.
+     */
+    static ParserFactoryBuilder builder(MarkupLanguage language) {
+        if (language == null) {
+            throw new NullPointerException("language must not be null");
+        }
+        ParserService service = ParserService.findService(language);
         if (service != null) {
-            return service.newBuilder(mediaType);
+            return service.newBuilder(language);
         }
         return null;
     }
     
+    /**
+     * Creates a parser instance to parse the text given as a string.
+     * 
+     * @param text the string containing the text to parse.
+     * @return newly created instance of {@link Parser}.
+     * @throws NullPointerException if specified text is {@code null}.
+     */
     default Parser newParser(String text) {
+        if (text == null) {
+            throw new NullPointerException("text must not be null");
+        }
         return newParser(new StringReader(text));
     }
 
+    /**
+     * Creates a parser instance to parse the text which will be 
+     * read by the specified reader.
+     * 
+     * @param reader the reader which will read the text to parse.
+     * @return newly created instance of {@link Parser}.
+     * @throws NullPointerException if specified reader is {@code null}.
+     */
     Parser newParser(Reader reader);
 }

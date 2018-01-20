@@ -16,20 +16,19 @@
 package io.github.leadpony.fika.core.parser;
 
 /**
- * Builder of parser factory.
+ * Basic features of the markup languages.
  * 
  * @author leadpony
  */
-public interface ParserFactoryBuilder {
-    
-    ParserFactoryBuilder withFeature(String feature);
-
-    ParserFactoryBuilder withoutFeature(String feature);
-   
-    /**
-     * Builds an instance of {@link ParserFactory}.
-     * 
-     * @return newly created instance of {@link ParserFactory}.
-     */
-    ParserFactory build();
+public enum BasicFeature implements Feature {
+    AUTO_LINK,
+    BACKSLASH_ESCAPE,
+    CHARACTER_REFERENCE,
+    CODE_SPAN,
+    EMPHASIS,
+    HARD_LINE_BREAK,
+    IMAGE,
+    LINK,
+    RAW_HTML
+    ;
 }

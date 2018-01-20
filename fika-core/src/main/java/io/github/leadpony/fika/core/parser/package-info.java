@@ -15,7 +15,7 @@
  */
 
 /**
- * Provides the parser interface for page sources.
+ * Provides the parser interface for markuped text.
  * 
  * @author leadpony
  */

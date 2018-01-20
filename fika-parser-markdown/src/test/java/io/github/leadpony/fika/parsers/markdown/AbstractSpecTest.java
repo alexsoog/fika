@@ -26,6 +26,7 @@ import javax.json.JsonReader;
 import org.junit.Test;
 
 import io.github.leadpony.fika.core.model.Document;
+import io.github.leadpony.fika.core.parser.MarkupLanguage;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserFactory;
 import io.github.leadpony.fika.core.renderers.HtmlRenderer;
@@ -35,8 +36,8 @@ import io.github.leadpony.fika.core.renderers.HtmlRenderer;
  */
 public abstract class AbstractSpecTest {
    
-    private static final String MEDIA_TYPE = "text/markdown";
-    private static final ParserFactory factory = ParserFactory.builder(MEDIA_TYPE).build();
+    private static final ParserFactory factory = 
+            ParserFactory.newInstance(MarkupLanguage.MARKDOWN);
 
     private final int index;
     protected final Fixture fixture;
