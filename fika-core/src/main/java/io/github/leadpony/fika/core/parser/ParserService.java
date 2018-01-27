@@ -31,14 +31,14 @@ public abstract class ParserService {
     /**
      * Searches for the appropriate service.
      * 
-     * @param language the markup language to parse, cannot be {@code null}.
+     * @param mediaType the media type of the source to parse, cannot be {@code null}.
      * @return the service found, or {@code null} if not found.
      */
-    static ParserService findService(MarkupLanguage language) {
+    static ParserService findService(String mediaType) {
         Iterator<ParserService> it = loaders.get().iterator();
         while (it.hasNext()) {
             ParserService service = it.next();
-            if (service.supports(language)) {
+            if (service.supports(mediaType)) {
                 return service;
             }
         }
@@ -50,12 +50,12 @@ public abstract class ParserService {
     }
    
     /**
-     * Checks if this service supports specified markup language.
+     * Checks if this service supports specified media type.
      * 
-     * @param language the markup language to check, must not be {@code null}.
-     * @return {@code true} if this service supports the specified language, otherwise {@code false}.
+     * @param mediaType the media type of the source to parse, cannot be {@code null}.
+     * @return {@code true} if this service supports the specified media type, otherwise {@code false}.
      */
-    public abstract boolean supports(MarkupLanguage language);
+    public abstract boolean supports(String mediaType);
 
     /**
      * Creates new instance of builder of parser factory.
@@ -63,5 +63,5 @@ public abstract class ParserService {
      * @param language the markup language to parse.
      * @return newly created builder.
      */
-    public abstract ParserFactoryBuilder newBuilder(MarkupLanguage language);
+    public abstract ParserFactoryBuilder newBuilder(String mediaType);
 }

@@ -22,7 +22,17 @@ import java.nio.file.Path;
  */
 public interface PageSource {
 
+    /**
+     * Return the path of this source.
+     * 
+     * @return the path relative to the source directory.
+     */
     Path path();
     
+    /**
+     * Return the media type of this source.
+     * 
+     * @return the media type of this source such as "text/markdown".
+     */
     String mediaType();
 }

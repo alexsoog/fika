@@ -13,31 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.renderers;
+package io.github.leadpony.fika.publication.builders;
 
-import java.util.Map;
+import java.nio.file.Path;
+
+import io.github.leadpony.fika.publication.project.Project;
 
 /**
+ * Document builder.
+ * 
  * @author leadpony
- *
  */
-public interface HtmlFormatter {
+public interface PublicationBuilder {
+
+    Project project();
+
+    void setTargetDirectory(Path path);
     
-    void doctype(String type);
+    void setProperty(String name, Object value);
     
-    void startTag(String tagName);
-
-    void startTag(String tagName, Map<String, String> attributes);
-
-    void endTag(String tagName);
-
-    void emptyTag(String tagName);
-
-    void emptyTag(String tagName, Map<String, String> attributes);
-
-    void text(String text);
-    
-    void preformatted(String text);
-    
-    void rawHtml(String html);
+    void build();
 }

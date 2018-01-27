@@ -20,21 +20,21 @@ package io.github.leadpony.fika.core.parser;
  * 
  * @author leadpony
  */
-public class MarkupLanguage {
-
+public enum MarkupLanguage {
     /**
      * Markdown (CommonMark).
      */
-    public static final MarkupLanguage MARKDOWN = new MarkupLanguage("text/markdown");
+    MARKDOWN("text/markdown")
+    ;
 
     private final String mediaType;
     private final String variant;
     
-    public MarkupLanguage(String mediaType) {
+    private MarkupLanguage(String mediaType) {
         this(mediaType, "");
     }
     
-    public MarkupLanguage(String mediaType, String variant) {
+    private MarkupLanguage(String mediaType, String variant) {
         this.mediaType = mediaType;
         this.variant = variant;
     }
@@ -65,25 +65,5 @@ public class MarkupLanguage {
             builder.append(";variant=").append(variant);
         }
         return builder.toString();
-    }
-  
-    @Override
-    public int hashCode() {
-        return toString().hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        MarkupLanguage other = (MarkupLanguage)obj;
-        return toString().equals(other.toString());
     }
 }

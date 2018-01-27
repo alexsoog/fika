@@ -16,8 +16,10 @@
 package io.github.leadpony.fika.publication.project;
 
 import java.io.InputStream;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.yaml.snakeyaml.Yaml;
@@ -28,20 +30,21 @@ import org.yaml.snakeyaml.Yaml;
  */
 class ProjectParser {
     
-    private final Object root;
+    private final InputStream input;
     private final ProjectParseListener listener;
     
     public ProjectParser(InputStream in, ProjectParseListener listener) {
-        this.root = loadYaml(in);
+        this.input = in;
         this.listener = listener;
     }
     
     public void root() {
-        if (!(this.root instanceof Map)) {
+        Object root = loadYaml(input);
+        if (!(root instanceof Map)) {
             // TODO:
         }
         @SuppressWarnings("unchecked")
-        Map<String, ?> map = (Map<String, ?>)this.root;
+        Map<String, ?> map = (Map<String, ?>)root;
         for (String key: map.keySet()) {
             Object value = map.get(key);
             if (key.equals("pages")) {
@@ -57,17 +60,23 @@ class ProjectParser {
         case "title":
             listener.title(valueAsString(key, value));
             break;
+        case "language":
+            listener.language(valueAsLocale(key, value));
+            break;
         case "description":
             listener.description(valueAsString(key, value));
             break;
         case "url":
-            listener.url(valueAsString(key, value));
+            listener.url(valueAsUri(key, value));
             break;
         case "copyright":
             listener.copyright(valueAsString(key, value));
             break;
-        case "author":
-            listener.author(valueAsStringList(key, value));
+        case "authors":
+            listener.authors(valueAsStringList(key, value));
+            break;
+        case "stylesheets":
+            listener.stylesheets(valueAsUriList(key, value));
             break;
         default:
             // TODO:
@@ -124,6 +133,22 @@ class ProjectParser {
         }
         return value.toString();
     }
+    
+    private static Locale valueAsLocale(String key, Object value) {
+        if (!(value instanceof String)) {
+            // TODO:
+            return null;
+        }
+        return Locale.forLanguageTag((String)value);
+    }
+    
+    private static URI valueAsUri(String key, Object value) {
+        if (!(value instanceof String)) {
+            // TODO:
+            return null;
+        }
+        return URI.create((String)value);
+    }
 
     private static List<String> valueAsStringList(String key, Object value) {
         if (value instanceof Map) {
@@ -140,7 +165,24 @@ class ProjectParser {
         }
         return list;
     }
-    
+
+    private static List<URI> valueAsUriList(String key, Object value) {
+        if (value instanceof Map) {
+            // TODO:
+            return null;
+        }
+        List<URI> list = new ArrayList<>();
+        if (value instanceof List<?>){
+            for (Object item: (List<?>)value) {
+                String string = (String)item;
+                list.add(URI.create(string));
+            }
+        } else {
+            list.add(URI.create(value.toString()));
+        }
+        return list;
+    }
+   
     private static List<?> valueAsList(String key, Object value) {
         if (!(value instanceof List)) {
             // TODO:

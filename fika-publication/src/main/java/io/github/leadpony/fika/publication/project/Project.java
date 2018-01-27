@@ -17,8 +17,13 @@
 package io.github.leadpony.fika.publication.project;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 /**
  * The project for managing a set of documents.
@@ -27,15 +32,24 @@ import java.util.List;
  */
 public interface Project {
     
+    /**
+     * Returns the path to this project file.
+     * 
+     * @return absolute path to this project file.
+     */
     Path path();
     
     Path sourceDirectory();
     
+    Path targetDirectory();
+    
     String title();
+    
+    Locale language();
     
     String description();
     
-    String url();
+    URI url();
     
     String copyright();
     
@@ -50,14 +64,28 @@ public interface Project {
 
     List<PageSource> sources();
     
+    List<URI> stylesheets();
+    
+    Set<String> resourceExtensions();
+    
     /**
      * Loads a project from file.
      * 
      * @param path the path to the file.
      * @return loaded project.
-     * @throws IOException if I/O error has occurred.
+     * @throws NullPointerException if given {@code path} is {@code null}.
+     * @throws IOException if I/O error has occurred while loading the project.
      */
     static Project loadFrom(Path path) throws IOException {
-        return ProjectFactory.get().load(path);
+        if (path == null) {
+            throw new NullPointerException("path must not be null.");
+        }
+        Path absolutePath = path.toAbsolutePath().normalize(); 
+        DefaultProject.Builder builder = DefaultProject.builder(absolutePath);
+        try (InputStream in = Files.newInputStream(absolutePath)) {
+            ProjectParser parser = new ProjectParser(in, builder);
+            parser.root();
+        }
+        return builder.build();
     }
 }

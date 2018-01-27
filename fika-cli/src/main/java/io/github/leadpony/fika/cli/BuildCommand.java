@@ -16,35 +16,29 @@
 
 package io.github.leadpony.fika.cli;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import io.github.leadpony.fika.publication.builders.Builder;
+import io.github.leadpony.fika.publication.builders.PublicationBuilder;
+import io.github.leadpony.fika.publication.builders.spi.PublicationBuilderFactory;
 
 /**
  *
  */
 public class BuildCommand extends Command {
     
-    private static final String DEFAULT_TYPE = "html";
+    private static final String DEFAULT_TYPE = "site";
     
     private String type;
-    private Path targetDirectory;
     
     public BuildCommand() {
         this.type = DEFAULT_TYPE;
-        this.targetDirectory = Paths.get("target");
     }
 
     @Override
     protected void run() throws Exception {
-        Builder builder = Builder.newBuilder(type);
+        PublicationBuilderFactory factory = PublicationBuilderFactory.factoryFor(type);
+        PublicationBuilder builder = factory.newBuilder(type, project);
         if (builder == null) {
             // TODO:
         }
-        Files.createDirectories(targetDirectory);
-        builder.setTargetDirectory(targetDirectory);
-        builder.build(project);
+        builder.build();
     }
 }

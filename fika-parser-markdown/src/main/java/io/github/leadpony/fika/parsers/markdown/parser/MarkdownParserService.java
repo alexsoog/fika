@@ -17,7 +17,6 @@ package io.github.leadpony.fika.parsers.markdown.parser;
 
 import java.util.Map;
 
-import io.github.leadpony.fika.core.parser.MarkupLanguage;
 import io.github.leadpony.fika.core.parser.ParserFactoryBuilder;
 import io.github.leadpony.fika.core.parser.ParserService;
 
@@ -28,6 +27,8 @@ import io.github.leadpony.fika.core.parser.ParserService;
  */
 public class MarkdownParserService extends ParserService {
     
+    private static final String MEDIA_TYPE = "text/markdown";
+ 
     private final Map<String, FeatureProvider> featureMap;
     
     public MarkdownParserService() {
@@ -35,13 +36,13 @@ public class MarkdownParserService extends ParserService {
     }
 
     @Override
-    public boolean supports(MarkupLanguage language) {
-        return MarkupLanguage.MARKDOWN.equals(language);
+    public boolean supports(String mediaType) {
+        return MEDIA_TYPE.equals(mediaType);
     }
 
     @Override
-    public ParserFactoryBuilder newBuilder(MarkupLanguage language) {
-        if (!supports(language)) {
+    public ParserFactoryBuilder newBuilder(String mediaType) {
+        if (!supports(mediaType)) {
             return null;
         }
         return new MarkdownParserFactory.Builder(featureMap);

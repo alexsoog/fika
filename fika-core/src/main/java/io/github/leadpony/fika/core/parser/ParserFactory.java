@@ -36,7 +36,14 @@ public interface ParserFactory {
         if (language == null) {
             throw new NullPointerException("language must not be null");
         }
-        return builder(language).build();
+        return newInstance(language.toString());
+    }
+
+    static ParserFactory newInstance(String mediaType) {
+        if (mediaType == null) {
+            throw new NullPointerException("mediaType must not be null");
+        }
+        return builder(mediaType).build();
     }
     
     /**
@@ -50,9 +57,16 @@ public interface ParserFactory {
         if (language == null) {
             throw new NullPointerException("language must not be null");
         }
-        ParserService service = ParserService.findService(language);
+        return builder(language.toString());
+    }
+    
+    static ParserFactoryBuilder builder(String mediaType) {
+        if (mediaType == null) {
+            throw new NullPointerException("mediaType must not be null");
+        }
+        ParserService service = ParserService.findService(mediaType);
         if (service != null) {
-            return service.newBuilder(language);
+            return service.newBuilder(mediaType);
         }
         return null;
     }

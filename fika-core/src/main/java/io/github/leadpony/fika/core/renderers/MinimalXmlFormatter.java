@@ -22,24 +22,20 @@ import java.util.Map;
 /**
  * @author leadpony
  */
-public class MinimalHtmlFormatter implements HtmlFormatter {
+public class MinimalXmlFormatter implements XmlFormatter {
     
-    private final PrintWriter writer;
+    private PrintWriter writer;
     
-    public MinimalHtmlFormatter(Writer writer) {
+    @Override
+    public void setWriter(Writer writer) {
         this.writer = new PrintWriter(writer);
     }
 
     @Override
     public void doctype(String type) {
-        writer.append("<DOCTYPE ").append(type).append(">");
+        writer.append("<!DOCTYPE ").append(type).append(">");
     }
 
-    @Override
-    public void startTag(String tagName) {
-        writer.append("<").append(tagName).append(">");
-    }
-    
     @Override
     public void startTag(String tagName, Map<String, String> attributes) {
         writer.append("<").append(tagName);
@@ -52,11 +48,6 @@ public class MinimalHtmlFormatter implements HtmlFormatter {
     @Override
     public void endTag(String tagName) {
         writer.append("</").append(tagName).append(">");
-    }
-
-    @Override
-    public void emptyTag(String tagName) {
-        writer.append("<").append(tagName).append(" />");
     }
 
     @Override
@@ -79,8 +70,8 @@ public class MinimalHtmlFormatter implements HtmlFormatter {
     }
     
     @Override
-    public void rawHtml(String html) {
-        writer.append(html);
+    public void rawXml(String xml) {
+        writer.append(xml);
     }
     
     private String escape(String text) {

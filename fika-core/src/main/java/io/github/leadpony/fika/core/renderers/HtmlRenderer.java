@@ -16,43 +16,29 @@
 package io.github.leadpony.fika.core.renderers;
 
 import java.io.Writer;
-import java.util.EnumSet;
-import java.util.Set;
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.util.Locale;
 
 import io.github.leadpony.fika.core.model.Node;
 
 /**
- * HTML renderer.
+ * HTML renderer interface.
  * 
  * @author leadpony
  */
-public class HtmlRenderer implements Renderer {
+public interface HtmlRenderer extends Renderer {
     
-    private final Set<Option> options;
-    
-    public static Builder builder() {
-        return new Builder();
-    }
-
-    @Override
-    public void render(Node node, Writer writer) {
-        HtmlFormatter formatter = createFormatter(writer); 
-        HtmlRenderingVisitor visitor = null;
-        if (options.contains(Option.HTML_FRAGMENT)) {
-            visitor = new HtmlRenderingVisitor(formatter);
-        } else {
-            visitor = new FullHtmlRenderingVisitor(formatter);
-        }
-        node.accept(visitor);
+    /**
+     * Returns a builder of HTML renderer.
+     * 
+     * @return new instance of builder.
+     */
+    static Builder builder() {
+        return DefaultHtmlRenderer.builder();
     }
     
-    protected HtmlRenderer(Builder builder) {
-        this.options = builder.options;
-    }
-    
-    protected HtmlFormatter createFormatter(Writer writer) {
-        return new MinimalHtmlFormatter(writer);
-    }
+    void render(Node node, Writer writer);
     
     /**
      * Rendering options.
@@ -68,22 +54,37 @@ public class HtmlRenderer implements Renderer {
      * 
      * @author leadpony
      */
-    public static class Builder {
+    public static interface Builder {
         
-        private final Set<Option> options = EnumSet.noneOf(Option.class);
+        Builder withOption(Option option);
+
+        Builder withoutOption(Option option);
         
-        public Builder withOption(Option option) {
-            options.add(option);
+        Builder withCharset(Charset charset);
+        
+        Builder withLanguage(Locale language);
+        
+        Builder withTitle(String title);
+        
+        Builder withStylesheet(URI stylesheet);
+        
+        default Builder withStylesheets(Iterable<URI> stylesheets) {
+            if (stylesheets == null) {
+                throw new NullPointerException("stylesheets must not be null.");
+            }
+            for (URI stylehsheet: stylesheets) {
+                withStylesheet(stylehsheet);
+            }
             return this;
         }
 
-        public Builder withoutOption(Option option) {
-            options.remove(option);
-            return this;
-        }
+        Builder withFormatter(XmlFormatter formatter);
 
-        public HtmlRenderer build() {
-            return new HtmlRenderer(this);
-        }
+        /**
+         * Builds an instance of HtmlRenderer.
+         * 
+         * @return newly created instance of HtmlRenderer.
+         */
+        HtmlRenderer build();
     }
 }

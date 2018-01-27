@@ -13,25 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.renderers;
+package io.github.leadpony.fika.publication.project;
 
-import java.io.StringWriter;
-import java.io.Writer;
+import java.nio.file.Path;
 
-import io.github.leadpony.fika.core.model.Node;
+import io.github.leadpony.fika.publication.common.MediaTypeRegistry;
 
 /**
- * Common renderer interface.
+ * Default implementation of {@link PageSource}.
  * 
  * @author leadpony
  */
-public interface Renderer {
+class DefaultPageSource implements PageSource {
     
-    void render(Node node, Writer writer);
+    private final Path path;
     
-    default String render(Node node) {
-        StringWriter writer = new StringWriter();
-        render(node, writer);
-        return writer.toString();
+    public DefaultPageSource(Path path) {
+        this.path = path;
+    }
+
+    @Override
+    public Path path() {
+        return path;
+    }
+    
+    @Override
+    public String mediaType() {
+        return MediaTypeRegistry.get().guessMediaType(path());
+    }
+    
+    @Override
+    public String toString() {
+        return path.toString();
     }
 }

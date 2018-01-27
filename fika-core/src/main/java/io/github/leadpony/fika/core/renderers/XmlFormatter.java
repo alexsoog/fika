@@ -15,23 +15,36 @@
  */
 package io.github.leadpony.fika.core.renderers;
 
-import java.io.StringWriter;
 import java.io.Writer;
-
-import io.github.leadpony.fika.core.model.Node;
+import java.util.Collections;
+import java.util.Map;
 
 /**
- * Common renderer interface.
- * 
  * @author leadpony
  */
-public interface Renderer {
+public interface XmlFormatter {
     
-    void render(Node node, Writer writer);
+    void setWriter(Writer writer);
     
-    default String render(Node node) {
-        StringWriter writer = new StringWriter();
-        render(node, writer);
-        return writer.toString();
+    void doctype(String type);
+    
+    default void startTag(String tagName) {
+        startTag(tagName, Collections.emptyMap());
     }
+
+    void startTag(String tagName, Map<String, String> attributes);
+
+    void endTag(String tagName);
+
+    default void emptyTag(String tagName) {
+        emptyTag(tagName, Collections.emptyMap());
+    }
+
+    void emptyTag(String tagName, Map<String, String> attributes);
+
+    void text(String text);
+    
+    void preformatted(String text);
+    
+    void rawXml(String xml);
 }

@@ -13,10 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.leadpony.fika.core.renderers;
 
 /**
- * Provides publication builders.
- *
+ * Default implementation of {@link HtmlRenderer}.
+ * 
  * @author leadpony
  */
-package io.github.leadpony.fika.publication.builders;
+class DefaultHtmlRenderer extends AbstractHtmlRenderer {
+   
+    static Builder builder() {
+        return new Builder();
+    }
+    
+    private DefaultHtmlRenderer(Builder builder) {
+        super(builder);
+    }
+    
+    /**
+     * Default implementation of {@link HtmlRenderer.Builder}.
+     * 
+     * @author leadpony
+     */
+    private static class Builder extends AbstractHtmlRenderer.Builder {
+
+        @Override
+        public HtmlRenderer build() {
+            return new DefaultHtmlRenderer(this);
+        }
+    }
+}

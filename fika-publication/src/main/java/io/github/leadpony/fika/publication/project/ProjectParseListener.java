@@ -15,7 +15,9 @@
  */
 package io.github.leadpony.fika.publication.project;
 
+import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author leadpony
@@ -24,17 +26,23 @@ interface ProjectParseListener {
 
     default void title(String value) {
     }
+    
+    default void language(Locale language) {
+    }
 
     default void description(String value) {
     }
 
-    default void url(String value) {
+    default void url(URI value) {
     }
 
     default void copyright(String value) {
     }
 
-    default void author(List<String> values) {
+    default void authors(List<String> values) {
+    }
+    
+    default void stylesheets(List<URI> values) {
     }
     
     default void enterPages() {
