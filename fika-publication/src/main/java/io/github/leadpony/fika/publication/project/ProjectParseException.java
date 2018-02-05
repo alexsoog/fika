@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package io.github.leadpony.fika.cli;
-
-import java.util.List;
+package io.github.leadpony.fika.publication.project;
 
 /**
- *
+ * @author leadpony
  */
-public interface Command {
-
-    default void setOptions(List<String> options) {
-    }
+@SuppressWarnings("serial")
+public class ProjectParseException extends RuntimeException {
     
-    void execute() throws Exception;
+    public ProjectParseException(String message) {
+        super(message);
+    }
 }

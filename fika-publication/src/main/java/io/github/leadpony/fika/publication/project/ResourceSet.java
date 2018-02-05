@@ -13,18 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.leadpony.fika.publication.project;
 
-package io.github.leadpony.fika.cli;
-
-import java.util.List;
+import java.nio.file.Path;
 
 /**
- *
+ * @author leadpony
  */
-public interface Command {
-
-    default void setOptions(List<String> options) {
-    }
+public interface ResourceSet {
     
-    void execute() throws Exception;
+    boolean contains(Path path);
+
+    boolean contains(String path);
 }

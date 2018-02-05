@@ -54,7 +54,7 @@ public class Launcher {
     private static void executeCommand(String[] args) throws Exception {
         Command command = createCommand(args[0]);
         List<String> options = Arrays.asList(args).subList(1, args.length);
-        command.prepare(options);
+        command.setOptions(options);
         command.execute();
     }
 
@@ -62,6 +62,8 @@ public class Launcher {
         switch (name) {
         case "build":
             return new BuildCommand();
+        case "preview":
+            return new PreviewCommand();
         default:
             return null;
         }

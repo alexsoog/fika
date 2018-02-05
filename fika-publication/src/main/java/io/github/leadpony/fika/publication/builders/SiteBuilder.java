@@ -34,39 +34,56 @@ import java.util.logging.Logger;
 import io.github.leadpony.fika.core.model.Document;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserFactory;
-import io.github.leadpony.fika.core.renderers.AbstractHtmlRenderer;
-import io.github.leadpony.fika.core.renderers.HtmlRenderer;
-import io.github.leadpony.fika.core.renderers.XmlFormatter;
 import io.github.leadpony.fika.publication.project.PageSource;
 import io.github.leadpony.fika.publication.project.Project;
+import io.github.leadpony.fika.publication.view.View;
+import io.github.leadpony.fika.publication.view.ViewResolver;
 
 /**
  * Builder of publication composed of one or more HTML files.
  * 
  * @author leadpony
  */
-public class SiteBuilder extends AbstractPublicationBuilder {
+public class SiteBuilder extends AbstractHtmlBuilder {
     
     private static final Logger log = Logger.getLogger(SiteBuilder.class.getName());
     
     private final Map<String, ParserFactory> parserFactories = new HashMap<>();
     private Charset charset = StandardCharsets.UTF_8;
-    
+
+    private View pageView;
+   
     public SiteBuilder(Project project) {
         super(project);
     }
     
     @Override
+    public String name() {
+        return "site";
+    }
+    
+    @Override
+    protected void initialize() throws Exception {
+        super.initialize();
+        final ViewResolver viewResolver = viewResolver();
+        this.pageView = viewResolver.resolveView("page.ftlh");
+    }
+    
+    @Override
     protected void processResources() throws IOException {
-        Files.walkFileTree(sourceDirectory(), new ResourceFileVisitor());
+        ResourceFileVisitor visitor = new ResourceFileVisitor();
+        Files.walkFileTree(sourceDirectory(), visitor);
+        log.fine("Copied " + visitor.filesCopied + " resource file(s).");
     }
 
     @Override
     protected void compile() throws IOException {
-        log.fine("Starting to build HTML document.");
+        int count = 0;
         for (PageSource source: project().sources()) {
             compileSource(source);
+            ++count;
         }
+        log.fine("Compiled " + count + " source file(s).");
     }
     
     private void compileSource(PageSource source) throws IOException {
@@ -90,37 +107,17 @@ public class SiteBuilder extends AbstractPublicationBuilder {
         }
     }
 
-    private HtmlRenderer buildHtmlRenderer() {
-        HtmlRenderer.Builder builder = new HtmlRendererBuilder();
-        builder.withCharset(this.charset);
-        builder.withLanguage(project().language());
-        builder.withTitle(project().title());
-        builder.withStylesheets(project().stylesheets());
-        return builder.build();
-    }
-    
     private void renderHtml(PageSource source, Document doc) throws IOException {
-        HtmlRenderer renderer = buildHtmlRenderer();
         Path path = mapSourceToTarget(source.path());
         Path parent = path.getParent();
         if (parent != null) {
             Files.createDirectories(parent);
         }
         try (Writer writer = Files.newBufferedWriter(path, this.charset)) {
-            renderer.render(doc, writer);
+            Map<String, Object> model = new HashMap<>();
+            model.put("project", project());
+            this.pageView.render(doc, model, writer);
         }
-    }
-    
-    private void renderHtmlHeader(XmlFormatter formatter) {
-    }
-
-    private void renderHtmlFooter(XmlFormatter formatter) {
-        formatter.startTag("footer");
-        formatter.emptyTag("hr");
-        formatter.startTag("p");
-        formatter.rawXml(project().copyright());
-        formatter.endTag("p");
-        formatter.endTag("footer");
     }
     
     private Path mapSourceToTarget(Path path) {
@@ -156,43 +153,17 @@ public class SiteBuilder extends AbstractPublicationBuilder {
     }
     
     private class ResourceFileVisitor extends SimpleFileVisitor<Path> {
-
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            String fileName = file.getFileName().toString();
-            int index = fileName.lastIndexOf('.');
-            if (index >= 0) {
-                String extension = fileName.substring(index + 1).toLowerCase();
-                if (project().resourceExtensions().contains(extension)) {
-                    copyFileToTarget(file);
-                }
-            }
-            return FileVisitResult.CONTINUE;
-        }
-    }
-    
-    private class CustomHtmlRenderer extends AbstractHtmlRenderer {
- 
-        private CustomHtmlRenderer(HtmlRendererBuilder builder) {
-            super(builder);
-        }
-
-        @Override
-        protected void renderHeader(XmlFormatter formatter) {
-            renderHtmlHeader(formatter);
-        }
-
-        @Override
-        protected void renderFooter(XmlFormatter formatter) {
-            renderHtmlFooter(formatter);
-        }
-    }
-    
-    private class HtmlRendererBuilder extends AbstractHtmlRenderer.Builder {
+        
+        private int filesCopied;
         
         @Override
-        public HtmlRenderer build() {
-            return new CustomHtmlRenderer(this);
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            Path relative = relativizeSource(file);
+            if (resourceSet().contains(relative)) {
+                copyFileToTarget(file);
+                this.filesCopied++;
+            }
+            return FileVisitResult.CONTINUE;
         }
     }
 }

@@ -14,17 +14,9 @@
  * limitations under the License.
  */
 
-package io.github.leadpony.fika.cli;
-
-import java.util.List;
-
 /**
- *
+ * Provides various kinds of HTML views.
+ * 
+ * @author leadpony
  */
-public interface Command {
-
-    default void setOptions(List<String> options) {
-    }
-    
-    void execute() throws Exception;
-}
+package io.github.leadpony.fika.publication.view;

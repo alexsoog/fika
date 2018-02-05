@@ -22,6 +22,11 @@
             <artifactId>fika-parser-markdown</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-server</artifactId>
+            <version>9.4.8.v20171121</version>
+        </dependency>
     </dependencies>
 
     <build>

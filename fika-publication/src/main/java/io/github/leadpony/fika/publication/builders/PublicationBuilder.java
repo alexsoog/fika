@@ -18,15 +18,36 @@ package io.github.leadpony.fika.publication.builders;
 import java.nio.file.Path;
 
 import io.github.leadpony.fika.publication.project.Project;
+import io.github.leadpony.fika.publication.project.ResourceSet;
 
 /**
- * Document builder.
+ * Publication builder.
  * 
  * @author leadpony
  */
 public interface PublicationBuilder {
 
+    /**
+     * Returns the name of this builder.
+     * 
+     * @return the name of this builder.
+     */
+    String name();
+    
+    /**
+     * Returns the project for which this builder performs the build.
+     * 
+     * @return the project for which this builder performs the build.
+     */
     Project project();
+    
+    default Project.Media media() {
+        return project().media(name());
+    }
+    
+    default ResourceSet resourceSet() {
+        return media().resourceSet();
+    }
 
     void setTargetDirectory(Path path);
     

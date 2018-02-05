@@ -13,18 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package io.github.leadpony.fika.cli;
-
-import java.util.List;
+package io.github.leadpony.fika.publication.view;
 
 /**
- *
+ * @author leadpony
  */
-public interface Command {
+@SuppressWarnings("serial")
+public class ViewException extends RuntimeException {
 
-    default void setOptions(List<String> options) {
+    public ViewException(Throwable cause) {
+        super(cause);
     }
-    
-    void execute() throws Exception;
 }

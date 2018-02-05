@@ -17,13 +17,9 @@
 package io.github.leadpony.fika.publication.project;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * The project for managing a set of documents.
@@ -39,19 +35,36 @@ public interface Project {
      */
     Path path();
     
+    /**
+     * Returns the path to the source directory.
+     * 
+     * @return the path to the source directory.
+     */
     Path sourceDirectory();
     
+    /**
+     * Returns the path to the target directory.
+     * 
+     * @return the path to the target directory.
+     */
     Path targetDirectory();
     
-    String title();
+    /**
+     * Returns the path to the directory containing template files.
+     * 
+     * @return the path to the template directory.
+     */
+    Path templateDirectory();
     
-    Locale language();
+    String getTitle();
     
-    String description();
+    String getLanguage();
     
-    URI url();
+    String getDescription();
     
-    String copyright();
+    URI getUrl();
+    
+    String getCopyright();
     
     List<String> authors();
     
@@ -66,7 +79,7 @@ public interface Project {
     
     List<URI> stylesheets();
     
-    Set<String> resourceExtensions();
+    Media media(String type);
     
     /**
      * Loads a project from file.
@@ -80,12 +93,16 @@ public interface Project {
         if (path == null) {
             throw new NullPointerException("path must not be null.");
         }
-        Path absolutePath = path.toAbsolutePath().normalize(); 
-        DefaultProject.Builder builder = DefaultProject.builder(absolutePath);
-        try (InputStream in = Files.newInputStream(absolutePath)) {
-            ProjectParser parser = new ProjectParser(in, builder);
-            parser.root();
-        }
-        return builder.build();
+        ProjectParser parser = new ProjectParser(path);
+        return parser.parse();
+    }
+
+    public interface Media {
+        
+        String name();
+
+        Path templateFile();
+        
+        ResourceSet resourceSet();
     }
 }

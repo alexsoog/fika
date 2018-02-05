@@ -13,18 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package io.github.leadpony.fika.cli;
 
-import java.util.List;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.log.JavaUtilLog;
+import org.eclipse.jetty.util.log.Log;
+
+import io.github.leadpony.fika.publication.project.Project;
 
 /**
- *
+ * @author leadpony
  */
-public interface Command {
+public class PreviewCommand extends AbstractProjectCommand {
 
-    default void setOptions(List<String> options) {
+    @Override
+    public void execute(Project project) throws Exception {
+        runServer();
     }
     
-    void execute() throws Exception;
+    private void runServer() throws Exception {
+        Log.setLog(new JavaUtilLog());
+        Server server = new Server();
+        server.start();
+        server.join();
+    }
 }

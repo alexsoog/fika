@@ -18,11 +18,12 @@ package io.github.leadpony.fika.cli;
 
 import io.github.leadpony.fika.publication.builders.PublicationBuilder;
 import io.github.leadpony.fika.publication.builders.spi.PublicationBuilderFactory;
+import io.github.leadpony.fika.publication.project.Project;
 
 /**
  *
  */
-public class BuildCommand extends Command {
+public class BuildCommand extends AbstractProjectCommand {
     
     private static final String DEFAULT_TYPE = "site";
     
@@ -33,7 +34,7 @@ public class BuildCommand extends Command {
     }
 
     @Override
-    protected void run() throws Exception {
+    public void execute(Project project) throws Exception {
         PublicationBuilderFactory factory = PublicationBuilderFactory.factoryFor(type);
         PublicationBuilder builder = factory.newBuilder(type, project);
         if (builder == null) {

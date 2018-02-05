@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.leadpony.fika.publication.view;
 
-package io.github.leadpony.fika.cli;
+import java.io.Writer;
+import java.util.Map;
 
-import java.util.List;
+import io.github.leadpony.fika.core.model.Document;
 
 /**
- *
+ * @author leadpony
  */
-public interface Command {
+public interface View {
 
-    default void setOptions(List<String> options) {
-    }
-    
-    void execute() throws Exception;
+    void render(Document doc, Map<String, Object> model, Writer writer);
 }

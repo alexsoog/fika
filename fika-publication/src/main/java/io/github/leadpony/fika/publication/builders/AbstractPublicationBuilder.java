@@ -63,6 +63,7 @@ abstract class AbstractPublicationBuilder implements PublicationBuilder {
             log.severe(e.getMessage());
         } catch (Exception e) {
             log.severe(e.getMessage());
+            e.printStackTrace();
         }
     }
     

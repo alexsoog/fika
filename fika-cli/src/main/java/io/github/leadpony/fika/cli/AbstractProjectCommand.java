@@ -13,37 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.publication.project;
+package io.github.leadpony.fika.cli;
 
+import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
-import io.github.leadpony.fika.publication.common.MediaTypeRegistry;
+import io.github.leadpony.fika.publication.project.Project;
 
 /**
- * Default implementation of {@link PageSource}.
- * 
  * @author leadpony
  */
-class DefaultPageSource implements PageSource {
+abstract class AbstractProjectCommand implements Command {
+
+    private static final Path DEFAULT_PATH = Paths.get("fika.yml");
+
+    private Path path = DEFAULT_PATH;
     
-    private final Path path;
-    
-    public DefaultPageSource(Path path) {
-        this.path = path;
+    @Override
+    public void execute() throws Exception {
+        execute(loadProject());
     }
 
-    @Override
-    public Path path() {
-        return path;
+    private Project loadProject() throws IOException {
+        return Project.loadFrom(this.path);
     }
     
-    @Override
-    public String mediaType() {
-        return MediaTypeRegistry.get().guessMediaType(path());
-    }
-    
-    @Override
-    public String toString() {
-        return path.toString();
-    }
+    public abstract void execute(Project project) throws Exception;
 }
