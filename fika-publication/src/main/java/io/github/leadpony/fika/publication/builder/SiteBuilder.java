@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.publication.builders;
+package io.github.leadpony.fika.publication.builder;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -71,9 +71,9 @@ public class SiteBuilder extends AbstractHtmlBuilder {
     
     @Override
     protected void processResources() throws IOException {
-        ResourceFileVisitor visitor = new ResourceFileVisitor();
-        Files.walkFileTree(sourceDirectory(), visitor);
-        log.fine("Copied " + visitor.filesCopied + " resource file(s).");
+        int count = copyResources(sourceDirectory());
+        count += copyResources(templateDirectory());
+        log.fine("Copied " + count + " resource file(s).");
     }
 
     @Override
@@ -108,19 +108,20 @@ public class SiteBuilder extends AbstractHtmlBuilder {
     }
 
     private void renderHtml(PageSource source, Document doc) throws IOException {
-        Path path = mapSourceToTarget(source.path());
-        Path parent = path.getParent();
+        Path path = mapSourceToHtml(source.path());
+        Path fullPath = resolveTarget(path);
+        Path parent = fullPath.getParent();
         if (parent != null) {
             Files.createDirectories(parent);
         }
-        try (Writer writer = Files.newBufferedWriter(path, this.charset)) {
-            Map<String, Object> model = new HashMap<>();
-            model.put("project", project());
-            this.pageView.render(doc, model, writer);
+        try (Writer writer = Files.newBufferedWriter(fullPath, this.charset)) {
+            Map<String, Object> context = new HashMap<>();
+            context.put("url", mapToUrl(path));
+            this.pageView.render(doc, context, writer);
         }
     }
     
-    private Path mapSourceToTarget(Path path) {
+    private Path mapSourceToHtml(Path path) {
         Path parent = path.getParent();
         String name = path.getFileName().toString();
         int index = name.lastIndexOf('.');
@@ -129,7 +130,11 @@ public class SiteBuilder extends AbstractHtmlBuilder {
         }
         Path newFileName = Paths.get(name + ".html");
         Path newPath = (parent != null) ? parent.resolve(newFileName) : newFileName;
-        return resolveTarget(newPath);
+        return newPath;
+    }
+    
+    private static String mapToUrl(Path path) {
+        return path.toString().replace("\\", "/");
     }
     
     private ParserFactory findParserFactory(String mediaType) {
@@ -143,8 +148,15 @@ public class SiteBuilder extends AbstractHtmlBuilder {
         return factory;
     }
     
-    private void copyFileToTarget(Path file) throws IOException {
-        Path targetFile = resolveTarget(relativizeSource(file));
+    private int copyResources(Path directory) throws IOException {
+        ResourceFileVisitor visitor = new ResourceFileVisitor(directory);
+        Files.walkFileTree(directory, visitor);
+        return visitor.filesCopied;
+    }
+    
+    private void copyFileToTarget(Path file, Path baseDirectory) throws IOException {
+        Path relativePath = baseDirectory.relativize(file);
+        Path targetFile = resolveTarget(relativePath);
         Path parent = targetFile.getParent();
         if (parent != null) {
             Files.createDirectories(parent);
@@ -153,14 +165,19 @@ public class SiteBuilder extends AbstractHtmlBuilder {
     }
     
     private class ResourceFileVisitor extends SimpleFileVisitor<Path> {
-        
+
+        private final Path directory;
         private int filesCopied;
+        
+        private ResourceFileVisitor(Path directory) {
+            this.directory = directory;
+        }
         
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            Path relative = relativizeSource(file);
+            Path relative = this.directory.relativize(file);
             if (resourceSet().contains(relative)) {
-                copyFileToTarget(file);
+                copyFileToTarget(file, this.directory);
                 this.filesCopied++;
             }
             return FileVisitResult.CONTINUE;

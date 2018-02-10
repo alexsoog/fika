@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.publication.builders;
+package io.github.leadpony.fika.publication.builder;
 
 import io.github.leadpony.fika.publication.project.Project;
 import io.github.leadpony.fika.publication.view.ViewResolver;
@@ -39,6 +39,7 @@ public abstract class AbstractHtmlBuilder extends AbstractPublicationBuilder {
     protected ViewResolver createViewResolver() {
         ViewService service = ViewService.findService("freemarker");
         ViewResolver.Builder builder = service.newViewResolverBuilder();
+        builder.withSharedValue("project", project());
         builder.withTemplateDirectory(project().templateDirectory());
         return builder.build();
     }

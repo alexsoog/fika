@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.publication.builders;
+package io.github.leadpony.fika.publication.builder;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -73,6 +73,10 @@ abstract class AbstractPublicationBuilder implements PublicationBuilder {
 
     protected Path targetDirectory() {
         return targetDirectory;
+    }
+    
+    protected Path templateDirectory() {
+        return project().templateDirectory();
     }
     
     protected Path resolveSource(Path path) {

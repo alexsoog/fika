@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.publication.builders.spi;
+package io.github.leadpony.fika.publication.builder.spi;
 
 import java.util.ServiceLoader;
 
-import io.github.leadpony.fika.publication.builders.PublicationBuilder;
+import io.github.leadpony.fika.publication.builder.PublicationBuilder;
 import io.github.leadpony.fika.publication.project.Project;
 
 /**

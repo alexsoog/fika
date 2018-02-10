@@ -16,20 +16,28 @@
 package io.github.leadpony.fika.publication.view;
 
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+
+import io.github.leadpony.fika.publication.view.ViewResolver.Builder;
 
 /**
  * @author leadpony
  */
-public interface ViewResolver {
+public abstract class AbstractViewResolverBuilder implements ViewResolver.Builder {
 
-    View resolveView(String templateName);
+    protected final Map<String, Object> sharedValues = new HashMap<>();
+    protected Path templateDirectory;
     
-    interface Builder {
-        
-        Builder withSharedValue(String name, Object value);
+    @Override
+    public Builder withSharedValue(String name, Object value) {
+        this.sharedValues.put(name, value);
+        return this;
+    }
 
-        Builder withTemplateDirectory(Path path);
-        
-        ViewResolver build();
+    @Override
+    public Builder withTemplateDirectory(Path path) {
+        this.templateDirectory = path;
+        return this;
     }
 }

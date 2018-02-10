@@ -19,4 +19,4 @@
  *
  * @author leadpony
  */
-package io.github.leadpony.fika.publication.builders;
+package io.github.leadpony.fika.publication.builder;

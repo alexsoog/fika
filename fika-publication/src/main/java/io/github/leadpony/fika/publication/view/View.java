@@ -25,5 +25,5 @@ import io.github.leadpony.fika.core.model.Document;
  */
 public interface View {
 
-    void render(Document doc, Map<String, Object> model, Writer writer);
+    void render(Document doc, Map<String, Object> context, Writer writer);
 }

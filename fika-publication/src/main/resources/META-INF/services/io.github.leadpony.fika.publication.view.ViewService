@@ -1,1 +1,1 @@
-io.github.leadpony.fika.publication.view.FreeMarkerViewService
+io.github.leadpony.fika.publication.view.freemarker.FreeMarkerViewService

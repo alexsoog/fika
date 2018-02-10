@@ -13,23 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.publication.view;
-
-import java.nio.file.Path;
 
 /**
  * @author leadpony
  */
-public interface ViewResolver {
-
-    View resolveView(String templateName);
-    
-    interface Builder {
-        
-        Builder withSharedValue(String name, Object value);
-
-        Builder withTemplateDirectory(Path path);
-        
-        ViewResolver build();
-    }
-}
+package io.github.leadpony.fika.publication.builder.spi;

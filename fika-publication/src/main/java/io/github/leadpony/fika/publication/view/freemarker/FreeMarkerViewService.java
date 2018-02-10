@@ -13,19 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.publication.view;
+package io.github.leadpony.fika.publication.view.freemarker;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.nio.file.Path;
 import java.util.Map;
 
+import freemarker.cache.ClassTemplateLoader;
+import freemarker.cache.FileTemplateLoader;
+import freemarker.cache.MultiTemplateLoader;
+import freemarker.cache.TemplateLoader;
 import freemarker.core.HTMLOutputFormat;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.template.TemplateModelException;
 import io.github.leadpony.fika.core.model.Document;
-import io.github.leadpony.fika.publication.view.ViewResolver.Builder;
+import io.github.leadpony.fika.publication.view.AbstractTemplateView;
+import io.github.leadpony.fika.publication.view.AbstractViewResolverBuilder;
+import io.github.leadpony.fika.publication.view.View;
+import io.github.leadpony.fika.publication.view.ViewException;
+import io.github.leadpony.fika.publication.view.ViewResolver;
+import io.github.leadpony.fika.publication.view.ViewService;
 
 /**
  * @author leadpony
@@ -33,6 +42,8 @@ import io.github.leadpony.fika.publication.view.ViewResolver.Builder;
 public class FreeMarkerViewService implements ViewService {
     
     private static final String TYPE = "freemarker";
+    private static final String PACKAGE_PATH = 
+            "/" +  FreeMarkerViewService.class.getPackage().getName().replace(".", "/");
     
     @Override
     public boolean canProvideViewOf(String type) {
@@ -74,15 +85,7 @@ public class FreeMarkerViewService implements ViewService {
         }
     }
     
-    private static class FreeMarkerViewResolverBuilder implements ViewResolver.Builder {
-
-        private Path templateDirectory;
-        
-        @Override
-        public Builder withTemplateDirectory(Path path) {
-            this.templateDirectory = path;
-            return this;
-        }
+    private static class FreeMarkerViewResolverBuilder extends AbstractViewResolverBuilder {
 
         @Override
         public ViewResolver build() {
@@ -91,14 +94,36 @@ public class FreeMarkerViewService implements ViewService {
         
         private Configuration configure() {
             try {
-                Configuration configuration = new Configuration(Configuration.VERSION_2_3_27);
-                configuration.setDirectoryForTemplateLoading(templateDirectory.toFile());
-                configuration.setOutputFormat(HTMLOutputFormat.INSTANCE);
-                configuration.setDefaultEncoding("UTF-8");
-                return configuration;
-            } catch (IOException e) {
+                return buildConfiguration();
+            } catch (IOException | TemplateModelException e) {
                 throw new ViewException(e);
             }
+        }
+        
+        private Configuration buildConfiguration() throws IOException, TemplateModelException {
+            Configuration cfg = new Configuration(Configuration.VERSION_2_3_27);
+            cfg.setTemplateLoader(createLoader());
+            cfg.setOutputFormat(HTMLOutputFormat.INSTANCE);
+            cfg.setDefaultEncoding("UTF-8");
+            cfg.setSharedVaribles(this.sharedValues);
+            return cfg;
+        }
+        
+        private TemplateLoader createLoader() throws IOException {
+            TemplateLoader[] loaders = { 
+                    fileTemplateLoader(), 
+                    classTemplateLoader() 
+                    };
+            return new MultiTemplateLoader(loaders);
+        }
+        
+        private TemplateLoader fileTemplateLoader() throws IOException {
+            return new FileTemplateLoader(this.templateDirectory.toFile());
+        }
+        
+        private TemplateLoader classTemplateLoader() {
+            Class<?> clazz = FreeMarkerViewService.class;
+            return new ClassTemplateLoader(clazz, PACKAGE_PATH);
         }
     }
 
@@ -111,10 +136,11 @@ public class FreeMarkerViewService implements ViewService {
         }
 
         @Override
-        public void render(Document doc, Map<String, Object> model, Writer writer) {
-            model.put("content", renderContent(doc));
+        public void render(Document doc, Map<String, Object> context, Writer writer) {
+            context.put("page", new PageContext((String)context.get("url")));
+            context.put("content", renderContent(doc));
             try {
-                template.process(model, writer);
+                this.template.process(context, writer);
             } catch (TemplateException | IOException e) {
                 throw new ViewException(e);
             }

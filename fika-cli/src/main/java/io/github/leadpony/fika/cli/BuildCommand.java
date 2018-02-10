@@ -16,8 +16,8 @@
 
 package io.github.leadpony.fika.cli;
 
-import io.github.leadpony.fika.publication.builders.PublicationBuilder;
-import io.github.leadpony.fika.publication.builders.spi.PublicationBuilderFactory;
+import io.github.leadpony.fika.publication.builder.PublicationBuilder;
+import io.github.leadpony.fika.publication.builder.spi.PublicationBuilderFactory;
 import io.github.leadpony.fika.publication.project.Project;
 
 /**
