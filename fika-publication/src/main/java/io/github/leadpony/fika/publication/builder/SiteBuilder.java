@@ -20,13 +20,9 @@ import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -37,7 +33,6 @@ import io.github.leadpony.fika.core.parser.ParserFactory;
 import io.github.leadpony.fika.publication.project.PageSource;
 import io.github.leadpony.fika.publication.project.Project;
 import io.github.leadpony.fika.publication.view.View;
-import io.github.leadpony.fika.publication.view.ViewResolver;
 
 /**
  * Builder of publication composed of one or more HTML files.
@@ -65,17 +60,9 @@ public class SiteBuilder extends AbstractHtmlBuilder {
     @Override
     protected void initialize() throws Exception {
         super.initialize();
-        final ViewResolver viewResolver = viewResolver();
-        this.pageView = viewResolver.resolveView("page.ftlh");
+        this.pageView = viewResolver().resolveView("page.ftlh");
     }
     
-    @Override
-    protected void processResources() throws IOException {
-        int count = copyResources(sourceDirectory());
-        count += copyResources(templateDirectory());
-        log.fine("Copied " + count + " resource file(s).");
-    }
-
     @Override
     protected void compile() throws IOException {
         int count = 0;
@@ -146,41 +133,5 @@ public class SiteBuilder extends AbstractHtmlBuilder {
             }
         }
         return factory;
-    }
-    
-    private int copyResources(Path directory) throws IOException {
-        ResourceFileVisitor visitor = new ResourceFileVisitor(directory);
-        Files.walkFileTree(directory, visitor);
-        return visitor.filesCopied;
-    }
-    
-    private void copyFileToTarget(Path file, Path baseDirectory) throws IOException {
-        Path relativePath = baseDirectory.relativize(file);
-        Path targetFile = resolveTarget(relativePath);
-        Path parent = targetFile.getParent();
-        if (parent != null) {
-            Files.createDirectories(parent);
-        }
-        Files.copy(file, targetFile, StandardCopyOption.REPLACE_EXISTING);
-    }
-    
-    private class ResourceFileVisitor extends SimpleFileVisitor<Path> {
-
-        private final Path directory;
-        private int filesCopied;
-        
-        private ResourceFileVisitor(Path directory) {
-            this.directory = directory;
-        }
-        
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-            Path relative = this.directory.relativize(file);
-            if (resourceSet().contains(relative)) {
-                copyFileToTarget(file, this.directory);
-                this.filesCopied++;
-            }
-            return FileVisitResult.CONTINUE;
-        }
     }
 }

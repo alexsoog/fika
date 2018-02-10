@@ -106,6 +106,7 @@ public class FreeMarkerViewService implements ViewService {
             cfg.setOutputFormat(HTMLOutputFormat.INSTANCE);
             cfg.setDefaultEncoding("UTF-8");
             cfg.setSharedVaribles(this.sharedValues);
+            cfg.addAutoImport("fika", "/fika.ftl");
             return cfg;
         }
         

@@ -2,10 +2,18 @@
 
 ## fika-parser-markdown
 
-The following files are obtained from:
-    http://spec.commonmark.org/
-and licensed under:
-    CC BY-SA 4.0
+The following files are obtained from <http://spec.commonmark.org/>.
 
-- src/test/resources/spec.json
-- src/test/resources/spec.original.json
+* src/test/resources/spec.json
+* src/test/resources/spec.txt
+
+> CC BY-SA 4.0
+
+## fika-themes
+
+Cinnamon theme contains the files from Bootstrap (<https://getbootstrap.com/>).
+
+> The MIT License (MIT)
+>
+> Copyright (c) 2011-2018 Twitter, Inc.  
+> Copyright (c) 2011-2018 The Bootstrap Authors
