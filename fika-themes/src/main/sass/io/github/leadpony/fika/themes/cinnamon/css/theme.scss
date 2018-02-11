@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,22 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.themes.cinnamon;
 
-import io.github.leadpony.fika.publication.theme.AbstractTheme;
+$enable-shadows:            true;
 
-/**
- * @author leadpony
- */
-public class Theme extends AbstractTheme {
-    
-    public Theme() {
-        css("css/bootstrap-custom.min.css");
-        css("css/theme.min.css");
-    }
+@import "functions";
+@import "variables";
+@import "mixins";
 
-    @Override
-    public String name() {
-        return "cinnamon";
-    }
+pre {
+  background-color: $gray-200;
+}
+
+header {
+  background-color: $primary;  
+  @include box-shadow(0px 2px 10px 0px rgba(0,0,0,0.4));
+}
+
+main {
+    padding-top: 5rem;
+}
+
+footer {
+  color: $light;
+  background-color: $dark;
+  padding-top: $paragraph-margin-bottom;
+  padding-bottom: $paragraph-margin-bottom;
 }

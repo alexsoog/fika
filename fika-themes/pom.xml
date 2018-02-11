@@ -18,5 +18,57 @@
             <version>${project.version}</version>
         </dependency>
     </dependencies>
+    
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.github.warmuuh</groupId>
+                <artifactId>libsass-maven-plugin</artifactId>
+                <version>0.2.9-libsass_3.4.7</version>
+                <executions>
+                    <execution>
+                        <id>generate-css</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <outputPath>${project.build.directory}/classes</outputPath>
+                    <sourceMapOutputPath>${project.build.directory}/classes</sourceMapOutputPath>
+                    <includePath>${basedir}/src/main/sass/bootstrap</includePath>
+                    <omitSourceMapingURL>true</omitSourceMapingURL>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.samaxes.maven</groupId>
+                <artifactId>minify-maven-plugin</artifactId>
+                <version>1.7.6</version>
+                <executions>
+                    <execution>
+                        <id>minify-css</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>minify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <webappSourceDir>${project.build.directory}</webappSourceDir>
+                    <webappTargetDir>${project.build.directory}</webappTargetDir>
+                    <cssSourceDir>classes</cssSourceDir>
+                    <jsSourceDir>classes</jsSourceDir>
+                    <cssIncludes>
+                        <cssInclude>**/*.css</cssInclude>
+                    </cssIncludes>
+                    <cssSourceExcludes>
+                        <cssSourceExclude>**/*.min.css</cssSourceExclude>
+                    </cssSourceExcludes>
+                    <skipMerge>true</skipMerge>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
