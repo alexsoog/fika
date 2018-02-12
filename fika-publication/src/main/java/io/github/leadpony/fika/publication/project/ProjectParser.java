@@ -268,8 +268,14 @@ public class ProjectParser {
             .include("**/*.jpg")
             .include("**/*.jpeg")
             .include("**/*.gif")
+            .include("**/*.eot")
+            .include("**/*.ttf")
+            .include("**/*.svg")
+            .include("**/*.woff")
+            .include("**/*.woff2")
             .include("**/*.css")
-            .include("**/*.js");
+            .include("**/*.js")
+            ;
         return rs;
     }
     

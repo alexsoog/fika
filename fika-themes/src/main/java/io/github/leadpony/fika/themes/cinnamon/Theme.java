@@ -22,11 +22,6 @@ import io.github.leadpony.fika.publication.theme.AbstractTheme;
  */
 public class Theme extends AbstractTheme {
     
-    public Theme() {
-        css("css/bootstrap-custom.min.css");
-        css("css/theme.min.css");
-    }
-
     @Override
     public String name() {
         return "cinnamon";

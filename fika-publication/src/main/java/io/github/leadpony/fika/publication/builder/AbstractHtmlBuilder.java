@@ -88,7 +88,11 @@ public abstract class AbstractHtmlBuilder extends AbstractPublicationBuilder {
         Path relativePath = Paths.get(resource.path());
         Path targetFile = prepareTarget(relativePath);
         try (InputStream in = resource.newInputStream()) {
-            Files.copy(in, targetFile, StandardCopyOption.REPLACE_EXISTING);
+            if (in == null) {
+                log.severe("Resource not found: " + resource.path());
+            } else {
+                Files.copy(in, targetFile, StandardCopyOption.REPLACE_EXISTING);
+            }
         }
     }
     

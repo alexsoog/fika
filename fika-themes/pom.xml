@@ -17,6 +17,21 @@
             <artifactId>fika-publication</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>font-awesome</artifactId>
+            <version>5.0.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>highlightjs</artifactId>
+            <version>9.8.0</version>
+        </dependency>
     </dependencies>
     
     <build>
@@ -47,7 +62,7 @@
                 <version>1.7.6</version>
                 <executions>
                     <execution>
-                        <id>minify-css</id>
+                        <id>minify-resources</id>
                         <phase>process-resources</phase>
                         <goals>
                             <goal>minify</goal>
@@ -65,10 +80,46 @@
                     <cssSourceExcludes>
                         <cssSourceExclude>**/*.min.css</cssSourceExclude>
                     </cssSourceExcludes>
+                    <jsIncludes>
+                        <jsInclude>**/*.js</jsInclude>
+                    </jsIncludes>
+                    <jsSourceExcludes>
+                        <jsSourceExclude>**/*.min.js</jsSourceExclude>
+                    </jsSourceExcludes>
                     <skipMerge>true</skipMerge>
                 </configuration>
             </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>1.0.0</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.samaxes.maven</groupId>
+                                        <artifactId>minify-maven-plugin</artifactId>
+                                        <versionRange>[1.7.6,)</versionRange>
+                                        <goals>
+                                            <goal>minify</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <execute>
+                                            <runOnIncremental>true</runOnIncremental>
+                                        </execute>
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
 
 </project>

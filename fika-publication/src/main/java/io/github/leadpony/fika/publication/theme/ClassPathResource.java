@@ -23,10 +23,12 @@ import java.io.InputStream;
 public class ClassPathResource implements Resource {
     
     private final String path;
+    private final String classPath;
     private final Class<?> loadingClass;
     
-    public ClassPathResource(String path, Class<?> loadingClass) {
+    public ClassPathResource(String path, String classPath, Class<?> loadingClass) {
         this.path = path;
+        this.classPath = classPath;
         this.loadingClass = loadingClass;
     }
     
@@ -37,7 +39,7 @@ public class ClassPathResource implements Resource {
 
     @Override
     public InputStream newInputStream() {
-        return loadingClass.getResourceAsStream(path);
+        return loadingClass.getResourceAsStream(classPath);
     }
     
     @Override

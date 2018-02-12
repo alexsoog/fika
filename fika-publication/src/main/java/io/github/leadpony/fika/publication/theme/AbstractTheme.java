@@ -15,6 +15,10 @@
  */
 package io.github.leadpony.fika.publication.theme;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,6 +33,10 @@ public abstract class AbstractTheme implements Theme {
     private final List<String> stylesheets = new ArrayList<>();
     private final List<String> scripts = new ArrayList<>();
     private final List<Resource> resources = new ArrayList<>();
+    
+    protected AbstractTheme() {
+        importResources();
+    }
 
     @Override
     public List<String> getStylesheets() {
@@ -49,24 +57,32 @@ public abstract class AbstractTheme implements Theme {
     public String toString() {
         return name();
     }
-    
-    protected void css(String path) {
-        if (path == null) {
-            throw new NullPointerException("path must not be null.");
-        }
-        this.stylesheets.add(path);
-        addResource(path);
-    }
 
-    protected void js(String path) {
-        if (path == null) {
-            throw new NullPointerException("path must not be null.");
+    private void importResources() {
+        InputStream in = getClass().getResourceAsStream("resources.properties");
+        if (in == null) {
+            return;
         }
-        this.scripts.add(path);
-        addResource(path);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                line = line.trim();
+                if (!line.isEmpty()) {
+                    String[] values = line.split("\\s*=\\s*");
+                    addResource(values[0], values[1]);
+                }
+            }
+        } catch (IOException e) {
+            return;
+        }
     }
     
-    private void addResource(String path) {
-        this.resources.add(new ClassPathResource(path, getClass()));
+    private void addResource(String targetPath, String classPath) {
+        if (targetPath.endsWith(".css")) {
+            this.stylesheets.add(targetPath);
+        } else if (targetPath.endsWith(".js")) {
+            this.scripts.add(targetPath);
+        }
+        this.resources.add(new ClassPathResource(targetPath, classPath, getClass()));
     }
 }
