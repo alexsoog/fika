@@ -13,29 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.publication.view;
+package io.github.leadpony.fika.parser.markdown.block;
+
+import java.util.Set;
 
 import io.github.leadpony.fika.core.model.Document;
-import io.github.leadpony.fika.core.renderer.HtmlRenderer;
+import io.github.leadpony.fika.core.model.Text;
 
 /**
  * @author leadpony
  */
-public abstract class AbstractTemplateView implements View {
-
-    private final HtmlRenderer contentRenderer;
+public interface BlockProcessor {
     
-    protected AbstractTemplateView() {
-        this.contentRenderer = buildContentRenderer();
-    }
+    void process(String line);
     
-    protected String renderContent(Document doc) {
-        return this.contentRenderer.render(doc);
-    }
+    Document close();
 
-    protected HtmlRenderer buildContentRenderer() {
-        HtmlRenderer.Builder builder = HtmlRenderer.builder();
-        builder.withOption(HtmlRenderer.Option.HTML_FRAGMENT);
-        return builder.build();
-    }
+    Set<Text> getInlines();
 }

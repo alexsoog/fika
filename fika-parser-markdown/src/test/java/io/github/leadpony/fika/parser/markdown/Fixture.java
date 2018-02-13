@@ -13,29 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.publication.view;
-
-import io.github.leadpony.fika.core.model.Document;
-import io.github.leadpony.fika.core.renderer.HtmlRenderer;
+package io.github.leadpony.fika.parser.markdown;
 
 /**
  * @author leadpony
  */
-public abstract class AbstractTemplateView implements View {
-
-    private final HtmlRenderer contentRenderer;
+class Fixture {
     
-    protected AbstractTemplateView() {
-        this.contentRenderer = buildContentRenderer();
+    private final String source;
+    private final String expected;
+    
+    Fixture(String source, String expected) {
+        this.source = source;
+        this.expected = expected;
     }
     
-    protected String renderContent(Document doc) {
-        return this.contentRenderer.render(doc);
+    String source() {
+        return source;
     }
-
-    protected HtmlRenderer buildContentRenderer() {
-        HtmlRenderer.Builder builder = HtmlRenderer.builder();
-        builder.withOption(HtmlRenderer.Option.HTML_FRAGMENT);
-        return builder.build();
+    
+    String expected() {
+        return expected;
     }
 }

@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.publication.view;
+package io.github.leadpony.fika.parser.markdown.block;
 
 import io.github.leadpony.fika.core.model.Document;
-import io.github.leadpony.fika.core.renderer.HtmlRenderer;
+import io.github.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
+ * Builder of document node.
+ * 
  * @author leadpony
  */
-public abstract class AbstractTemplateView implements View {
-
-    private final HtmlRenderer contentRenderer;
+public class DocumentBuilder extends ContainerBlockBuilder {
     
-    protected AbstractTemplateView() {
-        this.contentRenderer = buildContentRenderer();
+    @Override
+    public MatcherType matcherType() {
+        throw new UnsupportedOperationException();
     }
     
-    protected String renderContent(Document doc) {
-        return this.contentRenderer.render(doc);
+    @Override
+    public Result match(InputSequence input) {
+        super.match(input);
+        return Result.CONTINUED;
     }
-
-    protected HtmlRenderer buildContentRenderer() {
-        HtmlRenderer.Builder builder = HtmlRenderer.builder();
-        builder.withOption(HtmlRenderer.Option.HTML_FRAGMENT);
-        return builder.build();
+    
+    @Override
+    protected Document buildBlock() {
+        return getNodeFactory().newDocument();
     }
 }
