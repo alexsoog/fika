@@ -49,7 +49,7 @@ public abstract class AbstractSpecTest {
     
     @Test
     public void test() {
-        Parser parser = factory.newParser(fixture.source());
+        Parser parser = getParserFactory().newParser(fixture.source());
         Document doc = parser.parse();
         HtmlRenderer renderer = HtmlRenderer.builder()
                 .withOption(HtmlRenderer.Option.HTML_FRAGMENT)
@@ -61,6 +61,10 @@ public abstract class AbstractSpecTest {
     
     public int index() {
         return index;
+    }
+    
+    protected ParserFactory getParserFactory() {
+        return factory;
     }
     
     protected static Iterable<Object[]> parameters(String path) {

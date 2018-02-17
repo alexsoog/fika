@@ -167,9 +167,6 @@ public abstract class AbstractHtmlRenderer implements HtmlRenderer, Visitor {
         attributes.addClass("admonition").addClass(typeQualifier);
         formatter.startTag("aside", attributes);
         String title = node.getTitle();
-        if (title == null) {
-            title = capitalize(typeQualifier);
-        }
         if (!title.isEmpty()) {
             formatter.startTag("header");
             formatter.startTag("p");
@@ -306,10 +303,6 @@ public abstract class AbstractHtmlRenderer implements HtmlRenderer, Visitor {
         formatter.startTag("ul");
         visitChildren(node);
         formatter.endTag("ul");
-    }
-    
-    private static String capitalize(String s) {
-        return s.substring(0, 1).toUpperCase() + s.substring(1);
     }
     
     /**

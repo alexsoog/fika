@@ -26,11 +26,16 @@ import io.github.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
  * @author leadpony
- *
  */
 public class AdmonitionMatcher implements BlockMatcher {
 
-    private static final Pattern TYPE_PATTERN = Pattern.compile("\\s*([^\" ]+)\\s*(\"([^\"]*)\"\\s*)?");
+    private static final Pattern TYPE_PATTERN = Pattern.compile(
+            "\\s*(\\S+)" +
+            "(" +
+            "\\s*|" +
+            "\\s+\"((\\\\\"|[^\"])*)\"\\s*" + 
+            ")"
+            );
     
     @Override
     public MatcherType matcherType() {

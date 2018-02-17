@@ -15,6 +15,8 @@
  */
 package io.github.leadpony.fika.parser.markdown.block.matchers;
 
+import static io.github.leadpony.fika.parser.markdown.common.Strings.capitalize;
+
 import io.github.leadpony.fika.core.model.Admonition;
 import io.github.leadpony.fika.core.model.Block;
 import io.github.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
@@ -35,8 +37,8 @@ class AdmonitionBuilder extends ContainerBlockBuilder {
     private final String title;
     
     AdmonitionBuilder(String type, String title) {
-        this.type = type;
-        this.title = title;
+        this.type = type.toLowerCase();
+        this.title = (title != null) ? title : capitalize(this.type);
     }
 
     @Override

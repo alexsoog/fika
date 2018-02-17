@@ -1,0 +1,20 @@
+[
+  {
+    "example": 1,
+    "section": "Admontions",
+    "markdown": "!!! note\n\tYou should note that the title will be automatically capitalized.",
+    "html": "<aside class=\"admonition note\"><header><p>Note</p></header><p>You should note that the title will be automatically capitalized.</p></aside>" 
+  },
+  {
+    "example": 2,
+    "section": "Admontions",
+    "markdown": "!!! danger \"Don't try this at home\"\n\t...",
+    "html": "<aside class=\"admonition danger\"><header><p>Don't try this at home</p></header><p>...</p></aside>" 
+  },
+  {
+    "example": 3,
+    "section": "Admontions",
+    "markdown": "!!! important \"\"\n\tThis is a admonition box without a title.",
+    "html": "<aside class=\"admonition important\"><p>This is a admonition box without a title.</p></aside>" 
+  }
+]
