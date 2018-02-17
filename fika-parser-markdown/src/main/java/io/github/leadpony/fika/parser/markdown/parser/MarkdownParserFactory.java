@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.leadpony.fika.core.model.NodeFactory;
+import io.github.leadpony.fika.core.parser.Feature;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserFactory;
 import io.github.leadpony.fika.core.parser.ParserFactoryBuilder;
@@ -44,7 +45,7 @@ class MarkdownParserFactory implements ParserFactory {
     @Override
     public Parser newParser(Reader reader) {
         if (reader == null) {
-            throw new NullPointerException("reader must not be null");
+            throw new NullPointerException("reader must not be null.");
         }
         return new MarkdownParser(reader, this.nodeFactory, this.featureSet);
     }
@@ -56,18 +57,18 @@ class MarkdownParserFactory implements ParserFactory {
      */
     static class Builder implements ParserFactoryBuilder {
         
-        private final Map<String, FeatureProvider> featureMap;
+        private final Map<String, FeatureProvider> availableFeatures;
         private final Set<FeatureProvider> activeFeatureSet;
         
-        Builder(Map<String, FeatureProvider> featureMap) {
-            this.featureMap = featureMap;
-            this.activeFeatureSet = defaultizeFeatureSet(featureMap);
+        Builder(Map<String, FeatureProvider> availableFeatures, Set<Feature> defaultFeatureSet) {
+            this.availableFeatures = availableFeatures;
+            this.activeFeatureSet = defaultizeFeatureSet(availableFeatures, defaultFeatureSet);
         }
 
         @Override
         public ParserFactoryBuilder withFeature(String feature) {
-            FeatureProvider found = featureMap.get(feature);
-            if (found != null) {
+            FeatureProvider found = availableFeatures.get(feature);
+            if (found == null) {
                 return this;
             }
             activeFeatureSet.add(found);
@@ -76,8 +77,8 @@ class MarkdownParserFactory implements ParserFactory {
 
         @Override
         public ParserFactoryBuilder withoutFeature(String feature) {
-            FeatureProvider found = featureMap.get(feature);
-            if (found != null) {
+            FeatureProvider found = availableFeatures.get(feature);
+            if (found == null) {
                 return this;
             }
             activeFeatureSet.remove(found);
@@ -89,9 +90,13 @@ class MarkdownParserFactory implements ParserFactory {
             return new MarkdownParserFactory(this);
         }
         
-        protected Set<FeatureProvider> defaultizeFeatureSet(Map<String, FeatureProvider> featureMap) {
+        protected Set<FeatureProvider> defaultizeFeatureSet(
+                Map<String, FeatureProvider> availableFeature,
+                Set<Feature> defaultSet) {
             Set<FeatureProvider> featureSet = new HashSet<>();
-            featureSet.addAll(featureMap.values());
+            for (Feature feature : defaultSet) {
+                featureSet.add(availableFeature.get(feature.name()));
+            }
             return featureSet;
         }
     }

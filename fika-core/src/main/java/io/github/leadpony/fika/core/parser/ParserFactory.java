@@ -17,6 +17,7 @@ package io.github.leadpony.fika.core.parser;
 
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.Objects;
 
 /**
  * Factory of {@link Parser} instances.
@@ -33,17 +34,31 @@ public interface ParserFactory {
      * @throws NullPointerException if specified language is {@code null}.
      */
     static ParserFactory newInstance(MarkupLanguage language) {
-        if (language == null) {
-            throw new NullPointerException("language must not be null");
-        }
-        return newInstance(language.toString());
+        Objects.requireNonNull(language, "language must not be null");
+        return newInstance(language.mediaType(), language.variant());
     }
 
+    /**
+     * Creates an instance of this type.
+     * 
+     * @param mediaType the media type of the source to parse.
+     * @return newly created instance of this type.
+     * @throws NullPointerException if one of parameters is {@code null}.
+     */
     static ParserFactory newInstance(String mediaType) {
-        if (mediaType == null) {
-            throw new NullPointerException("mediaType must not be null");
-        }
-        return builder(mediaType).build();
+        return newInstance(mediaType, "");
+    }
+
+    /**
+     * Creates an instance of this type.
+     * 
+     * @param mediaType the media type of the source to parse.
+     * @param variant the qualifier representing the media type variant.
+     * @return newly created instance of this type.
+     * @throws NullPointerException if one of parameters is {@code null}.
+     */
+    static ParserFactory newInstance(String mediaType, String variant) {
+        return builder(mediaType, variant).build();
     }
     
     /**
@@ -54,19 +69,24 @@ public interface ParserFactory {
      * @throws NullPointerException if specified language is {@code null}.
      */
     static ParserFactoryBuilder builder(MarkupLanguage language) {
-        if (language == null) {
-            throw new NullPointerException("language must not be null");
-        }
-        return builder(language.toString());
+        Objects.requireNonNull(language, "language must not be null");
+        return builder(language.mediaType(), language.variant());
     }
     
-    static ParserFactoryBuilder builder(String mediaType) {
-        if (mediaType == null) {
-            throw new NullPointerException("mediaType must not be null");
-        }
-        ParserService service = ParserService.findService(mediaType);
+    /**
+     * Creates an instance the builder of this type.
+     * 
+     * @param mediaType the media type of the source to parse.
+     * @param variant the qualifier representing the media type variant.
+     * @return newly created instance of the builder.
+     * @throws NullPointerException if one of parameters is {@code null}.
+     */
+    static ParserFactoryBuilder builder(String mediaType, String variant) {
+        Objects.requireNonNull(mediaType, "mediaType must not be null");
+        Objects.requireNonNull(variant, "variant must not be null");
+        ParserService service = ParserService.findService(mediaType, variant);
         if (service != null) {
-            return service.newBuilder(mediaType);
+            return service.newBuilder(mediaType, variant);
         }
         return null;
     }
@@ -79,9 +99,7 @@ public interface ParserFactory {
      * @throws NullPointerException if specified text is {@code null}.
      */
     default Parser newParser(String text) {
-        if (text == null) {
-            throw new NullPointerException("text must not be null");
-        }
+        Objects.requireNonNull(text, "text must not be null");
         return newParser(new StringReader(text));
     }
 

@@ -5,7 +5,7 @@
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
  */
 /*!
- * Copyright 2017 the original author or authors.
+ * Copyright 2017-2018 The Fika Authors.
  * Licensed under the Apache License, Version 2.0
  * (http://www.apache.org/licenses/LICENSE-2.0)
  */
@@ -19,7 +19,7 @@ $h5-font-size:                $font-size-base * 1.1;
 $h6-font-size:                $font-size-base;
 
 $headings-color:              #0040a0;  
-$enable-shadows:            true;
+$enable-shadows:              true;
 
 @import "functions";
 @import "variables";
@@ -57,13 +57,13 @@ $enable-shadows:            true;
 @import "utilities";
 @import "print";
 
+@import "admonition";
+
 body {
     padding-top: 5rem;
 }
 
 pre {
-  @extend .border;
-  
   code {
     display: block;
     padding: 0.5rem;
@@ -72,14 +72,15 @@ pre {
   }
 }
 
-header {
-  background-color: $indigo;  
+header.navbar {
+  background-color: $primary;  
   @include box-shadow(0px 2px 10px 0px rgba(0,0,0,0.4));
 }
 
 footer {
   color: $light;
   background-color: $black;
+  margin-top: $paragraph-margin-bottom * 2;
   padding-top: $paragraph-margin-bottom;
   padding-bottom: ($paragraph-margin-bottom / 2);
 }

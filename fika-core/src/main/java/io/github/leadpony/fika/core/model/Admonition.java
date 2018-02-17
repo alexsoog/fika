@@ -13,30 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.leadpony.fika.core.parser;
+package io.github.leadpony.fika.core.model;
 
 /**
- * Basic features of the markup languages.
- * 
  * @author leadpony
  */
-public enum BasicFeature implements Feature {
-    ADMONITION,
-    AUTO_LINK,
-    BLOCK_QUOTE,
-    CODE_BLOCK,
-    CODE_SPAN,
-    EMPHASIS,
-    HARD_LINE_BREAK,
-    HEADING,
-    HTML_BLOCK,
-    IMAGE,
-    INLINE_HTML,
-    LINK,
-    LINK_DEFINITION,
-    LIST,
-    PARAGRAPH,
-    SOFT_LINE_BREAK,
-    THEMATIC_BREAK
-    ;
+public interface Admonition extends Block {
+    
+    String getType();
+    
+    void setType(String type);
+    
+    String getTitle();
+    
+    void setTitle(String title);
+
+    @Override
+    default void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
 }

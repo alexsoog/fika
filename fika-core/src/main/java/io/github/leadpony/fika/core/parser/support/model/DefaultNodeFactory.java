@@ -15,6 +15,9 @@
  */
 package io.github.leadpony.fika.core.parser.support.model;
 
+import java.util.Objects;
+
+import io.github.leadpony.fika.core.model.Admonition;
 import io.github.leadpony.fika.core.model.BlockQuote;
 import io.github.leadpony.fika.core.model.CodeBlock;
 import io.github.leadpony.fika.core.model.CodeSpan;
@@ -44,6 +47,12 @@ import io.github.leadpony.fika.core.model.UnorderedList;
 public class DefaultNodeFactory implements NodeFactory {
     
     public DefaultNodeFactory() {
+    }
+    
+    @Override
+    public Admonition newAdmonition(String type) {
+        Objects.requireNonNull(type, "type must not be null");
+        return new AdmonitionImpl(this, type);
     }
 
     @Override
@@ -132,6 +141,39 @@ public class DefaultNodeFactory implements NodeFactory {
         return new ThematicBreakImpl(this);
     }
 
+    
+    private static class AdmonitionImpl extends ContainerNode implements Admonition {
+        
+        private String type;
+        private String title;
+        
+        AdmonitionImpl(NodeFactory factory, String type) {
+            super(factory);
+            this.type = type;
+        }
+
+        @Override
+        public String getType() {
+            return type;
+        }
+
+        @Override
+        public void setType(String type) {
+            Objects.requireNonNull(type, "type must not be null");
+            this.type = type;
+        }
+
+        @Override
+        public String getTitle() {
+            return title;
+        }
+
+        @Override
+        public void setTitle(String title) {
+            this.title = title;
+        }
+    }
+    
     private static class BlockQuoteImpl extends ContainerNode implements BlockQuote {
         
         BlockQuoteImpl(NodeFactory factory) {

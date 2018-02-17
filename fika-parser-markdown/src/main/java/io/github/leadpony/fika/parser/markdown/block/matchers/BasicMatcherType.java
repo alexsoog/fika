@@ -33,10 +33,11 @@ public enum BasicMatcherType implements MatcherType {
     ATX_HEADING(140),
     BLOCK_QUOTE(150),
     FENCED_CODE(160),
-    HTML_BLOCK(170),
-    INDENTED_CODE(180),
-    LINK_DEFINITION(190),
-    PARAGRAPH(200)
+    ADMONITION(170),
+    HTML_BLOCK(180),
+    INDENTED_CODE(190),
+    LINK_DEFINITION(200),
+    PARAGRAPH(300)
     ;
     
     private final int precedence;

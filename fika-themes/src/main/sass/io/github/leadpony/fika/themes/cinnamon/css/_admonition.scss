@@ -1,0 +1,80 @@
+/*!
+ * Copyright 2017-2018 The Fika Authors.
+ * Licensed under the Apache License, Version 2.0
+ * (http://www.apache.org/licenses/LICENSE-2.0)
+ */
+
+$admonition-colors: (
+  "attention": $orange,
+  "caution": $yellow, 
+  "danger": $red,
+  "error": $red, 
+  "hint": $green, 
+  "important": $green, 
+  "note": $blue, 
+  "tip": $green, 
+  "warning": $yellow
+);
+
+$admonition-icons: (
+  "attention": "\f071",
+  "caution": "\f071", 
+  "danger": "\f0e7",
+  "error": "\f05a", 
+  "hint": "\f05a", 
+  "important": "\f05a", 
+  "note": "\f303", 
+  "tip": "\f05a", 
+  "warning": "\f071"
+);
+ 
+$admonition-color-interval: 8%;
+
+@function admonition-color-level($type, $level) {
+  $color: map-get($admonition-colors, $type);
+  $color-base: if($level > 0, #000, #fff);
+  $level: abs($level);
+
+  @return mix($color-base, $color, $level * $admonition-color-interval);
+}
+
+@mixin admonition-variant($background, $border, $color, $icon) {
+  background-color: $background;
+  border-left-color: $border;
+
+  header {
+    p::before {
+      content: $icon;
+    }
+    p {
+      color: $color;
+    }
+  }
+}
+
+aside.admonition {
+  padding: 0.5rem 0.5rem 0.5rem 1.0rem;
+  border-left-width: ($border-width * 6);
+  border-left-style: solid;
+  margin-bottom: $paragraph-margin-bottom;
+  
+  header {
+    p::before {
+      font-family: "Font Awesome 5 Free";
+      font-weight: 900;
+      display: inline-block;
+      padding-right: 0.5rem;
+    }
+  }
+}
+
+@each $type, $color in $admonition-colors {
+  .admonition.#{$type} {
+    @include admonition-variant(
+      admonition-color-level($type, -12), 
+      admonition-color-level($type, -6), 
+      admonition-color-level($type, 2),
+      map-get($admonition-icons, $type));
+  }
+}
+ 

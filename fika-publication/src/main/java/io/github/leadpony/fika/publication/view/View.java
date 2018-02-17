@@ -18,12 +18,10 @@ package io.github.leadpony.fika.publication.view;
 import java.io.Writer;
 import java.util.Map;
 
-import io.github.leadpony.fika.core.model.Document;
-
 /**
  * @author leadpony
  */
 public interface View {
 
-    void render(Document doc, Map<String, Object> context, Writer writer);
+    void render(Map<String, Object> context, Writer writer);
 }

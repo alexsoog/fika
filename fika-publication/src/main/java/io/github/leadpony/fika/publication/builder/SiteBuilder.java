@@ -28,8 +28,10 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import io.github.leadpony.fika.core.model.Document;
+import io.github.leadpony.fika.core.parser.BasicFeature;
 import io.github.leadpony.fika.core.parser.Parser;
 import io.github.leadpony.fika.core.parser.ParserFactory;
+import io.github.leadpony.fika.core.parser.ParserFactoryBuilder;
 import io.github.leadpony.fika.publication.project.PageSource;
 import io.github.leadpony.fika.publication.project.Project;
 import io.github.leadpony.fika.publication.view.View;
@@ -102,9 +104,7 @@ public class SiteBuilder extends AbstractHtmlBuilder {
             Files.createDirectories(parent);
         }
         try (Writer writer = Files.newBufferedWriter(fullPath, this.charset)) {
-            Map<String, Object> context = new HashMap<>();
-            context.put("url", mapToUrl(path));
-            this.pageView.render(doc, context, writer);
+            this.pageView.render(createViewContext(doc, path), writer);
         }
     }
     
@@ -120,6 +120,14 @@ public class SiteBuilder extends AbstractHtmlBuilder {
         return newPath;
     }
     
+    private Map<String, Object> createViewContext(Document doc, Path path) {
+        Map<String, Object> context = new HashMap<>();
+        String url = mapToUrl(path);
+        context.put("url", url);
+        context.put("page", new DefaultPageContext(doc, url));
+        return context;
+    }
+    
     private static String mapToUrl(Path path) {
         return path.toString().replace("\\", "/");
     }
@@ -127,11 +135,20 @@ public class SiteBuilder extends AbstractHtmlBuilder {
     private ParserFactory findParserFactory(String mediaType) {
         ParserFactory factory = parserFactories.get(mediaType);
         if (factory == null) {
-            factory = ParserFactory.newInstance(mediaType);
+            factory = buildParserFactory(mediaType);
             if (factory != null) {
                 parserFactories.put(mediaType, factory);
             }
         }
         return factory;
+    }
+    
+    private ParserFactory buildParserFactory(String mediaType) {
+        ParserFactoryBuilder builder = ParserFactory.builder(mediaType, "");
+        if (builder == null) {
+            return null;
+        }
+        builder.withFeature(BasicFeature.ADMONITION);
+        return builder.build();
     }
 }

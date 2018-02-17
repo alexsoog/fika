@@ -26,8 +26,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
+import io.github.leadpony.fika.core.model.Admonition;
 import io.github.leadpony.fika.core.model.BlockQuote;
 import io.github.leadpony.fika.core.model.CodeBlock;
 import io.github.leadpony.fika.core.model.CodeSpan;
@@ -159,6 +161,27 @@ public abstract class AbstractHtmlRenderer implements HtmlRenderer, Visitor {
     /* Visitor interface */
     
     @Override
+    public void visit(Admonition node) {
+        AttributeMap attributes = new AttributeMap();
+        final String typeQualifier = node.getType().toLowerCase();
+        attributes.addClass("admonition").addClass(typeQualifier);
+        formatter.startTag("aside", attributes);
+        String title = node.getTitle();
+        if (title == null) {
+            title = capitalize(typeQualifier);
+        }
+        if (!title.isEmpty()) {
+            formatter.startTag("header");
+            formatter.startTag("p");
+            formatter.text(title);
+            formatter.endTag("p");
+            formatter.endTag("header");
+        }
+        visitChildren(node);
+        formatter.endTag("aside");
+    }
+    
+    @Override
     public void visit(BlockQuote node) {
         formatter.startTag("blockquote");
         visitChildren(node);
@@ -168,11 +191,11 @@ public abstract class AbstractHtmlRenderer implements HtmlRenderer, Visitor {
     @Override
     public void visit(CodeBlock node) {
         formatter.startTag("pre");
-        Map<String, String> attributes = new HashMap<>();
+        AttributeMap attributes = new AttributeMap();
         String language = node.getLanguage();
         if (language != null) {
             String classValue = "language-" + language;
-            attributes.put("class", classValue);
+            attributes.addClass(classValue);
         }
         formatter.startTag("code", attributes);
         formatter.text(node.getContent());
@@ -225,27 +248,18 @@ public abstract class AbstractHtmlRenderer implements HtmlRenderer, Visitor {
 
     @Override
     public void visit(Image node) {
-        String title = node.getTitle();
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put("src", node.getLocation());
-        if (title != null) {
-            attributes.put("title", title);
-        }
-        String alt = node.textContent();
-        if (alt != null) {
-            attributes.put("alt", alt);
-        }
+        AttributeMap attributes = new AttributeMap();
+        attributes.add("src", node.getLocation());
+        attributes.add("title", node.getTitle());
+        attributes.add("alt", node.textContent());
         formatter.emptyTag("img", attributes);
     }
 
     @Override
     public void visit(Link node) {
-        String title = node.getTitle();
-        Map<String, String> attributes = new HashMap<>();
-        attributes.put("href", node.getDestination());
-        if (title != null) {
-            attributes.put("title", title);
-        }
+        AttributeMap attributes = new AttributeMap();
+        attributes.add("href", node.getDestination());
+        attributes.add("title", node.getTitle());
         formatter.startTag("a", attributes);
         visitChildren(node);
         formatter.endTag("a");
@@ -260,10 +274,10 @@ public abstract class AbstractHtmlRenderer implements HtmlRenderer, Visitor {
 
     @Override
     public void visit(OrderedList node) {
-        Map<String, String> attributes = new HashMap<>();
+        AttributeMap attributes = new AttributeMap();
         int startNumber = node.getStartNumber();
         if (startNumber != 1) {
-            attributes.put("start", String.valueOf(startNumber));
+            attributes.add("start", String.valueOf(startNumber));
         }
         formatter.startTag("ol", attributes);
         visitChildren(node);
@@ -294,6 +308,10 @@ public abstract class AbstractHtmlRenderer implements HtmlRenderer, Visitor {
         formatter.endTag("ul");
     }
     
+    private static String capitalize(String s) {
+        return s.substring(0, 1).toUpperCase() + s.substring(1);
+    }
+    
     /**
      * Default implementation of {@link HtmlRenderer.Builder}.
      * 
@@ -310,63 +328,49 @@ public abstract class AbstractHtmlRenderer implements HtmlRenderer, Visitor {
         
         @Override
         public Builder withOption(Option option) {
-            if (option == null) {
-                throw new NullPointerException("option must not be null.");
-            }
+            Objects.requireNonNull(option, "option must not be null");
             options.add(option);
             return this;
         }
 
         @Override
         public Builder withoutOption(Option option) {
-            if (option == null) {
-                throw new NullPointerException("option must not be null.");
-            }
+            Objects.requireNonNull(option, "option must not be null");
             options.remove(option);
             return this;
         }
         
         @Override
         public Builder withCharset(Charset charset) {
-            if (charset == null) {
-                throw new NullPointerException("charset must not be null.");
-            }
+            Objects.requireNonNull(charset, "charset must not be null");
             this.charset = charset;
             return this;
         }
   
         @Override
         public Builder withLanguage(Locale language) {
-            if (language == null) {
-                throw new NullPointerException("language must not be null.");
-            }
+            Objects.requireNonNull(language, "language must not be null");
             this.language = language;
             return this;
         }
         
         @Override
         public Builder withTitle(String title) {
-            if (title == null) {
-                throw new NullPointerException("title must not be null.");
-            }
+            Objects.requireNonNull(title, "title must not be null");
             this.title = title;
             return this;
         }
  
         @Override
         public Builder withStylesheet(URI stylesheet) {
-            if (stylesheet == null) {
-                throw new NullPointerException("stylesheet must not be null.");
-            }
+            Objects.requireNonNull(stylesheet, "stylesheet must not be null");
             this.stylesheet.add(stylesheet);
             return this;
         }
        
         @Override
         public Builder withFormatter(XmlFormatter formatter) {
-            if (formatter == null) {
-                throw new NullPointerException("formatter must not be null.");
-            }
+            Objects.requireNonNull(formatter, "formatter must not be null");
             this.formatter = formatter;
             return this;
         }

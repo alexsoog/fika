@@ -21,6 +21,8 @@ package io.github.leadpony.fika.core.model;
  * @author leadpony
  */
 public interface NodeFactory {
+    
+    Admonition newAdmonition(String type);
 
     /**
      * Creates a new block quote.

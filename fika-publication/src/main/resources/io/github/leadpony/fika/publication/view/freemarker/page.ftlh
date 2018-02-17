@@ -14,7 +14,7 @@
 <i class="fas fa-home fa-sm" aria-hidden="true"></i>
 ${project.title}</a>
 </header>
-<main class="container">${content?no_esc}</main>
+<main class="container">${page.content?no_esc}</main>
 <footer><p class="container">${project.copyright?no_esc}</p></footer>
 <#list theme.scripts as script>
 <script src="<@fika.relativize "${script}" />"></script>

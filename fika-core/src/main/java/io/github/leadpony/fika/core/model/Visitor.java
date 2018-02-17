@@ -20,6 +20,10 @@ package io.github.leadpony.fika.core.model;
  */
 public interface Visitor {
 
+    default void visit(Admonition node) {
+        visitChildren(node);
+    }
+
     default void visit(BlockQuote node) {
         visitChildren(node);
     }

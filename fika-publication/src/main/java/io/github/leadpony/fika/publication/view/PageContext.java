@@ -15,27 +15,21 @@
  */
 package io.github.leadpony.fika.publication.view;
 
-import io.github.leadpony.fika.core.model.Document;
-import io.github.leadpony.fika.core.renderer.HtmlRenderer;
-
 /**
+ * Page context referred by Views.
+ * 
  * @author leadpony
  */
-public abstract class AbstractTemplateView implements View {
+public interface PageContext {
 
-    private final HtmlRenderer contentRenderer;
+    /**
+     * Returns the relative URL of the current page.
+     * 
+     * @return the URL relative to the context root.
+     */
+    String getUrl();
     
-    protected AbstractTemplateView() {
-        this.contentRenderer = buildContentRenderer();
-    }
+    String getContent();
     
-    protected String renderContent(Document doc) {
-        return this.contentRenderer.render(doc);
-    }
-
-    protected HtmlRenderer buildContentRenderer() {
-        HtmlRenderer.Builder builder = HtmlRenderer.builder();
-        builder.withOption(HtmlRenderer.Option.HTML_FRAGMENT);
-        return builder.build();
-    }
+    String relativizeUrl(String other);
 }

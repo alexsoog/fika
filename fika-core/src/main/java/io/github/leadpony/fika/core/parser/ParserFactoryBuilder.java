@@ -21,11 +21,31 @@ package io.github.leadpony.fika.core.parser;
  * @author leadpony
  */
 public interface ParserFactoryBuilder {
-    
+
+    /**
+     * Provides the factory with the specified feature.
+     * 
+     * @param feature the name of the feature.
+     * @return this builder.
+     */
     ParserFactoryBuilder withFeature(String feature);
 
+    /**
+     * Provides the factory with the specified feature.
+     * 
+     * @param feature the feature.
+     * @return this builder.
+     */
+    default ParserFactoryBuilder withFeature(Feature feature) {
+        return withFeature(feature.name());
+    }
+    
     ParserFactoryBuilder withoutFeature(String feature);
-   
+
+    default ParserFactoryBuilder withoutFeature(Feature feature) {
+        return withoutFeature(feature.name());
+    }
+    
     /**
      * Builds an instance of {@link ParserFactory}.
      * 

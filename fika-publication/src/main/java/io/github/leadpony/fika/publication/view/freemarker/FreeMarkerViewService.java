@@ -28,8 +28,6 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModelException;
-import io.github.leadpony.fika.core.model.Document;
-import io.github.leadpony.fika.publication.view.AbstractTemplateView;
 import io.github.leadpony.fika.publication.view.AbstractViewResolverBuilder;
 import io.github.leadpony.fika.publication.view.View;
 import io.github.leadpony.fika.publication.view.ViewException;
@@ -128,7 +126,7 @@ public class FreeMarkerViewService implements ViewService {
         }
     }
 
-    private static class FreeMarkerView extends AbstractTemplateView {
+    private static class FreeMarkerView implements View {
         
         private final Template template;
         
@@ -137,9 +135,7 @@ public class FreeMarkerViewService implements ViewService {
         }
 
         @Override
-        public void render(Document doc, Map<String, Object> context, Writer writer) {
-            context.put("page", new PageContext((String)context.get("url")));
-            context.put("content", renderContent(doc));
+        public void render(Map<String, Object> context, Writer writer) {
             try {
                 this.template.process(context, writer);
             } catch (TemplateException | IOException e) {

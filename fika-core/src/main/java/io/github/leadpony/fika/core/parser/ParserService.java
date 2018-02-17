@@ -16,6 +16,7 @@
 package io.github.leadpony.fika.core.parser;
 
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.ServiceLoader;
 
 /**
@@ -32,13 +33,16 @@ public abstract class ParserService {
      * Searches for the appropriate service.
      * 
      * @param mediaType the media type of the source to parse, cannot be {@code null}.
+     * @param variant the variant of the media type, cannot be {@code null}.
      * @return the service found, or {@code null} if not found.
      */
-    static ParserService findService(String mediaType) {
+    static ParserService findService(String mediaType, String variant) {
+        Objects.requireNonNull(mediaType, "media must not be null");
+        Objects.requireNonNull(mediaType, "variant must not be null");
         Iterator<ParserService> it = loaders.get().iterator();
         while (it.hasNext()) {
             ParserService service = it.next();
-            if (service.supports(mediaType)) {
+            if (service.supports(mediaType, variant)) {
                 return service;
             }
         }
@@ -53,15 +57,19 @@ public abstract class ParserService {
      * Checks if this service supports specified media type.
      * 
      * @param mediaType the media type of the source to parse, cannot be {@code null}.
+     * @param variant the variant of the media type, cannot be {@code null}.
      * @return {@code true} if this service supports the specified media type, otherwise {@code false}.
+     * @throws NullPointerException if one of given parameters is {@code null}.
      */
-    public abstract boolean supports(String mediaType);
+    public abstract boolean supports(String mediaType, String variant);
 
     /**
      * Creates new instance of builder of parser factory.
      * 
-     * @param language the markup language to parse.
+     * @param mediaType the media type of the source to parse, cannot be {@code null}.
+     * @param variant the variant of the media type, cannot be {@code null}.
      * @return newly created builder.
+     * @throws NullPointerException if one of given parameters is {@code null}.
      */
-    public abstract ParserFactoryBuilder newBuilder(String mediaType);
+    public abstract ParserFactoryBuilder newBuilder(String mediaType, String variant);
 }
