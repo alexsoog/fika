@@ -16,11 +16,11 @@
 package org.leadpony.fika.core.model;
 
 /**
- * Unordered item list.
+ * Each term in a definition list.
  * 
  * @author leadpony
  */
-public interface UnorderedList extends ListBlock {
+public interface Term extends Block {
 
     /**
      * {@inheritDoc}
@@ -28,13 +28,5 @@ public interface UnorderedList extends ListBlock {
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    default ListType listType() {
-        return ListType.UNORDERED;
     }
 }

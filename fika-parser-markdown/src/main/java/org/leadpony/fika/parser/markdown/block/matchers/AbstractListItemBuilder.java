@@ -15,40 +15,40 @@
  */
 package org.leadpony.fika.parser.markdown.block.matchers;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.leadpony.fika.core.model.BlockQuote;
+import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
-import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
  * @author leadpony
  */
-class BlockQuoteBuilder extends ContainerBlockBuilder {
-    
-    static final Pattern BLOCK_QUOTE_MARKER = Pattern.compile("^\\u0020{0,3}>\\u0020?");
+abstract class AbstractListItemBuilder extends ContainerBlockBuilder {
 
-    @Override
-    public BlockType blockType() {
-        return BasicBlockType.BLOCK_QUOTE;
+    private boolean loose;
+    private int lastBlankLineNo;
+    
+    protected AbstractListItemBuilder() {
+        this.loose = false;
+        this.lastBlankLineNo = -1;
     }
-   
+    
+    boolean isLoose() {
+        return loose;
+    }
+
     @Override
     public Result append(InputSequence input) {
-        Matcher m = BLOCK_QUOTE_MARKER.matcher(input);
-        if (m.find()) {
-            int skip = m.group(0).length();
-            findAndInvokeChildBuilder(input.subSequence(skip));
-            return Result.CONTINUED;
-        } else {
-            return matchLazyContinuationLine(input);
+        if (input.isBlank()) {
+            this.lastBlankLineNo = lineNo();
         }
+        return Result.CONTINUED;
     }
 
     @Override
-    protected BlockQuote buildBlock() {
-        return getNodeFactory().newBlockQuote();
+    protected void openChildBuilder(BlockBuilder childBuilder) {
+        if (lineNo() == this.lastBlankLineNo + 1) {
+            this.loose = true;
+        }
+        super.openChildBuilder(childBuilder);
     }
 }

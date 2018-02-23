@@ -13,28 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.leadpony.fika.core.model;
+package org.leadpony.fika.parser.markdown.parser.features.block;
+
+import org.leadpony.fika.core.parser.BasicFeature;
+import org.leadpony.fika.core.parser.Feature;
+import org.leadpony.fika.parser.markdown.block.matchers.DefinitionListMatcher;
+import org.leadpony.fika.parser.markdown.parser.FeatureProvider;
+import org.leadpony.fika.parser.markdown.parser.ParserBuilder;
 
 /**
- * Unordered item list.
- * 
  * @author leadpony
+ *
  */
-public interface UnorderedList extends ListBlock {
+public class DefinitionList implements FeatureProvider {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    default void accept(Visitor visitor) {
-        visitor.visit(this);
+    public Feature feature() {
+        return BasicFeature.DEFINITION_LIST;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    default ListType listType() {
-        return ListType.UNORDERED;
+    public void provide(ParserBuilder builder) {
+        builder.add(new DefinitionListMatcher());
     }
 }

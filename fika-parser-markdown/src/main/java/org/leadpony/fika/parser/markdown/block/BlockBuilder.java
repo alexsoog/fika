@@ -40,11 +40,11 @@ public interface BlockBuilder {
     }
     
     /**
-     * Returns the type of the block matcher.
+     * Returns the type of the block.
      * 
-     * @return the type of the block matcher.
+     * @return the type of the block.
      */
-    MatcherType matcherType();
+    BlockType blockType();
     
     /**
      * Binds the context to this builder.
@@ -86,7 +86,13 @@ public interface BlockBuilder {
      */
     int lineNo();
 
-    Result match(InputSequence input);
+    /**
+     * Appends a line to this builder.
+     * 
+     * @param input the line to append.
+     * @return the result of the appending operation, never be {@code null}. 
+     */
+    Result append(InputSequence input);
 
     /**
      * Checks if this builder is interruptible.
@@ -117,7 +123,7 @@ public interface BlockBuilder {
      * 
      * @return the block built by this builder.
      */
-    Block close();
+    Block build();
     
     /**
      * Context shared by block builders.

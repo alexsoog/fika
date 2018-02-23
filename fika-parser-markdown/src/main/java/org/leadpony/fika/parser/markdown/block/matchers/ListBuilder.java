@@ -15,19 +15,13 @@
  */
 package org.leadpony.fika.parser.markdown.block.matchers;
 
-import java.util.List;
-
 import org.leadpony.fika.core.model.Block;
-import org.leadpony.fika.core.model.ListItem;
 import org.leadpony.fika.core.model.ListType;
-import org.leadpony.fika.core.model.Node;
 import org.leadpony.fika.core.model.OrderedList;
-import org.leadpony.fika.core.model.Paragraph;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
-import org.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
-import org.leadpony.fika.parser.markdown.block.MatcherType;
+import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
@@ -35,33 +29,21 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  * 
  * @author leadpony
  */
-abstract class ListBuilder extends ContainerBlockBuilder {
+abstract class ListBuilder extends AbstractListBuilder {
     
-    private final BlockMatcher factory;
+    private final BlockMatcher matcher;
     private final ListItemBuilder firstItemBuilder;
-    private boolean loose;
-    private int lastBlankLineNo;
 
-    protected ListBuilder(BlockMatcher factory, ListItemBuilder firstItemMatcher) {
-        this.factory = factory;
+    protected ListBuilder(BlockMatcher matcher, ListItemBuilder firstItemMatcher) {
+        this.matcher = matcher;
         this.firstItemBuilder = firstItemMatcher;
-        this.loose = false;
-        this.lastBlankLineNo = -1;
-    }
-    
-    boolean isLoose() {
-        return loose;
-    }
-    
-    boolean isTight() {
-        return !isLoose();
     }
     
     boolean canInterrupt(BlockBuilder builder) {
-        MatcherType type = builder.matcherType();
-        if (type == BasicMatcherType.PARAGRAPH) {
+        BlockType type = builder.blockType();
+        if (type == BasicBlockType.PARAGRAPH) {
             return firstItemBuilder.canInterruptParagraph();
-        } else if (type == BasicMatcherType.LIST) {
+        } else if (type == BasicBlockType.LIST) {
             return !isSameTypeAs((ListBuilder)builder);
         }
         return true;
@@ -72,8 +54,8 @@ abstract class ListBuilder extends ContainerBlockBuilder {
     }
     
     @Override
-    public MatcherType matcherType() {
-        return BasicMatcherType.LIST;
+    public BlockType blockType() {
+        return BasicBlockType.LIST;
     }
     
     @Override
@@ -83,14 +65,11 @@ abstract class ListBuilder extends ContainerBlockBuilder {
     }
     
     @Override
-    public Result match(InputSequence input) {
-        boolean isBlank = input.isBlank();
-        if (isBlank) {
-            this.lastBlankLineNo = lineNo();
-        }
+    public Result append(InputSequence input) {
+        super.append(input);
         Result result = findAndInvokeChildBuilder(input);
         if (result == Result.NOT_MATCHED) {
-            if (!isBlank) {
+            if (!input.isBlank()) {
                 return result;
             }
         }
@@ -112,7 +91,7 @@ abstract class ListBuilder extends ContainerBlockBuilder {
         }
         BlockBuilder matcher = context().finder().findInterruptingBuilder(input, this, mode);
         if (matcher == null) {
-            matcher = this.factory.newInterruptingBuilder(input, this, mode);
+            matcher = this.matcher.newInterruptingBuilder(input, this, mode);
         }
         return matcher;
     }
@@ -125,50 +104,6 @@ abstract class ListBuilder extends ContainerBlockBuilder {
         }
         return matched;
     }
-    
-    @Override
-    protected void openChildBuilder(BlockBuilder childMatcher) {
-        if (lineNo() == lastBlankLineNo + 1) {
-            this.loose = true;
-        }
-        super.openChildBuilder(childMatcher);
-    }
-    
-    @Override
-    protected void closeChildBuilder(BlockBuilder childMatcher) {
-        ListItemBuilder itemMatcher = (ListItemBuilder)childMatcher;
-        if (itemMatcher.isLoose()) {
-            this.loose = true;
-        }
-        super.closeChildBuilder(childMatcher);
-    }
-    
-    @Override
-    protected List<Node> childNodes() {
-        return buildChildNodes();
-    }
-    
-    private List<Node> buildChildNodes() {
-        List<Node> items = super.childNodes();
-        if (isTight()) {
-            for (Node item: items) {
-                tightenListItem((ListItem)item);
-            }
-        }
-        return items;
-    }
-    
-    private void tightenListItem(ListItem item) {
-        Node child = item.firstChildNode();
-        while (child != null) {
-            if (child instanceof Paragraph) {
-                Node text = child.firstChildNode();
-                item.replaceChild(text, child);
-                child = text;
-            }
-            child = child.nextNode();
-        }
-    }
 }
 
 /**
@@ -178,8 +113,8 @@ abstract class ListBuilder extends ContainerBlockBuilder {
  */
 class BulletListBuilder extends ListBuilder {
     
-    BulletListBuilder(BlockMatcher factory, BulletListItemBuilder itemBuilder) {
-        super(factory, itemBuilder);
+    BulletListBuilder(BlockMatcher matcher, BulletListItemBuilder itemBuilder) {
+        super(matcher, itemBuilder);
     }
     
     @Override
@@ -197,8 +132,8 @@ class OrderedListBuilder extends ListBuilder {
     
     private final int startNumber;
     
-    OrderedListBuilder(BlockMatcher factory, OrderedListItemBuilder itemBuilder) {
-        super(factory, itemBuilder);
+    OrderedListBuilder(BlockMatcher matcher, OrderedListItemBuilder itemBuilder) {
+        super(matcher, itemBuilder);
         this.startNumber = itemBuilder.number();
     }
     

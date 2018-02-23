@@ -17,14 +17,19 @@ package org.leadpony.fika.parser.markdown.block.matchers;
 
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockMatcher;
-import org.leadpony.fika.parser.markdown.block.MatcherType;
+import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
+/**
+ * Matcher implementation for link reference definition.
+ * 
+ * @author leadpony
+ */
 public class LinkDefinitionMatcher implements BlockMatcher {
 
     @Override
-    public MatcherType matcherType() {
-        return BasicMatcherType.LINK_DEFINITION;
+    public BlockType blockType() {
+        return BasicBlockType.LINK_DEFINITION;
     }
 
     @Override

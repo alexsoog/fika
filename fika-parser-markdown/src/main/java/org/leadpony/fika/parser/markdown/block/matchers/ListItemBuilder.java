@@ -21,8 +21,7 @@ import java.util.regex.Pattern;
 import org.leadpony.fika.core.model.Block;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
-import org.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
-import org.leadpony.fika.parser.markdown.block.MatcherType;
+import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
@@ -30,28 +29,20 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  * 
  * @author leadpony
  */
-abstract class ListItemBuilder extends ContainerBlockBuilder {
+abstract class ListItemBuilder extends AbstractListItemBuilder {
     
     private final int indentSize;
     private final boolean empty;
-    private boolean loose;
-    private int lastBlankLineNo;
     private int linesNotMatched;
     
     protected ListItemBuilder(int indentSize, boolean empty) {
         this.indentSize = indentSize;
         this.empty = empty;
-        this.loose = false;
-        this.lastBlankLineNo = -1;
         this.linesNotMatched = 0;
     }
     
-    boolean isLoose() {
-        return loose;
-    }
-    
     /**
-     * Returns the indentation size of this matcher.
+     * Returns the indentation size of this builder.
      * 
      * @return the indentation size.
      */
@@ -64,16 +55,15 @@ abstract class ListItemBuilder extends ContainerBlockBuilder {
     }
     
     @Override
-    public MatcherType matcherType() {
-        return BasicMatcherType.LIST_ITEM;
+    public BlockType blockType() {
+        return BasicBlockType.LIST_ITEM;
     }
 
     @Override
-    public Result match(InputSequence input) {
+    public Result append(InputSequence input) {
+        super.append(input);
         final boolean isBlank = input.isBlank();
-        if (isBlank) {
-            this.lastBlankLineNo = lineNo();
-        } else if (lineNo() > 1 && !input.hasLeadingSpaces(indentSize)) {
+        if (!isBlank && lineNo() > 1 && !input.hasLeadingSpaces(indentSize)) {
             // Not indented.
             return matchLazyContinuationLine(input);
         }
@@ -101,14 +91,6 @@ abstract class ListItemBuilder extends ContainerBlockBuilder {
             return interrupterOfSameType(input);
         }
         return null;
-    }
-    
-    @Override
-    protected void openChildBuilder(BlockBuilder childMatcher) {
-        if (lineNo() == this.lastBlankLineNo + 1) {
-            this.loose = true;
-        }
-        super.openChildBuilder(childMatcher);
     }
     
     @Override

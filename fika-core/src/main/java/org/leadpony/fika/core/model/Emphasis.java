@@ -16,14 +16,40 @@
 package org.leadpony.fika.core.model;
 
 /**
+ * Emphasis node.
+ * 
  * @author leadpony
  */
 public interface Emphasis extends Inline {
     
-    int getStrength();
+    /**
+     * The minimum strength allowed.
+     */
+    static int MIN_STRENGTH = 1;
+ 
+    /**
+     * The minimum strength allowed.
+     */
+    static int MAX_STRENGTH = 2;
     
+    /**
+     * Returns the strength of this emphasis.
+     * 
+     * @return the strength of this emphasis.
+     */
+    int getStrength();
+
+    /**
+     * Assigns the strength of this emphasis.
+     * 
+     * @param strength the strength of the emphasis to assign.
+     * @throws IllegalArgumentException if given {@code strength} if out of range.
+     */
     void setStrength(int strength);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

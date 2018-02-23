@@ -58,12 +58,12 @@ public class DefaultBlockProcessor implements BlockProcessor, BlockBuilder.Conte
     public void process(String line) {
         InputSequence content = BlockInputSequence.of(line);
         lineNumber++;
-        rootBuilder.match(content);
+        rootBuilder.append(content);
     }
     
     @Override
     public Document close() {
-        return (Document)rootBuilder.close();
+        return (Document)rootBuilder.build();
     }
     
     @Override

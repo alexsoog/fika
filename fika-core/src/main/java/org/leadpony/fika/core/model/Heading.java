@@ -21,11 +21,35 @@ package org.leadpony.fika.core.model;
  * @author leadpony
  */
 public interface Heading extends Block {
-
-    int getLevel();
     
+    /**
+     * The minimum level for headings.
+     */
+    static final int MIN_LEVEL = 1;
+
+    /**
+     * The maximum level for headings.
+     */
+    static final int MAX_LEVEL = 6;
+
+    /**
+     * Returns the level of this heading.
+     * 
+     * @return the level of the heading.
+     */
+    int getLevel();
+
+    /**
+     * Assigns the level of this heading.
+     * 
+     * @param level the level of the heading to assign.
+     * @throws IllegalArgumentException if given {@code level} if out of range.
+     */
     void setLevel(int level);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

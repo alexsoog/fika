@@ -1,0 +1,8 @@
+[
+  {
+    "example": 1,
+    "section": "Definition lists",
+    "markdown": "Apple\n:   Pomaceous fruit of plants of the genus Malus in\n\tthe family Rosaceae.\n\nOrange\n:   The fruit of an evergreen tree of the genus Citrus.",
+    "html": "<dl><dt>Apple</dt><dd>Pomaceous fruit of plants of the genus Malus in\nthe family Rosaceae.</dd><dt>Orange</dt><dd>The fruit of an evergreen tree of the genus Citrus.</dd></dl>"
+  }
+]

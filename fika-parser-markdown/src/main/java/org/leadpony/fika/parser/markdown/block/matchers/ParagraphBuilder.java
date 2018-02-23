@@ -18,7 +18,7 @@ package org.leadpony.fika.parser.markdown.block.matchers;
 import org.leadpony.fika.core.model.Block;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
-import org.leadpony.fika.parser.markdown.block.MatcherType;
+import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
@@ -33,14 +33,22 @@ class ParagraphBuilder extends AbstractParagraphBuilder {
     ParagraphBuilder() {
         this.canceled = false;
     }
+    
+    boolean isCanceled() {
+        return canceled;
+    }
+    
+    void cancel() {
+        this.canceled = true;
+    }
   
     @Override
-    public MatcherType matcherType() {
-        return BasicMatcherType.PARAGRAPH;
+    public BlockType blockType() {
+        return BasicBlockType.PARAGRAPH;
     }
     
     @Override
-    public Result match(InputSequence input) {
+    public Result append(InputSequence input) {
         if (lineNo() <= 1) {
             appendLine(input);
             return Result.CONTINUED;
@@ -58,26 +66,17 @@ class ParagraphBuilder extends AbstractParagraphBuilder {
     }
     
     @Override
-    public BlockBuilder interrupt(InputSequence input, BuilderMode mode) {
-        BlockBuilder interrupter = super.interrupt(input, mode);
-        if (interrupter instanceof SetextHeadingBuilder) {
-            this.canceled = true;
-        }
-        return interrupter;
-    }
-
-    @Override
     public Result continueLazily(InputSequence input) {
         BlockBuilder interrupter = interrupt(input, BuilderMode.LAZY_CONTINUATION);
         if (interrupter != null || input.isBlank()) {
             return Result.NOT_MATCHED;
         }
-        return match(input);
+        return append(input);
     }
     
     @Override
     protected Block buildBlock() {
-        if (canceled) {
+        if (isCanceled()) {
             return null;
         }
         return buildParagraph(0);

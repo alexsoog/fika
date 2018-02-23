@@ -22,21 +22,26 @@ import java.util.regex.Pattern;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
-import org.leadpony.fika.parser.markdown.block.MatcherType;
+import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
+/**
+ * Matcher implementation for setext heading.
+ * 
+ * @author leadpony
+ */
 public class SetextHeadingMatcher implements BlockMatcher {
 
     private static final Pattern UNDERLINE_PATTERN = Pattern.compile("\\u0020{0,3}(=+|-{2,})\\u0020*");
     
     @Override
-    public MatcherType matcherType() {
-        return BasicMatcherType.SETEXT_HEADING;
+    public BlockType blockType() {
+        return BasicBlockType.SETEXT_HEADING;
     }
 
     @Override
-    public Set<? extends MatcherType> interruptible() {
-        return EnumSet.of(BasicMatcherType.PARAGRAPH);
+    public Set<? extends BlockType> interruptible() {
+        return EnumSet.of(BasicBlockType.PARAGRAPH);
     }
     
     /**
@@ -64,6 +69,7 @@ public class SetextHeadingMatcher implements BlockMatcher {
         int level = (c == '=') ? 1 : 2;
         ParagraphBuilder paragraphBuilder = (ParagraphBuilder)current;
         String content = paragraphBuilder.buildContent(0);
+        paragraphBuilder.cancel();
         return new SetextHeadingBuilder(level, content);
     }
 }

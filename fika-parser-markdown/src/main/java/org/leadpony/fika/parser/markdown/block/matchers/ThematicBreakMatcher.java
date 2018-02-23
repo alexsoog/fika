@@ -21,10 +21,12 @@ import java.util.Set;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
-import org.leadpony.fika.parser.markdown.block.MatcherType;
+import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
+ * Matcher implementation for thematic break.
+ * 
  * @author leadpony
  */
 public class ThematicBreakMatcher implements BlockMatcher {
@@ -32,16 +34,16 @@ public class ThematicBreakMatcher implements BlockMatcher {
     private final ThematicBreakBuilder builder = new ThematicBreakBuilder();
 
     @Override
-    public MatcherType matcherType() {
-        return BasicMatcherType.THEMATIC_BREAK;
+    public BlockType blockType() {
+        return BasicBlockType.THEMATIC_BREAK;
     }
     
     @Override
-    public Set<? extends MatcherType> interruptible() {
+    public Set<? extends BlockType> interruptible() {
         return EnumSet.of(
-                BasicMatcherType.PARAGRAPH,
-                BasicMatcherType.LINK_DEFINITION,
-                BasicMatcherType.LIST);
+                BasicBlockType.PARAGRAPH,
+                BasicBlockType.LINK_DEFINITION,
+                BasicBlockType.LIST);
     }
 
     @Override

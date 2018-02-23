@@ -16,15 +16,23 @@
 package org.leadpony.fika.core.model;
 
 /**
+ * Ordered item list.
+ * 
  * @author leadpony
  */
 public interface OrderedList extends ListBlock {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);
     }
     
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default ListType listType() {
         return ListType.ORDERED;

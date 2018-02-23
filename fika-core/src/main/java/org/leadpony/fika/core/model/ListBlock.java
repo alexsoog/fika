@@ -16,9 +16,16 @@
 package org.leadpony.fika.core.model;
 
 /**
+ * List block.
+ * 
  * @author leadpony
  */
 public interface ListBlock extends Block {
     
+    /**
+     * Returns the type of this list.
+     * 
+     * @return the type of this list. never be {@code null}.
+     */
     ListType listType();
 }

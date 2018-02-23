@@ -26,13 +26,13 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
 public class DocumentBuilder extends ContainerBlockBuilder {
     
     @Override
-    public MatcherType matcherType() {
+    public BlockType blockType() {
         throw new UnsupportedOperationException();
     }
     
     @Override
-    public Result match(InputSequence input) {
-        super.match(input);
+    public Result append(InputSequence input) {
+        super.append(input);
         return Result.CONTINUED;
     }
     

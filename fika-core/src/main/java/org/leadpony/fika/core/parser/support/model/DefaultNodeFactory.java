@@ -21,6 +21,8 @@ import org.leadpony.fika.core.model.Admonition;
 import org.leadpony.fika.core.model.BlockQuote;
 import org.leadpony.fika.core.model.CodeBlock;
 import org.leadpony.fika.core.model.CodeSpan;
+import org.leadpony.fika.core.model.Definition;
+import org.leadpony.fika.core.model.DefinitionList;
 import org.leadpony.fika.core.model.Document;
 import org.leadpony.fika.core.model.Emphasis;
 import org.leadpony.fika.core.model.HardLineBreak;
@@ -35,6 +37,7 @@ import org.leadpony.fika.core.model.ListType;
 import org.leadpony.fika.core.model.NodeFactory;
 import org.leadpony.fika.core.model.OrderedList;
 import org.leadpony.fika.core.model.Paragraph;
+import org.leadpony.fika.core.model.Term;
 import org.leadpony.fika.core.model.Text;
 import org.leadpony.fika.core.model.ThematicBreak;
 import org.leadpony.fika.core.model.UnorderedList;
@@ -62,12 +65,19 @@ public class DefaultNodeFactory implements NodeFactory {
 
     @Override
     public CodeBlock newCodeBlock(String content) {
+        Objects.requireNonNull(content, "content must not be null");
         return new CodeBlockImpl(this, content);
     }
     
     @Override
     public CodeSpan newCodeSpan(String content) {
+        Objects.requireNonNull(content, "content must not be null");
         return new CodeSpanImpl(this, content);
+    }
+
+    @Override
+    public Definition newDefinition() {
+        return new DefinitionImpl(this);
     }
 
     @Override
@@ -77,6 +87,9 @@ public class DefaultNodeFactory implements NodeFactory {
 
     @Override
     public Emphasis newEmphasis(int strength) {
+        if (strength < Emphasis.MIN_STRENGTH || strength > Emphasis.MAX_STRENGTH) {
+            throw new IllegalArgumentException("strength is out of range");
+        }
         return new EmphasisImpl(this, strength);
     }
 
@@ -87,16 +100,21 @@ public class DefaultNodeFactory implements NodeFactory {
 
     @Override
     public Heading newHeading(int level) {
+        if (level < Heading.MIN_LEVEL || level > Heading.MAX_LEVEL) {
+            throw new IllegalArgumentException("level is out of range");
+        }
         return new HeadingImpl(this, level);
     }
 
     @Override
     public HtmlBlock newHtmlBlock(String content) {
+        Objects.requireNonNull(content, "content must not be null");
         return new HtmlBlockImpl(this, content);
     }
     
     @Override
     public HtmlInline newHtmlInline(String content) {
+        Objects.requireNonNull(content, "content must not be null");
         return new HtmlInlineImpl(this, content);
     }
 
@@ -112,11 +130,14 @@ public class DefaultNodeFactory implements NodeFactory {
 
     @Override
     public ListBlock newLiskBlock(ListType type) {
+        Objects.requireNonNull(type, "type must not be null");
         switch (type) {
         case ORDERED:
             return new OrderedListImpl(this);
         case UNORDERED:
             return new UnorderedListImpl(this);
+        case DEFINITION:
+            return new DefinitionListImpl(this);
         }
         return null;
     }
@@ -132,7 +153,13 @@ public class DefaultNodeFactory implements NodeFactory {
     }
 
     @Override
+    public Term newTerm() {
+        return new TermImpl(this);
+    }
+
+    @Override
     public Text newText(String content) {
+        Objects.requireNonNull(content, "content must not be null");
         return new TextImpl(this, content);
     }
 
@@ -140,8 +167,12 @@ public class DefaultNodeFactory implements NodeFactory {
     public ThematicBreak newThematicBreak() {
         return new ThematicBreakImpl(this);
     }
-
     
+    /**
+     * Implementation of {@link Admonition}.
+     * 
+     * @author leadpony
+     */
     private static class AdmonitionImpl extends ContainerNode implements Admonition {
         
         private String type;
@@ -170,10 +201,16 @@ public class DefaultNodeFactory implements NodeFactory {
 
         @Override
         public void setTitle(String title) {
+            Objects.requireNonNull(title, "title must not be null");
             this.title = title;
         }
     }
     
+    /**
+     * Implementation of {@link BlockQuote}.
+     * 
+     * @author leadpony
+     */
     private static class BlockQuoteImpl extends ContainerNode implements BlockQuote {
         
         BlockQuoteImpl(NodeFactory factory) {
@@ -181,6 +218,11 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
     
+    /**
+     * Implementation of {@link CodeBlock}.
+     * 
+     * @author leadpony
+     */
     private static class CodeBlockImpl extends CodeNode implements CodeBlock {
 
         CodeBlockImpl(NodeFactory factory, String content) {
@@ -188,6 +230,11 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
     
+    /**
+     * Implementation of {@link CodeSpan}.
+     * 
+     * @author leadpony
+     */
     private static class CodeSpanImpl extends CodeNode implements CodeSpan {
 
         CodeSpanImpl(NodeFactory factory, String content) {
@@ -195,6 +242,35 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
 
+    /**
+     * Implementation of {@link DefinitionList}.
+     * 
+     * @author leadpony
+     */
+    private static class DefinitionListImpl extends ContainerNode implements DefinitionList {
+        
+        DefinitionListImpl(NodeFactory factory) {
+            super(factory);
+        }
+    }
+    
+    /**
+     * Implementation of {@link Definition}.
+     * 
+     * @author leadpony
+     */
+    private static class DefinitionImpl extends ContainerNode implements Definition {
+        
+        DefinitionImpl(NodeFactory factory) {
+            super(factory);
+        }
+    }
+
+    /**
+     * Implementation of {@link Document}.
+     * 
+     * @author leadpony
+     */
     private static class DocumentImpl extends ContainerNode implements Document {
         
         DocumentImpl(NodeFactory factory) {
@@ -202,6 +278,11 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
   
+    /**
+     * Implementation of {@link Emphasis}.
+     * 
+     * @author leadpony
+     */
     private static class EmphasisImpl extends ContainerNode implements Emphasis {
         
         private int strength;
@@ -218,10 +299,18 @@ public class DefaultNodeFactory implements NodeFactory {
         
         @Override
         public void setStrength(int strength) {
+            if (strength < Emphasis.MIN_STRENGTH || strength > Emphasis.MAX_STRENGTH) {
+                throw new IllegalArgumentException("strength is out of range");
+            }
             this.strength = strength;
         }
     }
     
+    /**
+     * Implementation of {@link HardLineBreak}.
+     * 
+     * @author leadpony
+     */
     private static class HardLineBreakImpl extends BaseNode implements HardLineBreak {
         
         HardLineBreakImpl(NodeFactory factory) {
@@ -229,6 +318,11 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
 
+    /**
+     * Implementation of {@link Heading}.
+     * 
+     * @author leadpony
+     */
     private static class HeadingImpl extends ContainerNode implements Heading {
         
         private int level;
@@ -245,10 +339,18 @@ public class DefaultNodeFactory implements NodeFactory {
         
         @Override
         public void setLevel(int level) {
+            if (level < Heading.MIN_LEVEL || level > Heading.MAX_LEVEL) {
+                throw new IllegalArgumentException("level is out of range");
+            }
             this.level = level;
         }
     }
     
+    /**
+     * Implementation of {@link HtmlBlock}.
+     * 
+     * @author leadpony
+     */
     private static class HtmlBlockImpl extends HtmlNode implements HtmlBlock {
         
         HtmlBlockImpl(NodeFactory factory, String content) {
@@ -256,6 +358,11 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
 
+    /**
+     * Implementation of {@link HtmlInline}.
+     * 
+     * @author leadpony
+     */
     private static class HtmlInlineImpl extends HtmlNode implements HtmlInline {
         
         HtmlInlineImpl(NodeFactory factory, String content) {
@@ -263,6 +370,11 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
 
+    /**
+     * Implementation of {@link Image}.
+     * 
+     * @author leadpony
+     */
     private static class ImageImpl extends ContainerNode implements Image {
         
         private String location;
@@ -295,6 +407,11 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
     
+    /**
+     * Implementation of {@link Link}.
+     * 
+     * @author leadpony
+     */
     private static class LinkImpl extends ContainerNode implements Link {
         
         private String destination;
@@ -334,6 +451,11 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
 
+    /**
+     * Implementation of {@link ListItem}.
+     * 
+     * @author leadpony
+     */
     private static class ListItemImpl extends ContainerNode implements ListItem {
         
         ListItemImpl(NodeFactory factory) {
@@ -341,6 +463,11 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
     
+    /**
+     * Implementation of {@link OrderedList}.
+     * 
+     * @author leadpony
+     */
     private static class OrderedListImpl extends ContainerNode implements OrderedList {
 
         int startNumber;
@@ -361,6 +488,11 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
     
+    /**
+     * Implementation of {@link Paragraph}.
+     * 
+     * @author leadpony
+     */
     private static class ParagraphImpl extends ContainerNode implements Paragraph {
         
         ParagraphImpl(NodeFactory factory) {
@@ -368,6 +500,23 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
  
+    /**
+     * Implementation of {@link Term}.
+     * 
+     * @author leadpony
+     */
+    private static class TermImpl extends ContainerNode implements Term {
+        
+        TermImpl(NodeFactory factory) {
+            super(factory);
+        }
+    }
+
+    /**
+     * Implementation of {@link Text}.
+     * 
+     * @author leadpony
+     */
     private static class TextImpl extends CharDataNode implements Text {
         
         TextImpl(NodeFactory factory, String content) {
@@ -375,6 +524,11 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
     
+    /**
+     * Implementation of {@link ThematicBreak}.
+     * 
+     * @author leadpony
+     */
     private static class ThematicBreakImpl extends BaseNode implements ThematicBreak {
   
         ThematicBreakImpl(NodeFactory factory) {
@@ -382,6 +536,11 @@ public class DefaultNodeFactory implements NodeFactory {
         }
     }
 
+    /**
+     * Implementation of {@link UnorderedList}.
+     * 
+     * @author leadpony
+     */
     private static class UnorderedListImpl extends ContainerNode implements UnorderedList {
         
         UnorderedListImpl(NodeFactory factory) {

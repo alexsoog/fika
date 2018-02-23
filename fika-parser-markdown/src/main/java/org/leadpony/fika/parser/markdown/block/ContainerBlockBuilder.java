@@ -46,17 +46,19 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
     }
     
     @Override
-    public Result match(InputSequence input) {
+    public Result append(InputSequence input) {
         return findAndInvokeChildBuilder(input);
     }
 
     @Override
-    public final Block close() {
+    public final Block build() {
         if (hasChildBuilder()) {
             closeCurrentChildBuilder();
         }
         Block block = buildBlock();
-        block.appendChildren(childNodes());
+        if (block != null) {
+            block.appendChildren(childNodes());
+        }
         return block;
     }
     
@@ -111,7 +113,7 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
     }
     
     private Result callBuilderDirect(BlockBuilder matcher, InputSequence input) {
-        return matcher.match(input);
+        return matcher.append(input);
     }
     
     protected void openChildBuilder(BlockBuilder childBuilder) {
@@ -127,16 +129,19 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
         if (childBuilder == null) {
             throw new NullPointerException();
         }
-        Node node = childBuilder.close();
-        if (node != null) {
-            this.childNodes.add(node);
-        }
+        addChildNode(childBuilder.build());
         this.childBuilder = null;
     }
     
     protected void closeCurrentChildBuilder() {
         if (this.childBuilder != null) {
             closeChildBuilder(this.childBuilder);
+        }
+    }
+    
+    protected void addChildNode(Node node) {
+        if (node != null) {
+            this.childNodes.add(node);
         }
     }
     

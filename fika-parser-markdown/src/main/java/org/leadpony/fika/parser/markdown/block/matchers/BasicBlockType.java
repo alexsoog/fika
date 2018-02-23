@@ -15,12 +15,14 @@
  */
 package org.leadpony.fika.parser.markdown.block.matchers;
 
-import org.leadpony.fika.parser.markdown.block.MatcherType;
+import org.leadpony.fika.parser.markdown.block.BlockType;
 
 /**
+ * Predefined block types.
+ * 
  * @author leadpony
  */
-public enum BasicMatcherType implements MatcherType {
+public enum BasicBlockType implements BlockType {
 
     /**
      * Setext heading. 
@@ -30,19 +32,22 @@ public enum BasicMatcherType implements MatcherType {
     THEMATIC_BREAK(110),
     LIST(120),
     LIST_ITEM(130),
-    ATX_HEADING(140),
-    BLOCK_QUOTE(150),
-    FENCED_CODE(160),
-    ADMONITION(170),
-    HTML_BLOCK(180),
-    INDENTED_CODE(190),
-    LINK_DEFINITION(200),
+    DEFINITION_LIST(140),
+    TERM(150),
+    DEFINITIION(160),
+    ATX_HEADING(170),
+    BLOCK_QUOTE(180),
+    FENCED_CODE(190),
+    ADMONITION(200),
+    HTML_BLOCK(210),
+    INDENTED_CODE(220),
+    LINK_DEFINITION(230),
     PARAGRAPH(300)
     ;
     
     private final int precedence;
     
-    private BasicMatcherType(int precedence) {
+    private BasicBlockType(int precedence) {
         this.precedence = precedence;
     }
 

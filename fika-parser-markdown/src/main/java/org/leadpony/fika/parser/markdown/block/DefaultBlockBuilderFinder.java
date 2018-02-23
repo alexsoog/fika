@@ -33,7 +33,7 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
 class DefaultBlockBuilderFinder implements BlockBuilderFinder {
 
     private final List<BlockMatcher> matchers;
-    private final Map<MatcherType, List<BlockMatcher>> interrupters = new HashMap<>();
+    private final Map<BlockType, List<BlockMatcher>> interrupters = new HashMap<>();
 
     DefaultBlockBuilderFinder(List<BlockMatcher> matchers) {
         this.matchers = setUpMatchers(matchers);
@@ -58,7 +58,7 @@ class DefaultBlockBuilderFinder implements BlockBuilderFinder {
         if (input.isBlank()) {
             return null;
         }
-        List<BlockMatcher> matchers = interrupters.get(current.matcherType());
+        List<BlockMatcher> matchers = interrupters.get(current.blockType());
         if (matchers == null) {
             return null;
         }
@@ -80,7 +80,7 @@ class DefaultBlockBuilderFinder implements BlockBuilderFinder {
     }
     
     private void addInterrupter(BlockMatcher matcher) {
-        for (MatcherType type: matcher.interruptible()) {
+        for (BlockType type: matcher.interruptible()) {
             List<BlockMatcher> list = interrupters.get(type);
             if (list == null) {
                 list = new ArrayList<>();

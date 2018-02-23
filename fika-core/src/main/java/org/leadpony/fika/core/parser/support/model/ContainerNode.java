@@ -22,6 +22,8 @@ import org.leadpony.fika.core.model.Node;
 import org.leadpony.fika.core.model.NodeFactory;
 
 /**
+ * Skeletal implementation of the node containing child nodes.
+ * 
  * @author leadpony
  */
 public abstract class ContainerNode extends BaseNode {

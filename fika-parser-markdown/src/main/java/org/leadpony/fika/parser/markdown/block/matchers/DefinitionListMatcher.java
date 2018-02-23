@@ -15,57 +15,60 @@
  */
 package org.leadpony.fika.parser.markdown.block.matchers;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.EnumSet;
+import java.util.Set;
 
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockMatcher;
-import org.leadpony.fika.parser.markdown.block.BuilderMode;
 import org.leadpony.fika.parser.markdown.block.BlockType;
+import org.leadpony.fika.parser.markdown.block.BuilderMode;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
- * Matcher implementation for admonition.
+ * Matcher implementation for definition list.
  * 
  * @author leadpony
  */
-public class AdmonitionMatcher implements BlockMatcher {
+public class DefinitionListMatcher implements BlockMatcher {
 
-    private static final Pattern TYPE_PATTERN = Pattern.compile(
-            "\\s*(\\S+)" +
-            "(" +
-            "\\s*|" +
-            "\\s+\"((\\\\\"|[^\"])*)\"\\s*" + 
-            ")"
-            );
-    
     @Override
     public BlockType blockType() {
-        return BasicBlockType.ADMONITION;
+        return BasicBlockType.DEFINITION_LIST;
     }
 
     @Override
+    public Set<? extends BlockType> interruptible() {
+        return EnumSet.of(BasicBlockType.PARAGRAPH);
+    }
+    
+    @Override
     public BlockBuilder newBuilder(InputSequence input) {
-        final int spaces = input.countLeadingSpaces(0, 3);
-        if (spaces >= 4) {
-            return null;
+        if (matches(input)) {
+            return new DefinitionListBuilder();
         }
-        final int count = input.countLeading('!', spaces, spaces + 3);
-        if (count != 3) {
-            return null;
-        }
-        InputSequence content = input.subSequence(spaces + count);
-        Matcher m = TYPE_PATTERN.matcher(content);
-        if (!m.matches()) {
-            return null;
-        }
-        String type = m.group(1);
-        String title = m.group(3);
-        return new AdmonitionBuilder(type, title);
+        return null;
     }
 
     @Override
     public BlockBuilder newInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
-        return newBuilder(input);
+        if (mode == BuilderMode.LAZY_CONTINUATION) {
+            return null;
+        }
+        if (current.lineNo() > 2) {
+            return null;
+        }
+        if (matches(input)) {
+            ParagraphBuilder paragraphBuilder = (ParagraphBuilder)current;
+            String term = paragraphBuilder.buildContent(0);
+            paragraphBuilder.cancel();
+            return new DefinitionListBuilder(term);
+        }
+        return null;
+    }
+
+    private boolean matches(InputSequence input) {
+        return input.length() >= 4 && 
+               input.charAt(0) == ':' && 
+               input.countLeadingSpaces(1, 4) == 3;
     }
 }

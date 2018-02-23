@@ -16,10 +16,21 @@
 package org.leadpony.fika.core.model;
 
 /**
+ * Predefined type of list.
+ * 
  * @author leadpony
- *
  */
 public enum ListType {
+    /**
+     * Ordered item list.
+     */
     ORDERED,
-    UNORDERED
+    /**
+     * Unordered item list.
+     */
+    UNORDERED,
+    /**
+     * Definition list.
+     */
+    DEFINITION
 }

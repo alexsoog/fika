@@ -150,6 +150,7 @@ public class SiteBuilder extends AbstractHtmlBuilder {
             return null;
         }
         builder.withFeature(BasicFeature.ADMONITION);
+        builder.withFeature(BasicFeature.DEFINITION_LIST);
         return builder.build();
     }
 }

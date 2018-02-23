@@ -79,8 +79,18 @@ public interface Node {
     }
 
     String textContent();
-    
+ 
+    /**
+     * Accepts the visitor to this node.
+     * 
+     * @param visitor the visitor to accept, cannot be {@code null}.
+     */
     void accept(Visitor visitor);
 
+    /**
+     * Returns the instance of the factory that created this node.
+     *  
+     * @return the instance of the factory, never be {@code null}.
+     */
     NodeFactory factory();
 }

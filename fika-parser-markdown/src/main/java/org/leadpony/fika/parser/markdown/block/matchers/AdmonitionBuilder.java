@@ -20,7 +20,7 @@ import static org.leadpony.fika.parser.markdown.common.Strings.capitalize;
 import org.leadpony.fika.core.model.Admonition;
 import org.leadpony.fika.core.model.Block;
 import org.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
-import org.leadpony.fika.parser.markdown.block.MatcherType;
+import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
@@ -42,12 +42,12 @@ class AdmonitionBuilder extends ContainerBlockBuilder {
     }
 
     @Override
-    public MatcherType matcherType() {
-        return BasicMatcherType.ADMONITION;
+    public BlockType blockType() {
+        return BasicBlockType.ADMONITION;
     }
 
     @Override
-    public Result match(InputSequence input) {
+    public Result append(InputSequence input) {
         if (lineNo() <= 1) {
             return Result.CONTINUED;
         }

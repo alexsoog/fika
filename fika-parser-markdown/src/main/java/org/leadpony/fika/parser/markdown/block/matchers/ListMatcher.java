@@ -21,22 +21,24 @@ import java.util.Set;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
-import org.leadpony.fika.parser.markdown.block.MatcherType;
+import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
+ * Matcher implementation for list.
+ * 
  * @author leadpony
  */
 public class ListMatcher implements BlockMatcher {
     
     @Override
-    public MatcherType matcherType() {
-        return BasicMatcherType.LIST;
+    public BlockType blockType() {
+        return BasicBlockType.LIST;
     }
   
     @Override
-    public Set<? extends MatcherType> interruptible() {
-        return EnumSet.of(BasicMatcherType.PARAGRAPH, BasicMatcherType.LINK_DEFINITION);
+    public Set<? extends BlockType> interruptible() {
+        return EnumSet.of(BasicBlockType.PARAGRAPH, BasicBlockType.LINK_DEFINITION);
     }
     
     @Override

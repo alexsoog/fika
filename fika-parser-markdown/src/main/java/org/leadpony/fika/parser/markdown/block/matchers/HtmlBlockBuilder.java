@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 import org.leadpony.fika.core.model.Block;
 import org.leadpony.fika.parser.markdown.block.AbstractBlockBuilder;
-import org.leadpony.fika.parser.markdown.block.MatcherType;
+import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.HtmlMatchers;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
@@ -40,8 +40,8 @@ class HtmlBlockBuilder extends AbstractBlockBuilder {
     }
 
     @Override
-    public MatcherType matcherType() {
-        return BasicMatcherType.HTML_BLOCK;
+    public BlockType blockType() {
+        return BasicBlockType.HTML_BLOCK;
     }
 
     @Override
@@ -73,7 +73,7 @@ class HtmlScriptBlockBuilder extends HtmlBlockBuilder {
     }
     
     @Override
-    public Result match(InputSequence input) {
+    public Result append(InputSequence input) {
         appendLine(input);
         if (END_PATTERN.matcher(input).find()) {
             return Result.COMPLETED;
@@ -95,7 +95,7 @@ class HtmlCommentBlockBuilder extends HtmlBlockBuilder {
     }
     
     @Override
-    public Result match(InputSequence input) {
+    public Result append(InputSequence input) {
         appendLine(input);
         return input.contains("-->") ? Result.COMPLETED : Result.CONTINUED;
     }
@@ -114,7 +114,7 @@ class ProcessingInstructionBuilder extends HtmlBlockBuilder {
     }
     
     @Override
-    public Result match(InputSequence input) {
+    public Result append(InputSequence input) {
         appendLine(input);
         return input.contains("?>") ? Result.COMPLETED : Result.CONTINUED;
     }
@@ -135,7 +135,7 @@ class DeclarationBuilder extends HtmlBlockBuilder {
     }
     
     @Override
-    public Result match(InputSequence input) {
+    public Result append(InputSequence input) {
         appendLine(input);
         return input.contains(">") ? Result.COMPLETED : Result.CONTINUED;
     }
@@ -154,7 +154,7 @@ class CDataSectionBuilder extends HtmlBlockBuilder {
     }
     
     @Override
-    public Result match(InputSequence input) {
+    public Result append(InputSequence input) {
         appendLine(input);
         return input.contains("]]>") ? Result.COMPLETED : Result.CONTINUED;
     }
@@ -256,7 +256,7 @@ class HtmlElementBlockBuilder extends HtmlBlockBuilder {
     }
     
     @Override
-    public Result match(InputSequence input) {
+    public Result append(InputSequence input) {
         if (input.isBlank()) {
             return Result.COMPLETED;
         }
@@ -295,7 +295,7 @@ class HtmlTagBlockBuilder extends HtmlBlockBuilder {
     }
     
     @Override
-    public Result match(InputSequence input) {
+    public Result append(InputSequence input) {
         if (input.isBlank()) {
             return Result.COMPLETED;
         }

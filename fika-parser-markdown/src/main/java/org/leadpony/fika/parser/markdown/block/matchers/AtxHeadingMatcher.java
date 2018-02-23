@@ -21,10 +21,12 @@ import java.util.Set;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
-import org.leadpony.fika.parser.markdown.block.MatcherType;
+import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
+ * Matcher implementation for ATX heading.
+ * 
  * @author leadpony
  */
 public class AtxHeadingMatcher implements BlockMatcher {
@@ -32,13 +34,13 @@ public class AtxHeadingMatcher implements BlockMatcher {
     private static final int MAX_LEVEL = 6;
 
     @Override
-    public MatcherType matcherType() {
-        return BasicMatcherType.ATX_HEADING;
+    public BlockType blockType() {
+        return BasicBlockType.ATX_HEADING;
     }
     
     @Override
-    public Set<? extends MatcherType> interruptible() {
-        return EnumSet.of(BasicMatcherType.PARAGRAPH, BasicMatcherType.LINK_DEFINITION);
+    public Set<? extends BlockType> interruptible() {
+        return EnumSet.of(BasicBlockType.PARAGRAPH, BasicBlockType.LINK_DEFINITION);
     }
     
     @Override

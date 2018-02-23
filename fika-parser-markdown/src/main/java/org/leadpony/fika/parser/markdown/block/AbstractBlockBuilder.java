@@ -41,7 +41,7 @@ public abstract class AbstractBlockBuilder implements BlockBuilder {
     }
     
     @Override
-    public Result match(InputSequence input) {
+    public Result append(InputSequence input) {
         return Result.NOT_MATCHED;
     }
     
@@ -55,7 +55,7 @@ public abstract class AbstractBlockBuilder implements BlockBuilder {
     }
     
     @Override
-    public Block close() {
+    public Block build() {
         return buildBlock();
     }
 

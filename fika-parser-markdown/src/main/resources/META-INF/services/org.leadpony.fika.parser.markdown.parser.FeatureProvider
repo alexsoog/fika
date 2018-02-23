@@ -1,6 +1,7 @@
 org.leadpony.fika.parser.markdown.parser.features.block.Admonition
 org.leadpony.fika.parser.markdown.parser.features.block.BlockQuote
 org.leadpony.fika.parser.markdown.parser.features.block.CodeBlock
+org.leadpony.fika.parser.markdown.parser.features.block.DefinitionList
 org.leadpony.fika.parser.markdown.parser.features.block.Heading
 org.leadpony.fika.parser.markdown.parser.features.block.HtmlBlock
 org.leadpony.fika.parser.markdown.parser.features.block.LinkDefinition

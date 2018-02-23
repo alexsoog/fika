@@ -17,17 +17,19 @@ package org.leadpony.fika.parser.markdown.block.matchers;
 
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockMatcher;
-import org.leadpony.fika.parser.markdown.block.MatcherType;
+import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
+ * Matcher implementation for paragraph.
+ * 
  * @author leadpony
  */
 public class ParagraphMatcher implements BlockMatcher {
 
     @Override
-    public MatcherType matcherType() {
-        return BasicMatcherType.PARAGRAPH;
+    public BlockType blockType() {
+        return BasicBlockType.PARAGRAPH;
     }
 
     @Override

@@ -21,10 +21,12 @@ import java.util.Set;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
-import org.leadpony.fika.parser.markdown.block.MatcherType;
+import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
+ * Matcher implementation for fenced code.
+ * 
  * @author leadpony
  */
 public class FencedCodeMatcher implements BlockMatcher { 
@@ -33,13 +35,13 @@ public class FencedCodeMatcher implements BlockMatcher {
     }
 
     @Override
-    public MatcherType matcherType() {
-        return BasicMatcherType.FENCED_CODE;
+    public BlockType blockType() {
+        return BasicBlockType.FENCED_CODE;
     }
  
     @Override
-    public Set<? extends MatcherType> interruptible() {
-        return EnumSet.of(BasicMatcherType.PARAGRAPH, BasicMatcherType.LINK_DEFINITION);
+    public Set<? extends BlockType> interruptible() {
+        return EnumSet.of(BasicBlockType.PARAGRAPH, BasicBlockType.LINK_DEFINITION);
     }
 
     @Override

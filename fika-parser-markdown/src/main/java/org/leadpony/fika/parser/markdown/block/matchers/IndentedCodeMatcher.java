@@ -17,17 +17,19 @@ package org.leadpony.fika.parser.markdown.block.matchers;
 
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockMatcher;
-import org.leadpony.fika.parser.markdown.block.MatcherType;
+import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
+ * Matcher implementation for indented code.
+ * 
  * @author leadpony
  */
 public class IndentedCodeMatcher implements BlockMatcher {
 
     @Override
-    public MatcherType matcherType() {
-        return BasicMatcherType.INDENTED_CODE;
+    public BlockType blockType() {
+        return BasicBlockType.INDENTED_CODE;
     }
  
     @Override

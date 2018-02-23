@@ -26,6 +26,7 @@ public enum BasicFeature implements Feature {
     BLOCK_QUOTE,
     CODE_BLOCK,
     CODE_SPAN,
+    DEFINITION_LIST,
     EMPHASIS,
     HARD_LINE_BREAK,
     HEADING,

@@ -16,16 +16,16 @@
 package org.leadpony.fika.parser.markdown.block;
 
 /**
- * Block matcher type.
+ * Block type.
  * 
  * @author leadpony
  */
-public interface MatcherType {
+public interface BlockType {
 
     /**
-     * Returns the precedence of this matcher.
+     * Returns the precedence of this block.
      * 
-     * @return the precedence of this matcher.
+     * @return the precedence of the block.
      */
     int precedence();
 }

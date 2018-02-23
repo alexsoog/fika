@@ -29,25 +29,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.leadpony.fika.core.model.Admonition;
-import org.leadpony.fika.core.model.BlockQuote;
-import org.leadpony.fika.core.model.CodeBlock;
-import org.leadpony.fika.core.model.CodeSpan;
-import org.leadpony.fika.core.model.Document;
-import org.leadpony.fika.core.model.Emphasis;
-import org.leadpony.fika.core.model.HardLineBreak;
-import org.leadpony.fika.core.model.Heading;
-import org.leadpony.fika.core.model.HtmlBlock;
-import org.leadpony.fika.core.model.HtmlInline;
-import org.leadpony.fika.core.model.Image;
-import org.leadpony.fika.core.model.Link;
-import org.leadpony.fika.core.model.ListItem;
 import org.leadpony.fika.core.model.Node;
-import org.leadpony.fika.core.model.OrderedList;
-import org.leadpony.fika.core.model.Paragraph;
-import org.leadpony.fika.core.model.Text;
-import org.leadpony.fika.core.model.ThematicBreak;
-import org.leadpony.fika.core.model.UnorderedList;
 import org.leadpony.fika.core.model.Visitor;
 
 /**
@@ -55,7 +37,7 @@ import org.leadpony.fika.core.model.Visitor;
  * 
  * @author leadpony
  */
-public abstract class AbstractHtmlRenderer implements HtmlRenderer, Visitor {
+public abstract class AbstractHtmlRenderer implements HtmlRenderer {
    
     private final Set<Option> options;
     private final Charset charset;
@@ -63,9 +45,8 @@ public abstract class AbstractHtmlRenderer implements HtmlRenderer, Visitor {
     private final String title;
     private final List<URI> stylesheets;
     private final XmlFormatter formatter;
+    private final Visitor visitor;
  
-    private static final String[] HEADINGS = { "h1", "h2", "h3", "h4", "h5", "h6" };
-    
     protected AbstractHtmlRenderer(Builder builder) {
         this.options = Collections.unmodifiableSet(builder.options);
         this.charset = builder.charset;
@@ -75,6 +56,7 @@ public abstract class AbstractHtmlRenderer implements HtmlRenderer, Visitor {
         this.formatter = (builder.formatter != null) ?
                 builder.formatter :
                 new MinimalXmlFormatter();
+        this.visitor = buildVisitor(this.formatter);
     }
     
     @Override
@@ -119,9 +101,7 @@ public abstract class AbstractHtmlRenderer implements HtmlRenderer, Visitor {
     
     protected void renderBody(XmlFormatter formatter, Node node) {
         formatter.startTag("body");
-        renderHeader(formatter);
         renderContent(formatter, node);
-        renderFooter(formatter);
         formatter.endTag("body");
     }
     
@@ -148,163 +128,14 @@ public abstract class AbstractHtmlRenderer implements HtmlRenderer, Visitor {
         }
     }
     
-    protected void renderHeader(XmlFormatter formatter) {
-    }
-
-    protected void renderFooter(XmlFormatter formatter) {
-    }
-
     protected void renderContent(XmlFormatter formatter, Node node) {
-        node.accept(this);
+        node.accept(this.visitor);
     }
     
-    /* Visitor interface */
-    
-    @Override
-    public void visit(Admonition node) {
-        AttributeMap attributes = new AttributeMap();
-        final String typeQualifier = node.getType().toLowerCase();
-        attributes.addClass("admonition").addClass(typeQualifier);
-        formatter.startTag("aside", attributes);
-        String title = node.getTitle();
-        if (!title.isEmpty()) {
-            formatter.startTag("header");
-            formatter.startTag("p");
-            formatter.text(title);
-            formatter.endTag("p");
-            formatter.endTag("header");
-        }
-        visitChildren(node);
-        formatter.endTag("aside");
-    }
-    
-    @Override
-    public void visit(BlockQuote node) {
-        formatter.startTag("blockquote");
-        visitChildren(node);
-        formatter.endTag("blockquote");
+    protected Visitor buildVisitor(XmlFormatter formatter) {
+        return new DefaultRenderingVisitor(formatter);
     }
 
-    @Override
-    public void visit(CodeBlock node) {
-        formatter.startTag("pre");
-        AttributeMap attributes = new AttributeMap();
-        String language = node.getLanguage();
-        if (language != null) {
-            String classValue = "language-" + language;
-            attributes.addClass(classValue);
-        }
-        formatter.startTag("code", attributes);
-        formatter.text(node.getContent());
-        formatter.endTag("code");
-        formatter.endTag("pre");
-    }
-    
-    @Override
-    public void visit(CodeSpan node) {
-        formatter.startTag("code");
-        formatter.text(node.getContent());
-        formatter.endTag("code");
-    }
-    
-    @Override
-    public void visit(Document node) {
-        visitChildren(node);
-    }
-
-    @Override
-    public void visit(Emphasis node) {
-        String tagName = (node.getStrength() > 1) ? "strong" : "em";
-        formatter.startTag(tagName);
-        visitChildren(node);
-        formatter.endTag(tagName);
-    }
-    
-    @Override
-    public void visit(HardLineBreak node) {
-        formatter.emptyTag("br");
-    }
-
-    @Override
-    public void visit(Heading node) {
-        String tagName = HEADINGS[node.getLevel() - 1];
-        formatter.startTag(tagName);
-        visitChildren(node);
-        formatter.endTag(tagName);
-    }
-    
-    @Override
-    public void visit(HtmlBlock node) {
-        formatter.rawXml(node.getContent());
-    }
-    
-    @Override
-    public void visit(HtmlInline node) {
-        formatter.rawXml(node.getContent());
-    }
-
-    @Override
-    public void visit(Image node) {
-        AttributeMap attributes = new AttributeMap();
-        attributes.add("src", node.getLocation());
-        attributes.add("title", node.getTitle());
-        attributes.add("alt", node.textContent());
-        formatter.emptyTag("img", attributes);
-    }
-
-    @Override
-    public void visit(Link node) {
-        AttributeMap attributes = new AttributeMap();
-        attributes.add("href", node.getDestination());
-        attributes.add("title", node.getTitle());
-        formatter.startTag("a", attributes);
-        visitChildren(node);
-        formatter.endTag("a");
-    }
-
-    @Override
-    public void visit(ListItem node) {
-        formatter.startTag("li");
-        visitChildren(node);
-        formatter.endTag("li");
-    }
-
-    @Override
-    public void visit(OrderedList node) {
-        AttributeMap attributes = new AttributeMap();
-        int startNumber = node.getStartNumber();
-        if (startNumber != 1) {
-            attributes.add("start", String.valueOf(startNumber));
-        }
-        formatter.startTag("ol", attributes);
-        visitChildren(node);
-        formatter.endTag("ol");
-    }
-
-    @Override
-    public void visit(Paragraph node) {
-        formatter.startTag("p");
-        visitChildren(node);
-        formatter.endTag("p");
-    }
-
-    @Override
-    public void visit(Text node) {
-        formatter.text(node.getContent());
-    }
-
-    @Override
-    public void visit(ThematicBreak node) {
-        formatter.emptyTag("hr");
-    }
-
-    @Override
-    public void visit(UnorderedList node) {
-        formatter.startTag("ul");
-        visitChildren(node);
-        formatter.endTag("ul");
-    }
-    
     /**
      * Default implementation of {@link HtmlRenderer.Builder}.
      * 

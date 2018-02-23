@@ -22,7 +22,7 @@ import static org.leadpony.fika.parser.markdown.common.Strings.unescape;
 import org.leadpony.fika.core.model.Block;
 import org.leadpony.fika.core.model.CodeBlock;
 import org.leadpony.fika.parser.markdown.block.AbstractBlockBuilder;
-import org.leadpony.fika.parser.markdown.block.MatcherType;
+import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 class FencedCodeBuilder extends AbstractBlockBuilder {
@@ -43,12 +43,12 @@ class FencedCodeBuilder extends AbstractBlockBuilder {
     }
   
     @Override
-    public MatcherType matcherType() {
-        return BasicMatcherType.FENCED_CODE;
+    public BlockType blockType() {
+        return BasicBlockType.FENCED_CODE;
     }
     
     @Override
-    public Result match(InputSequence input) {
+    public Result append(InputSequence input) {
         if (lineNo() <= 1) {
             return Result.CONTINUED;
         }
