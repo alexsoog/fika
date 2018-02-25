@@ -42,7 +42,7 @@ class AtxHeadingBuilder extends AbstractBlockBuilder {
     }
     
     @Override
-    public Result append(InputSequence input) {
+    public Result processLine(InputSequence input) {
         return Result.COMPLETED;
     }
     

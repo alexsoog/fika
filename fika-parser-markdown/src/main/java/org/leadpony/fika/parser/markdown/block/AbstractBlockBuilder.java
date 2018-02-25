@@ -26,13 +26,24 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  */
 public abstract class AbstractBlockBuilder implements BlockBuilder {
 
-    private Context context;
+    private BlockContext context;
     private int firstLineNo;
+    private boolean canceled;
+    private BlockBuilder successor;
+    
+    protected AbstractBlockBuilder() {
+        this.canceled = false;
+    }
+
+    @Override
+    public void bind(BlockContext context, int firstLineNo) {
+        this.context = context;
+        this.firstLineNo = firstLineNo;
+    }
     
     @Override
-    public void bind(Context context) {
-        this.context = context;
-        this.firstLineNo = context.lineNo();
+    public BlockContext context() {
+        return context;
     }
     
     @Override
@@ -41,17 +52,30 @@ public abstract class AbstractBlockBuilder implements BlockBuilder {
     }
     
     @Override
-    public Result append(InputSequence input) {
-        return Result.NOT_MATCHED;
+    public void cancel() {
+        this.canceled = true;
     }
     
     @Override
-    public BlockBuilder interrupt(InputSequence input, BuilderMode mode) {
+    public boolean isCanceled() {
+        return canceled;
+    }
+   
+    @Override
+    public Result appendLine(InputSequence input) {
         if (isInterruptible()) {
-            return context().finder().findInterruptingBuilder(input, this, mode);
-        } else {
-            return null;
+            BlockBuilder interrupter = interrupt(input, BuilderMode.NORMAL);
+            if (interrupter != null) {
+                setSuccessor(interrupter);
+                return Result.INTERRUPTED;
+            }
         }
+        return processLine(input);
+    }
+    
+    @Override
+    public BlockBuilder successor() {
+        return successor;
     }
     
     @Override
@@ -59,10 +83,38 @@ public abstract class AbstractBlockBuilder implements BlockBuilder {
         return buildBlock();
     }
 
-    protected Context context() {
-        return context;
+    /**
+     * Checks if this builder is interruptible.
+     * 
+     * @return {@code true} if interruptible.
+     */
+    protected boolean isInterruptible() {
+        return false;
     }
     
+    protected void setSuccessor(BlockBuilder successor) {
+        this.successor = successor;
+    }
+    
+    protected Result processLine(InputSequence input) {
+        return Result.NOT_MATCHED;
+    }
+    
+    /**
+     * Interrupts this builder.
+     * 
+     * @param input new content.
+     * @param mode current mode of this builder.
+     * @return the interrupting builder if found.
+     */
+    protected BlockBuilder interrupt(InputSequence input, BuilderMode mode) {
+        if (isInterruptible()) {
+            return context().finder().findInterruptingBuilder(input, this, mode);
+        } else {
+            return null;
+        }
+    }
+
     protected NodeFactory getNodeFactory() {
         return context.getNodeFactory();
     }

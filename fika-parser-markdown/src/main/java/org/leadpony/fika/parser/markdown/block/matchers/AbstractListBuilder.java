@@ -41,7 +41,7 @@ abstract class AbstractListBuilder extends ContainerBlockBuilder {
     }
 
     @Override
-    public Result append(InputSequence input) {
+    public Result processLine(InputSequence input) {
         if (input.isBlank()) {
             this.lastBlankLineNo = lineNo();
         }

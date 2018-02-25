@@ -47,7 +47,7 @@ class AdmonitionBuilder extends ContainerBlockBuilder {
     }
 
     @Override
-    public Result append(InputSequence input) {
+    public Result processLine(InputSequence input) {
         if (lineNo() <= 1) {
             return Result.CONTINUED;
         }
@@ -59,7 +59,7 @@ class AdmonitionBuilder extends ContainerBlockBuilder {
             findAndInvokeChildBuilder(input);
             return Result.CONTINUED;
         } else {
-            return matchLazyContinuationLine(input);
+            return tryLazyContinuation(input);
         }
     }
     

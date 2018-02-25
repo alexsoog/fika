@@ -55,17 +55,12 @@ abstract class ListItemBuilder extends AbstractListItemBuilder {
     }
     
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.LIST_ITEM;
-    }
-
-    @Override
-    public Result append(InputSequence input) {
-        super.append(input);
+    public Result processLine(InputSequence input) {
+        super.processLine(input);
         final boolean isBlank = input.isBlank();
         if (!isBlank && lineNo() > 1 && !input.hasLeadingSpaces(indentSize)) {
             // Not indented.
-            return matchLazyContinuationLine(input);
+            return tryLazyContinuation(input);
         }
         Result result = findAndInvokeChildBuilder(contentAfterMarker(input));
         if (result == Result.NOT_MATCHED) {
@@ -136,7 +131,7 @@ class BulletListItemBuilder extends ListItemBuilder {
 
     private static final String MARKERS = "+-*";
 
-    static BulletListItemBuilder matcher(InputSequence input, int maxIndent) {
+    static BulletListItemBuilder builder(InputSequence input, int maxIndent) {
         if (input.isEmpty()) {
             return null;
         }
@@ -160,19 +155,25 @@ class BulletListItemBuilder extends ListItemBuilder {
     }
     
     @Override
+    public BlockType blockType() {
+        return BasicBlockType.BULLET_LIST_ITEM;
+    }
+
+    @Override
     boolean isSameTypeAs(ListItemBuilder other) {
         if (other == null || !(other instanceof BulletListItemBuilder)) {
             return false;
         }
-        BulletListItemBuilder casted = (BulletListItemBuilder)other;
-        return this.bullet == casted.bullet;
+        BulletListItemBuilder actual = (BulletListItemBuilder)other;
+        return this.bullet == actual.bullet;
     }
     
     @Override
     BlockBuilder interrupterOfSameType(InputSequence input) {
-        BulletListItemBuilder m = matcher(input, indentSize() + 3);
-        if (m != null && m.bullet == this.bullet) {
-            return m;
+        BulletListItemBuilder builder = builder(input, indentSize() + 3);
+        if (builder != null && builder.bullet == this.bullet) {
+            builder.bind(context());
+            return builder;
         }
         return null;
     }
@@ -188,7 +189,7 @@ class OrderedListItemBuilder extends ListItemBuilder {
     
     private static final Pattern MARKER_PATTERN = Pattern.compile("^(\\d{1,9})([.)])");
     
-    static OrderedListItemBuilder matcher(InputSequence input, int maxIndent) {
+    static OrderedListItemBuilder builder(InputSequence input, int maxIndent) {
         int leadingSpaces = input.countLeadingSpaces(0, maxIndent);
         Matcher m = MARKER_PATTERN.matcher(input.subSequence(leadingSpaces));
         if (!m.find()) {
@@ -211,6 +212,11 @@ class OrderedListItemBuilder extends ListItemBuilder {
         this.delimiter = delimiter;
     }
     
+    @Override
+    public BlockType blockType() {
+        return BasicBlockType.ORDERED_LIST_ITEM;
+    }
+
     int number() {
         return number;
     }
@@ -224,8 +230,8 @@ class OrderedListItemBuilder extends ListItemBuilder {
         if (other == null || !(other instanceof OrderedListItemBuilder)) {
             return false;
         }
-        OrderedListItemBuilder casted = (OrderedListItemBuilder)other;
-        return this.delimiter.equals(casted.delimiter);
+        OrderedListItemBuilder actual = (OrderedListItemBuilder)other;
+        return this.delimiter.equals(actual.delimiter);
     }
 
     @Override
@@ -235,9 +241,10 @@ class OrderedListItemBuilder extends ListItemBuilder {
 
     @Override
     BlockBuilder interrupterOfSameType(InputSequence input) {
-        OrderedListItemBuilder m = matcher(input, indentSize());
-        if (m != null && m.delimiter.equals(this.delimiter)) {
-            return m;
+        OrderedListItemBuilder builder = builder(input, indentSize());
+        if (builder != null && builder.delimiter.equals(this.delimiter)) {
+            builder.bind(context());
+            return builder;
         }
         return null;
     }

@@ -49,7 +49,7 @@ class HtmlBlockBuilder extends AbstractBlockBuilder {
         return getNodeFactory().newHtmlBlock(builder.toString());
     }
     
-    protected void appendLine(InputSequence input) {
+    protected void accumelateLine(InputSequence input) {
         this.builder.append(input.toSourceString()).append('\n');
     }
 }
@@ -73,8 +73,8 @@ class HtmlScriptBlockBuilder extends HtmlBlockBuilder {
     }
     
     @Override
-    public Result append(InputSequence input) {
-        appendLine(input);
+    public Result processLine(InputSequence input) {
+        accumelateLine(input);
         if (END_PATTERN.matcher(input).find()) {
             return Result.COMPLETED;
         }
@@ -95,8 +95,8 @@ class HtmlCommentBlockBuilder extends HtmlBlockBuilder {
     }
     
     @Override
-    public Result append(InputSequence input) {
-        appendLine(input);
+    public Result processLine(InputSequence input) {
+        accumelateLine(input);
         return input.contains("-->") ? Result.COMPLETED : Result.CONTINUED;
     }
 }
@@ -114,8 +114,8 @@ class ProcessingInstructionBuilder extends HtmlBlockBuilder {
     }
     
     @Override
-    public Result append(InputSequence input) {
-        appendLine(input);
+    public Result processLine(InputSequence input) {
+        accumelateLine(input);
         return input.contains("?>") ? Result.COMPLETED : Result.CONTINUED;
     }
 }
@@ -135,8 +135,8 @@ class DeclarationBuilder extends HtmlBlockBuilder {
     }
     
     @Override
-    public Result append(InputSequence input) {
-        appendLine(input);
+    public Result processLine(InputSequence input) {
+        accumelateLine(input);
         return input.contains(">") ? Result.COMPLETED : Result.CONTINUED;
     }
 }
@@ -154,8 +154,8 @@ class CDataSectionBuilder extends HtmlBlockBuilder {
     }
     
     @Override
-    public Result append(InputSequence input) {
-        appendLine(input);
+    public Result processLine(InputSequence input) {
+        accumelateLine(input);
         return input.contains("]]>") ? Result.COMPLETED : Result.CONTINUED;
     }
 }
@@ -256,11 +256,11 @@ class HtmlElementBlockBuilder extends HtmlBlockBuilder {
     }
     
     @Override
-    public Result append(InputSequence input) {
+    public Result processLine(InputSequence input) {
         if (input.isBlank()) {
             return Result.COMPLETED;
         }
-        appendLine(input);
+        accumelateLine(input);
         return Result.CONTINUED;
     }
 }
@@ -295,11 +295,11 @@ class HtmlTagBlockBuilder extends HtmlBlockBuilder {
     }
     
     @Override
-    public Result append(InputSequence input) {
+    public Result processLine(InputSequence input) {
         if (input.isBlank()) {
             return Result.COMPLETED;
         }
-        appendLine(input);
+        accumelateLine(input);
         return Result.CONTINUED;
     }
     

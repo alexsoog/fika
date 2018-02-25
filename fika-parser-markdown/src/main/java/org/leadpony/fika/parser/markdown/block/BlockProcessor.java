@@ -24,10 +24,23 @@ import org.leadpony.fika.core.model.Text;
  * @author leadpony
  */
 public interface BlockProcessor {
-    
-    void process(String line);
-    
-    Document close();
 
+    /**
+     * Processes all blocks from reader.
+     */
+    void processAll();
+    
+    /**
+     * Returns the built document.
+     * 
+     * @return the built document.
+     */
+    Document getDocument();
+
+    /**
+     * Returns the all inline nodes found.
+     * 
+     * @return the set of inline nodes.
+     */
     Set<Text> getInlines();
 }

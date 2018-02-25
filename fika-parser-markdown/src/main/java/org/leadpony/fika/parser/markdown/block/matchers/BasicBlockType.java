@@ -24,14 +24,12 @@ import org.leadpony.fika.parser.markdown.block.BlockType;
  */
 public enum BasicBlockType implements BlockType {
 
-    /**
-     * Setext heading. 
-     * This must have higher precedence than thematic break.
-     */
     SETEXT_HEADING(100),
     THEMATIC_BREAK(110),
-    LIST(120),
-    LIST_ITEM(130),
+    BULLET_LIST(120),
+    ORDERED_LIST(120),
+    BULLET_LIST_ITEM(130),
+    ORDERED_LIST_ITEM(130),
     DEFINITION_LIST(140),
     TERM(150),
     DEFINITIION(160),

@@ -52,10 +52,23 @@ public interface BlockMatcher {
      */
     BlockBuilder newBuilder(InputSequence input);
     
+    /**
+     * Returns the block types which this builder can interrupt.
+     * 
+     * @return the set of block types.
+     */
     default Set<? extends BlockType> interruptible() {
         return Collections.emptySet();
     }
     
+    /**
+     * Creates a new interrupting block builder for the given content.
+     * 
+     * @param input the content of the line.
+     * @param current the builder to be interrupted.
+     * @param mode the current builder mode.
+     * @return new block builder if matched, or {@code null} if not matched.
+     */
     default BlockBuilder newInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
         return null;
     }

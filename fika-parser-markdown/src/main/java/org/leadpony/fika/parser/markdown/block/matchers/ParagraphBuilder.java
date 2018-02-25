@@ -28,57 +28,40 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  */
 class ParagraphBuilder extends AbstractParagraphBuilder {
     
-    private boolean canceled;
-    
-    ParagraphBuilder() {
-        this.canceled = false;
-    }
-    
-    boolean isCanceled() {
-        return canceled;
-    }
-    
-    void cancel() {
-        this.canceled = true;
-    }
-  
     @Override
     public BlockType blockType() {
         return BasicBlockType.PARAGRAPH;
     }
     
     @Override
-    public Result append(InputSequence input) {
+    public Result appendLazyLine(InputSequence input) {
+        BlockBuilder interrupter = interrupt(input, BuilderMode.LAZY_CONTINUATION);
+        if (interrupter != null || input.isBlank()) {
+            return Result.NOT_MATCHED;
+        }
+        return processLine(input);
+    }
+    
+    @Override
+    protected Result processLine(InputSequence input) {
         if (lineNo() <= 1) {
-            appendLine(input);
+            accumelateLine(input);
             return Result.CONTINUED;
         } else if (input.isBlank()) {
             return Result.COMPLETED;
         } else {
-            appendLine(input);
+            accumelateLine(input);
             return Result.CONTINUED;
         }
     }
 
     @Override
-    public boolean isInterruptible() {
+    protected boolean isInterruptible() {
         return lineNo() > 1;
     }
     
     @Override
-    public Result continueLazily(InputSequence input) {
-        BlockBuilder interrupter = interrupt(input, BuilderMode.LAZY_CONTINUATION);
-        if (interrupter != null || input.isBlank()) {
-            return Result.NOT_MATCHED;
-        }
-        return append(input);
-    }
-    
-    @Override
     protected Block buildBlock() {
-        if (isCanceled()) {
-            return null;
-        }
         return buildParagraph(0);
     }
 }    

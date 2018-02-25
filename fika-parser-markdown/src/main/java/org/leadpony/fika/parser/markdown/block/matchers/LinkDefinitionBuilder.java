@@ -35,11 +35,11 @@ class LinkDefinitionBuilder extends AbstractParagraphBuilder implements Consumer
     }
 
     @Override
-    public Result append(InputSequence input) {
+    public Result processLine(InputSequence input) {
         if (lineNo() > 1 && input.isBlank()) {
             return Result.COMPLETED;
         }
-        appendLine(input);
+        accumelateLine(input);
         if (recognizer.acceptLine(input)) {
             return Result.COMPLETED;
         }

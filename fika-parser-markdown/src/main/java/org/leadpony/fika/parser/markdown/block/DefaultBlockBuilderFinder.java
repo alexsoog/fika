@@ -32,10 +32,12 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  */
 class DefaultBlockBuilderFinder implements BlockBuilderFinder {
 
+    private final BlockContext context;
     private final List<BlockMatcher> matchers;
     private final Map<BlockType, List<BlockMatcher>> interrupters = new HashMap<>();
 
-    DefaultBlockBuilderFinder(List<BlockMatcher> matchers) {
+    DefaultBlockBuilderFinder(BlockContext context, List<BlockMatcher> matchers) {
+        this.context = context;
         this.matchers = setUpMatchers(matchers);
     }
 
@@ -47,14 +49,15 @@ class DefaultBlockBuilderFinder implements BlockBuilderFinder {
         for (BlockMatcher matchers: this.matchers) {
             BlockBuilder builder = matchers.newBuilder(input);
             if (builder != null) {
-                return builder;
+                return bindContextTo(builder);
             }
         }
         return null;
     }
     
     @Override
-    public BlockBuilder findInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
+    public BlockBuilder findInterruptingBuilder(
+            InputSequence input, BlockBuilder current, BuilderMode mode) {
         if (input.isBlank()) {
             return null;
         }
@@ -65,10 +68,15 @@ class DefaultBlockBuilderFinder implements BlockBuilderFinder {
         for (BlockMatcher matcher: matchers) {
             BlockBuilder builder = matcher.newInterruptingBuilder(input, current, mode);
             if (builder != null) {
-                return builder;
+                return bindContextTo(builder);
             }
         }
         return null;
+    }
+    
+    private BlockBuilder bindContextTo(BlockBuilder builder) {
+        builder.bind(this.context);
+        return builder;
     }
     
     private List<BlockMatcher> setUpMatchers(List<BlockMatcher> matchers) {

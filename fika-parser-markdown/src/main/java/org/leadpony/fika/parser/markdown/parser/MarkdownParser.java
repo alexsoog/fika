@@ -15,8 +15,6 @@
  */
 package org.leadpony.fika.parser.markdown.parser;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 import java.util.Set;
@@ -25,7 +23,6 @@ import org.leadpony.fika.core.model.Document;
 import org.leadpony.fika.core.model.NodeFactory;
 import org.leadpony.fika.core.model.Text;
 import org.leadpony.fika.core.parser.Parser;
-import org.leadpony.fika.core.parser.ParserException;
 import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BlockProcessor;
 import org.leadpony.fika.parser.markdown.block.DefaultBlockProcessor;
@@ -64,21 +61,13 @@ class MarkdownParser implements Parser {
 
     @Override
     public Document parse() {
-        try {
-            return processAllBlocks();
-        } catch (IOException e) {
-            throw new ParserException(e);
-        }
+        return processAllBlocks();
     }
     
-    private Document processAllBlocks() throws IOException {
+    private Document processAllBlocks() {
         BlockProcessor processor = this.blockProcessor;
-        BufferedReader reader = new BufferedReader(this.reader);
-        String line = null;
-        while ((line = reader.readLine()) != null) {
-            processor.process(line);
-        }
-        Document doc = processor.close();
+        processor.processAll();
+        Document doc = processor.getDocument();
         processAllInlines(processor.getInlines());
         return doc;
     }
@@ -94,7 +83,7 @@ class MarkdownParser implements Parser {
     }
     
     protected BlockProcessor buildBlockProcessor(NodeFactory nodeFactory, List<BlockMatcher> matchers) {
-        return new DefaultBlockProcessor(nodeFactory, linkDefinitions, matchers);
+        return new DefaultBlockProcessor(this.reader, nodeFactory, linkDefinitions, matchers);
     }
     
     protected InlineProcessor buildInlineProcessor(NodeFactory nodeFactory, List<InlineHandler> handlers) {
@@ -107,4 +96,3 @@ class MarkdownParser implements Parser {
         }
     }
 }
-

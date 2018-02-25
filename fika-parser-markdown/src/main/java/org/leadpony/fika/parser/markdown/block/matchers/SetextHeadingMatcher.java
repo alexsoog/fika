@@ -19,8 +19,8 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.leadpony.fika.parser.markdown.block.AbstractBlocKMatcher;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
-import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
@@ -30,7 +30,7 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  * 
  * @author leadpony
  */
-public class SetextHeadingMatcher implements BlockMatcher {
+public class SetextHeadingMatcher extends AbstractBlocKMatcher {
 
     private static final Pattern UNDERLINE_PATTERN = Pattern.compile("\\u0020{0,3}(=+|-{2,})\\u0020*");
     
@@ -66,10 +66,13 @@ public class SetextHeadingMatcher implements BlockMatcher {
             return null;
         }
         char c = input.charAt(firstIndex);
-        int level = (c == '=') ? 1 : 2;
         ParagraphBuilder paragraphBuilder = (ParagraphBuilder)current;
         String content = paragraphBuilder.buildContent(0);
         paragraphBuilder.cancel();
-        return new SetextHeadingBuilder(level, content);
+        return new SetextHeadingBuilder(headingLevel(c), content);
+    }
+    
+    private int headingLevel(char c) {
+        return (c == '=') ? 1 : 2;
     }
 }

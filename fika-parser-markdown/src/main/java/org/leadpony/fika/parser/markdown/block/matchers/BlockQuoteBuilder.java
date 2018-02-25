@@ -36,14 +36,14 @@ class BlockQuoteBuilder extends ContainerBlockBuilder {
     }
    
     @Override
-    public Result append(InputSequence input) {
+    public Result processLine(InputSequence input) {
         Matcher m = BLOCK_QUOTE_MARKER.matcher(input);
         if (m.find()) {
             int skip = m.group(0).length();
             findAndInvokeChildBuilder(input.subSequence(skip));
             return Result.CONTINUED;
         } else {
-            return matchLazyContinuationLine(input);
+            return tryLazyContinuation(input);
         }
     }
 

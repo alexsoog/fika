@@ -18,8 +18,8 @@ package org.leadpony.fika.parser.markdown.block.matchers;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.leadpony.fika.parser.markdown.block.AbstractBlocKMatcher;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
-import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
@@ -29,7 +29,7 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  * 
  * @author leadpony
  */
-public class DefinitionListMatcher implements BlockMatcher {
+public class DefinitionListMatcher extends AbstractBlocKMatcher {
 
     @Override
     public BlockType blockType() {
@@ -43,8 +43,9 @@ public class DefinitionListMatcher implements BlockMatcher {
     
     @Override
     public BlockBuilder newBuilder(InputSequence input) {
-        if (matches(input)) {
-            return new DefinitionListBuilder();
+        DefinitionBuilder definitionBuilder = DefinitionBuilder.builder(input);
+        if (definitionBuilder != null) {
+            return new DefinitionListBuilder(definitionBuilder);
         }
         return null;
     }
@@ -57,18 +58,13 @@ public class DefinitionListMatcher implements BlockMatcher {
         if (current.lineNo() > 2) {
             return null;
         }
-        if (matches(input)) {
-            ParagraphBuilder paragraphBuilder = (ParagraphBuilder)current;
-            String term = paragraphBuilder.buildContent(0);
-            paragraphBuilder.cancel();
-            return new DefinitionListBuilder(term);
+        DefinitionBuilder definitionBuilder = DefinitionBuilder.builder(input);
+        if (definitionBuilder == null) {
+            return null;
         }
-        return null;
-    }
-
-    private boolean matches(InputSequence input) {
-        return input.length() >= 4 && 
-               input.charAt(0) == ':' && 
-               input.countLeadingSpaces(1, 4) == 3;
+        ParagraphBuilder paragraphBuilder = (ParagraphBuilder)current;
+        String term = paragraphBuilder.buildContent(0);
+        paragraphBuilder.cancel();
+        return new DefinitionListBuilder(new TermBuilder(term), definitionBuilder);
     }
 }

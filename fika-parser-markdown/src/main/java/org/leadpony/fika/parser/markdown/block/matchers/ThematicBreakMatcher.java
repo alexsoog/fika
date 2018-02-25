@@ -18,8 +18,8 @@ package org.leadpony.fika.parser.markdown.block.matchers;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.leadpony.fika.parser.markdown.block.AbstractBlocKMatcher;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
-import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
@@ -29,7 +29,7 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  * 
  * @author leadpony
  */
-public class ThematicBreakMatcher implements BlockMatcher {
+public class ThematicBreakMatcher extends AbstractBlocKMatcher {
     
     private final ThematicBreakBuilder builder = new ThematicBreakBuilder();
 
@@ -43,7 +43,8 @@ public class ThematicBreakMatcher implements BlockMatcher {
         return EnumSet.of(
                 BasicBlockType.PARAGRAPH,
                 BasicBlockType.LINK_DEFINITION,
-                BasicBlockType.LIST);
+                BasicBlockType.BULLET_LIST,
+                BasicBlockType.ORDERED_LIST);
     }
 
     @Override

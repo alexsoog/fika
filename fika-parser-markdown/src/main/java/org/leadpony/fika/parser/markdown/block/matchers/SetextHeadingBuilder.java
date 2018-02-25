@@ -22,8 +22,9 @@ import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
+ * Buidler of setext heading.
+ * 
  * @author leadpony
- *
  */
 class SetextHeadingBuilder extends AbstractBlockBuilder {
     
@@ -34,14 +35,14 @@ class SetextHeadingBuilder extends AbstractBlockBuilder {
         this.level = level;
         this.title = title;
     }
-
+    
     @Override
     public BlockType blockType() {
         return BasicBlockType.SETEXT_HEADING;
     }
 
     @Override
-    public Result append(InputSequence input) {
+    public Result processLine(InputSequence input) {
         return Result.COMPLETED;
     }
 

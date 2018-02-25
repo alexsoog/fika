@@ -39,5 +39,6 @@ public class AllSpecTest extends AbstractSpecTest {
     
     @Before
     public void setUp() {
+        //Assume.assumeTrue(index() == 51);
     }
 }

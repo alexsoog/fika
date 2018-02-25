@@ -17,28 +17,29 @@ package org.leadpony.fika.parser.markdown.block.matchers;
 
 import org.leadpony.fika.parser.markdown.block.AbstractBlocKMatcher;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
-import org.leadpony.fika.parser.markdown.block.BlockType;
+import org.leadpony.fika.parser.markdown.block.BuilderMode;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
- * Matcher implementation for link reference definition.
+ * Matcher implementation for list.
  * 
  * @author leadpony
  */
-public class LinkDefinitionMatcher extends AbstractBlocKMatcher {
-
-    @Override
-    public BlockType blockType() {
-        return BasicBlockType.LINK_DEFINITION;
-    }
-
+abstract class AbstractListMatcher extends AbstractBlocKMatcher {
+    
     @Override
     public BlockBuilder newBuilder(InputSequence input) {
-        int spaces = input.countLeadingSpaces(0,  3);
-        if (input.length() > spaces && input.charAt(spaces) == '[') {
-            return new LinkDefinitionBuilder();
-        } else {
+        return newListBuilder(input);
+    }
+    
+    @Override
+    public BlockBuilder newInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
+        ListBuilder builder = newListBuilder(input);
+        if (builder == null) {
             return null;
         }
+        return builder.canInterrupt(current) ? builder : null;
     }
+    
+    protected abstract ListBuilder newListBuilder(InputSequence input);
 }

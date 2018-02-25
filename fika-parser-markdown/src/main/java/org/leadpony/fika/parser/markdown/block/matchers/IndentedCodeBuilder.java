@@ -40,9 +40,9 @@ class IndentedCodeBuilder extends AbstractBlockBuilder {
     }
     
     @Override
-    public Result append(InputSequence input) {
+    public Result processLine(InputSequence input) {
         if (lineNo() <= 1 || input.hasLeadingSpaces(INDENT_SIZE)) {
-            appendLine(input);
+            accumelateLine(input);
             return Result.CONTINUED;
         } else if (input.isBlank()) {
             appendBlank();
@@ -60,7 +60,7 @@ class IndentedCodeBuilder extends AbstractBlockBuilder {
         return getNodeFactory().newCodeBlock(builder.toString());
     }
 
-    private void appendLine(InputSequence input) {
+    private void accumelateLine(InputSequence input) {
         input = input.subSequence(INDENT_SIZE);
         this.lines.add(input.toSourceString());
         if (!input.isBlank()) {

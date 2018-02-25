@@ -15,29 +15,10 @@
  */
 package org.leadpony.fika.parser.markdown.block;
 
-import org.leadpony.fika.core.model.Document;
-import org.leadpony.fika.parser.markdown.common.InputSequence;
-
 /**
- * Builder of document node.
+ * Skeletal implementation of {@link BlockMatcher}.
  * 
  * @author leadpony
  */
-public class DocumentBuilder extends ContainerBlockBuilder {
-    
-    @Override
-    public BlockType blockType() {
-        throw new UnsupportedOperationException();
-    }
-    
-    @Override
-    public Result processLine(InputSequence input) {
-        super.processLine(input);
-        return Result.CONTINUED;
-    }
-    
-    @Override
-    protected Document buildBlock() {
-        return getNodeFactory().newDocument();
-    }
+public abstract class AbstractBlocKMatcher implements BlockMatcher {
 }

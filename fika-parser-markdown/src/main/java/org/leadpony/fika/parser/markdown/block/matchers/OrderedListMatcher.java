@@ -13,31 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.leadpony.fika.parser.markdown.block;
+package org.leadpony.fika.parser.markdown.block.matchers;
 
-import org.leadpony.fika.core.model.Document;
+import java.util.EnumSet;
+import java.util.Set;
+
+import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
- * Builder of document node.
- * 
  * @author leadpony
  */
-public class DocumentBuilder extends ContainerBlockBuilder {
-    
+public class OrderedListMatcher extends AbstractListMatcher {
+
     @Override
     public BlockType blockType() {
-        throw new UnsupportedOperationException();
+        return BasicBlockType.ORDERED_LIST;
+    }
+
+    @Override
+    public Set<? extends BlockType> interruptible() {
+        return EnumSet.of(
+                BasicBlockType.PARAGRAPH, 
+                BasicBlockType.LINK_DEFINITION,
+                BasicBlockType.BULLET_LIST,
+                BasicBlockType.ORDERED_LIST);
     }
     
     @Override
-    public Result processLine(InputSequence input) {
-        super.processLine(input);
-        return Result.CONTINUED;
-    }
-    
-    @Override
-    protected Document buildBlock() {
-        return getNodeFactory().newDocument();
+    protected ListBuilder newListBuilder(InputSequence input) {
+        OrderedListItemBuilder itemBuilder = OrderedListItemBuilder.builder(input, 3);
+        if (itemBuilder == null) {
+            return null;
+        }
+        return new OrderedListBuilder(itemBuilder);
     }
 }

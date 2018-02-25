@@ -33,7 +33,7 @@ abstract class AbstractParagraphBuilder extends AbstractBlockBuilder {
 
     private final List<String> lines = new ArrayList<>();
     
-    protected void appendLine(InputSequence line) {
+    protected void accumelateLine(InputSequence line) {
         this.lines.add(line.toSourceString());
     }
     

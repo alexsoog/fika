@@ -19,7 +19,7 @@ import org.leadpony.fika.core.model.Block;
 import org.leadpony.fika.core.model.ListType;
 import org.leadpony.fika.core.model.OrderedList;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
-import org.leadpony.fika.parser.markdown.block.BlockMatcher;
+import org.leadpony.fika.parser.markdown.block.BlockContext;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
@@ -31,11 +31,9 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  */
 abstract class ListBuilder extends AbstractListBuilder {
     
-    private final BlockMatcher matcher;
     private final ListItemBuilder firstItemBuilder;
 
-    protected ListBuilder(BlockMatcher matcher, ListItemBuilder firstItemMatcher) {
-        this.matcher = matcher;
+    protected ListBuilder(ListItemBuilder firstItemMatcher) {
         this.firstItemBuilder = firstItemMatcher;
     }
     
@@ -43,7 +41,7 @@ abstract class ListBuilder extends AbstractListBuilder {
         BlockType type = builder.blockType();
         if (type == BasicBlockType.PARAGRAPH) {
             return firstItemBuilder.canInterruptParagraph();
-        } else if (type == BasicBlockType.LIST) {
+        } else if (type == BasicBlockType.BULLET_LIST || type == BasicBlockType.ORDERED_LIST) {
             return !isSameTypeAs((ListBuilder)builder);
         }
         return true;
@@ -54,19 +52,17 @@ abstract class ListBuilder extends AbstractListBuilder {
     }
     
     @Override
-    public BlockType blockType() {
-        return BasicBlockType.LIST;
-    }
-    
-    @Override
-    public void bind(Context context) {
+    public void bind(BlockContext context) {
         super.bind(context);
-        openChildBuilder(this.firstItemBuilder);
+        this.firstItemBuilder.bind(context);
     }
     
     @Override
-    public Result append(InputSequence input) {
-        super.append(input);
+    public Result processLine(InputSequence input) {
+        super.processLine(input);
+        if (lineNo() == 1) {
+            openChildBuilder(this.firstItemBuilder);
+        }
         Result result = findAndInvokeChildBuilder(input);
         if (result == Result.NOT_MATCHED) {
             if (!input.isBlank()) {
@@ -89,11 +85,7 @@ abstract class ListBuilder extends AbstractListBuilder {
                 return null;
             }
         }
-        BlockBuilder matcher = context().finder().findInterruptingBuilder(input, this, mode);
-        if (matcher == null) {
-            matcher = this.matcher.newInterruptingBuilder(input, this, mode);
-        }
-        return matcher;
+        return super.interrupt(input, mode);
     }
     
     @Override
@@ -113,10 +105,15 @@ abstract class ListBuilder extends AbstractListBuilder {
  */
 class BulletListBuilder extends ListBuilder {
     
-    BulletListBuilder(BlockMatcher matcher, BulletListItemBuilder itemBuilder) {
-        super(matcher, itemBuilder);
+    BulletListBuilder(BulletListItemBuilder itemBuilder) {
+        super(itemBuilder);
     }
     
+    @Override
+    public BlockType blockType() {
+        return BasicBlockType.BULLET_LIST;
+    }
+
     @Override
     protected Block buildBlock() {
         return getNodeFactory().newLiskBlock(ListType.UNORDERED);
@@ -132,11 +129,16 @@ class OrderedListBuilder extends ListBuilder {
     
     private final int startNumber;
     
-    OrderedListBuilder(BlockMatcher matcher, OrderedListItemBuilder itemBuilder) {
-        super(matcher, itemBuilder);
+    OrderedListBuilder(OrderedListItemBuilder itemBuilder) {
+        super(itemBuilder);
         this.startNumber = itemBuilder.number();
     }
     
+    @Override
+    public BlockType blockType() {
+        return BasicBlockType.ORDERED_LIST;
+    }
+
     @Override
     protected Block buildBlock() {
         OrderedList block = (OrderedList)getNodeFactory().newLiskBlock(ListType.ORDERED);

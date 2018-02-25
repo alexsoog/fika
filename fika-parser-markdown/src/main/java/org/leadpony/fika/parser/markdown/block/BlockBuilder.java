@@ -16,10 +16,7 @@
 package org.leadpony.fika.parser.markdown.block;
 
 import org.leadpony.fika.core.model.Block;
-import org.leadpony.fika.core.model.NodeFactory;
-import org.leadpony.fika.core.model.Text;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
-import org.leadpony.fika.parser.markdown.common.LinkDefinitionMap;
 
 /**
  * Block builder interface.
@@ -36,7 +33,8 @@ public interface BlockBuilder {
     public enum Result {
         NOT_MATCHED,
         CONTINUED,
-        COMPLETED
+        COMPLETED,
+        INTERRUPTED
     }
     
     /**
@@ -49,10 +47,44 @@ public interface BlockBuilder {
     /**
      * Binds the context to this builder.
      * 
-     * @param context the builder context.
+     * @param context the builder context, never be {@code null}.
      */
-    void bind(Context context);
+    default void bind(BlockContext context) {
+        bind(context, context.lineNo());
+    }
     
+    /**
+     * Binds the context to this builder.
+     * 
+     * @param context the builder context.
+     * @param firstLineNo the first line number of this builder.
+     */
+    void bind(BlockContext context, int firstLineNo);
+    
+    /**
+     * Returns the context bound to this builder.
+     * 
+     * @return the context bound to this builder.
+     */
+    BlockContext context();
+    
+    /**
+     * Cancels this builder.
+     */
+    void cancel();
+    
+    /**
+     * Checks if this builder is canceled.
+     * 
+     * @return {@code true} if canceled, {@code false} otherwise.
+     */
+    boolean isCanceled();
+    
+    /**
+     * Checks if this builder has any children.
+     * 
+     * @return {@code true} if this builder has any children. {@code false} otherwise.
+     */
     default boolean hasChildBuilder() {
         return false;
     }
@@ -80,69 +112,43 @@ public interface BlockBuilder {
     }
     
     /**
-     * Return the current line number of this builder.
+     * Return the current line number in this builder.
      * 
-     * @return the current line number.
+     * @return the current line number relative to the first line of this builder..
      */
     int lineNo();
-
+    
     /**
      * Appends a line to this builder.
      * 
      * @param input the line to append.
      * @return the result of the appending operation, never be {@code null}. 
      */
-    Result append(InputSequence input);
+    Result appendLine(InputSequence input);
 
     /**
-     * Checks if this builder is interruptible.
+     * Appends a lazy continuation line to this builder.
      * 
-     * @return {@code true} if interruptible.
+     * @param input the line to append.
+     * @return the result of the appending operation, never be {@code null}. 
      */
-    default boolean isInterruptible() {
-        return false;
-    }
-    
-    /**
-     * Interrupts this builder.
-     * 
-     * @param input new content.
-     * @param mode current mode of this builder.
-     * @return the interrupting builder if found.
-     */
-    default BlockBuilder interrupt(InputSequence input, BuilderMode mode) {
-        return null;
-    }
-    
-    default Result continueLazily(InputSequence input) {
+    default Result appendLazyLine(InputSequence input) {
         return Result.NOT_MATCHED;
     }
     
     /**
-     * Closes this builder.
+     * Returns the successor of this builder.
+     * 
+     * @return the successor of this builder.
+     */
+    default BlockBuilder successor() {
+        return null;
+    }
+    
+    /**
+     * Builds a block by this builder.
      * 
      * @return the block built by this builder.
      */
     Block build();
-    
-    /**
-     * Context shared by block builders.
-     */
-    interface Context {
-        
-        /**
-         * Return the current line number.
-         * 
-         * @return current line number, starting from one.
-         */
-        int lineNo();
-        
-        NodeFactory getNodeFactory();
-        
-        BlockBuilderFinder finder();
-        
-        LinkDefinitionMap getLinkDefinitionMap();
-        
-        void addInline(Text text);
-    }
 }

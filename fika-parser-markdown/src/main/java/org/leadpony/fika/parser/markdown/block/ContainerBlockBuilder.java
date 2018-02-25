@@ -17,6 +17,7 @@ package org.leadpony.fika.parser.markdown.block;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.leadpony.fika.core.model.Block;
 import org.leadpony.fika.core.model.Node;
@@ -46,14 +47,9 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
     }
     
     @Override
-    public Result append(InputSequence input) {
-        return findAndInvokeChildBuilder(input);
-    }
-
-    @Override
     public final Block build() {
         if (hasChildBuilder()) {
-            closeCurrentChildBuilder();
+            closeChildBuilder(this.childBuilder);
         }
         Block block = buildBlock();
         if (block != null) {
@@ -62,9 +58,14 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
         return block;
     }
     
-    protected Result matchLazyContinuationLine(InputSequence input) {
+    @Override
+    protected Result processLine(InputSequence input) {
+        return findAndInvokeChildBuilder(input);
+    }
+
+    protected Result tryLazyContinuation(InputSequence input) {
         BlockBuilder last = lastBuilder();
-        return last.continueLazily(input);
+        return last.appendLazyLine(input);
     }
     
     protected Result findAndInvokeChildBuilder(InputSequence input) {
@@ -90,20 +91,21 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
     protected Result invokeChildBuilder(InputSequence input) {
         BlockBuilder child = childBuilder();
         assert(child != null);
-        if (child.isInterruptible()) {
-            BlockBuilder interrupter = child.interrupt(input, BuilderMode.NORMAL);
-            if (interrupter != null) {
-                openChildBuilder(interrupter);
-                child = interrupter;
-            }
-        }
-        Result result = callBuilderDirect(child, input);
+        Result result = child.appendLine(input);
         if (result == Result.COMPLETED || result == Result.NOT_MATCHED) {
-            closeCurrentChildBuilder();
+            closeChildBuilder(child);
+        } else if (result == Result.INTERRUPTED) {
+            closeChildBuilder(child);
+            child = child.successor();
+            openChildBuilder(child);
+            result = child.appendLine(input);
+            if (result == Result.COMPLETED || result == Result.NOT_MATCHED) {
+                closeChildBuilder(child);
+            }
         }
         return result;
     }
-    
+
     protected BlockBuilder findChildBuilder(InputSequence input) {
         BlockBuilder matched = context().finder().findBuilder(input);
         if (matched != null) {
@@ -112,37 +114,23 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
         return matched;
     }
     
-    private Result callBuilderDirect(BlockBuilder matcher, InputSequence input) {
-        return matcher.append(input);
-    }
-    
     protected void openChildBuilder(BlockBuilder childBuilder) {
-        if (childBuilder == null) {
-            throw new NullPointerException();
-        }
-        closeCurrentChildBuilder();
-        this.childBuilder = childBuilder;
-        childBuilder.bind(context());
-    }
-    
-    protected void closeChildBuilder(BlockBuilder childBuilder) {
-        if (childBuilder == null) {
-            throw new NullPointerException();
-        }
-        addChildNode(childBuilder.build());
-        this.childBuilder = null;
-    }
-    
-    protected void closeCurrentChildBuilder() {
+        Objects.requireNonNull(childBuilder, "childBuilder must not be null");
         if (this.childBuilder != null) {
             closeChildBuilder(this.childBuilder);
         }
+        this.childBuilder = childBuilder;
     }
     
-    protected void addChildNode(Node node) {
-        if (node != null) {
-            this.childNodes.add(node);
+    protected void closeChildBuilder(BlockBuilder childBuilder) {
+        Objects.requireNonNull(childBuilder, "childBuilder must not be null");
+        if (!childBuilder.isCanceled()) {
+            Node node = childBuilder.build();
+            if (node != null) {
+                this.childNodes.add(node);
+            }
         }
+        this.childBuilder = null;
     }
     
     protected List<Node> childNodes() {

@@ -18,11 +18,14 @@ package org.leadpony.fika.parser.markdown.block;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
+ * Finder of block builders.
+ * 
  * @author leadpony
  */
 public interface BlockBuilderFinder {
     
     BlockBuilder findBuilder(InputSequence input);
     
-    BlockBuilder findInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode);
+    BlockBuilder findInterruptingBuilder(
+            InputSequence input, BlockBuilder current, BuilderMode mode);
 }

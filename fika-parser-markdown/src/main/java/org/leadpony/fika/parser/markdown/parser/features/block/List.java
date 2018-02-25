@@ -17,7 +17,8 @@ package org.leadpony.fika.parser.markdown.parser.features.block;
 
 import org.leadpony.fika.core.parser.BasicFeature;
 import org.leadpony.fika.core.parser.Feature;
-import org.leadpony.fika.parser.markdown.block.matchers.ListMatcher;
+import org.leadpony.fika.parser.markdown.block.matchers.BulletListMatcher;
+import org.leadpony.fika.parser.markdown.block.matchers.OrderedListMatcher;
 import org.leadpony.fika.parser.markdown.parser.FeatureProvider;
 import org.leadpony.fika.parser.markdown.parser.ParserBuilder;
 
@@ -33,6 +34,7 @@ public class List implements FeatureProvider {
 
     @Override
     public void provide(ParserBuilder builder) {
-        builder.add(new ListMatcher());
+        builder.add(new BulletListMatcher());
+        builder.add(new OrderedListMatcher());
     }
 }

@@ -48,14 +48,14 @@ class FencedCodeBuilder extends AbstractBlockBuilder {
     }
     
     @Override
-    public Result append(InputSequence input) {
+    public Result processLine(InputSequence input) {
         if (lineNo() <= 1) {
             return Result.CONTINUED;
         }
         if (testClosingFence(input)) {
             return Result.COMPLETED;
         }
-        appendLine(input);
+        accumelateLine(input);
         return Result.CONTINUED;
     }
 
@@ -103,7 +103,7 @@ class FencedCodeBuilder extends AbstractBlockBuilder {
         return true;
     }
     
-    private void appendLine(InputSequence input) {
+    private void accumelateLine(InputSequence input) {
         if (indentSize > 0) {
             int beginIndex = input.countLeadingSpaces(0,  indentSize);
             input = input.subSequence(beginIndex);
