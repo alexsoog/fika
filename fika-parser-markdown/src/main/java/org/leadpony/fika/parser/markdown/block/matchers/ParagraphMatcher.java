@@ -15,8 +15,8 @@
  */
 package org.leadpony.fika.parser.markdown.block.matchers;
 
-import org.leadpony.fika.parser.markdown.block.AbstractBlocKMatcher;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
+import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
@@ -25,7 +25,7 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  * 
  * @author leadpony
  */
-public class ParagraphMatcher extends AbstractBlocKMatcher {
+public class ParagraphMatcher implements BlockMatcher {
 
     @Override
     public BlockType blockType() {

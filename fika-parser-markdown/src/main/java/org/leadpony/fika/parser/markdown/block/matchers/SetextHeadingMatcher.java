@@ -19,8 +19,8 @@ import java.util.EnumSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.leadpony.fika.parser.markdown.block.AbstractBlocKMatcher;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
+import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
@@ -30,7 +30,7 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  * 
  * @author leadpony
  */
-public class SetextHeadingMatcher extends AbstractBlocKMatcher {
+public class SetextHeadingMatcher implements BlockMatcher {
 
     private static final Pattern UNDERLINE_PATTERN = Pattern.compile("\\u0020{0,3}(=+|-{2,})\\u0020*");
     
@@ -40,7 +40,7 @@ public class SetextHeadingMatcher extends AbstractBlocKMatcher {
     }
 
     @Override
-    public Set<? extends BlockType> interruptible() {
+    public Set<? extends BlockType> typesToReplace() {
         return EnumSet.of(BasicBlockType.PARAGRAPH);
     }
     
@@ -54,7 +54,7 @@ public class SetextHeadingMatcher extends AbstractBlocKMatcher {
     }
 
     @Override
-    public BlockBuilder newInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
+    public BlockBuilder newReplacingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
         if (mode == BuilderMode.LAZY_CONTINUATION) {
             return null;
         }
@@ -65,14 +65,11 @@ public class SetextHeadingMatcher extends AbstractBlocKMatcher {
         if (firstIndex >= input.length()) {
             return null;
         }
-        char c = input.charAt(firstIndex);
-        ParagraphBuilder paragraphBuilder = (ParagraphBuilder)current;
-        String content = paragraphBuilder.buildContent(0);
-        paragraphBuilder.cancel();
-        return new SetextHeadingBuilder(headingLevel(c), content);
+        int level = headingLevel(input.charAt(firstIndex));
+        return new SetextHeadingBuilder((ParagraphBuilder)current, level);
     }
     
-    private int headingLevel(char c) {
+    private static int headingLevel(char c) {
         return (c == '=') ? 1 : 2;
     }
 }

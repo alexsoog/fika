@@ -60,7 +60,7 @@ abstract class ListBuilder extends AbstractListBuilder {
     @Override
     public Result processLine(InputSequence input) {
         super.processLine(input);
-        if (lineNo() == 1) {
+        if (lineCount() == 0) {
             openChildBuilder(this.firstItemBuilder);
         }
         Result result = findAndInvokeChildBuilder(input);
@@ -74,7 +74,7 @@ abstract class ListBuilder extends AbstractListBuilder {
     
     @Override
     public boolean isInterruptible() {
-        return lineNo() > 1;
+        return true;
     }
     
     @Override
@@ -90,11 +90,7 @@ abstract class ListBuilder extends AbstractListBuilder {
     
     @Override
     protected BlockBuilder findChildBuilder(InputSequence input) {
-        BlockBuilder matched = firstItemBuilder.interrupterOfSameType(input);
-        if (matched != null) {
-            openChildBuilder(matched);
-        }
-        return matched;
+        return firstItemBuilder.interrupterOfSameType(input);
     }
 }
 

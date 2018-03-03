@@ -32,7 +32,7 @@ public class OrderedListMatcher extends AbstractListMatcher {
     }
 
     @Override
-    public Set<? extends BlockType> interruptible() {
+    public Set<? extends BlockType> typesToInterrupt() {
         return EnumSet.of(
                 BasicBlockType.PARAGRAPH, 
                 BasicBlockType.LINK_DEFINITION,

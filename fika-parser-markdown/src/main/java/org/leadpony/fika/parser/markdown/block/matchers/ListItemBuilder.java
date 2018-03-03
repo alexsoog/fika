@@ -58,7 +58,7 @@ abstract class ListItemBuilder extends AbstractListItemBuilder {
     public Result processLine(InputSequence input) {
         super.processLine(input);
         final boolean isBlank = input.isBlank();
-        if (!isBlank && lineNo() > 1 && !input.hasLeadingSpaces(indentSize)) {
+        if (!isBlank && lineCount() > 0 && !input.hasLeadingSpaces(indentSize)) {
             // Not indented.
             return tryLazyContinuation(input);
         }
@@ -75,7 +75,7 @@ abstract class ListItemBuilder extends AbstractListItemBuilder {
     
     @Override
     public boolean isInterruptible() {
-        return lineNo() > 1;
+        return true;
     }
 
     @Override

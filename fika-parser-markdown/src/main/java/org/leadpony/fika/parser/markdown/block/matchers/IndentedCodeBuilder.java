@@ -41,7 +41,7 @@ class IndentedCodeBuilder extends AbstractBlockBuilder {
     
     @Override
     public Result processLine(InputSequence input) {
-        if (lineNo() <= 1 || input.hasLeadingSpaces(INDENT_SIZE)) {
+        if (lineCount() == 0 || input.hasLeadingSpaces(INDENT_SIZE)) {
             accumelateLine(input);
             return Result.CONTINUED;
         } else if (input.isBlank()) {
@@ -64,7 +64,7 @@ class IndentedCodeBuilder extends AbstractBlockBuilder {
         input = input.subSequence(INDENT_SIZE);
         this.lines.add(input.toSourceString());
         if (!input.isBlank()) {
-            this.lastNonBlankLineNo = lineNo();
+            this.lastNonBlankLineNo = lineCount() + 1;
         }
     }
     

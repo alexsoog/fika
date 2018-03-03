@@ -15,56 +15,45 @@
  */
 package org.leadpony.fika.parser.markdown.block.matchers;
 
-import java.util.function.Consumer;
-
 import org.leadpony.fika.core.model.Block;
+import org.leadpony.fika.core.model.ListType;
+import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
-import org.leadpony.fika.parser.markdown.common.LinkDefinition;
 
 /**
+ * Builder of term definition list.
+ * 
  * @author leadpony
  */
-class LinkDefinitionBuilder extends AbstractParagraphBuilder implements Consumer<LinkDefinition> {
+class TermDefinitionListBuilder extends AbstractListBuilder {
     
-    private final LinkDefinitionRecognizer recognizer = new LinkDefinitionRecognizer(this);
-   
     @Override
     public BlockType blockType() {
-        return BasicBlockType.LINK_DEFINITION;
-    }
-
-    @Override
-    public Result processLine(InputSequence input) {
-        if (lineCount() > 0 && input.isBlank()) {
-            return Result.COMPLETED;
-        }
-        accumelateLine(input);
-        if (recognizer.acceptLine(input)) {
-            return Result.COMPLETED;
-        }
-        return Result.CONTINUED;
+        return BasicBlockType.TERM_DEFINITION_LIST;
     }
     
     @Override
-    public boolean isInterruptible() {
-        return true;
+    public Result processLine(InputSequence input) {
+        super.processLine(input);
+        return findAndInvokeChildBuilder(input);
     }
-   
+    
     @Override
     protected Block buildBlock() {
-        int linesConsumed = recognizer.flush();
-        return buildParagraph(linesConsumed);
+        return getNodeFactory().newLiskBlock(ListType.DEFINITION);
     }
 
-    /**
-     * Processes the link definition found.
-     * 
-     * @param definition the link definition found.
-     */
     @Override
-    public void accept(LinkDefinition definition) {
-        context().getLinkDefinitionMap()
-            .put(definition.label(), definition);
+    protected BlockBuilder findChildBuilder(InputSequence input) {
+        BlockBuilder found = super.findChildBuilder(input);
+        if (found == null || found.blockType() != BasicBlockType.PARAGRAPH) {
+            return null;
+        }
+        ParagraphBuilder paragraphBuilder = (ParagraphBuilder)found;
+        TermBuilder child = new TermBuilder(paragraphBuilder);
+        child.bind(context());
+        child.openChildBuilder(paragraphBuilder);
+        return child;
     }
 }

@@ -18,8 +18,8 @@ package org.leadpony.fika.parser.markdown.block.matchers;
 import java.util.EnumSet;
 import java.util.Set;
 
-import org.leadpony.fika.parser.markdown.block.AbstractBlocKMatcher;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
+import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
@@ -29,7 +29,7 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  * 
  * @author leadpony
  */
-public class AtxHeadingMatcher extends AbstractBlocKMatcher {
+public class AtxHeadingMatcher implements BlockMatcher {
     
     private static final int MAX_LEVEL = 6;
 
@@ -39,7 +39,7 @@ public class AtxHeadingMatcher extends AbstractBlocKMatcher {
     }
     
     @Override
-    public Set<? extends BlockType> interruptible() {
+    public Set<? extends BlockType> typesToInterrupt() {
         return EnumSet.of(BasicBlockType.PARAGRAPH, BasicBlockType.LINK_DEFINITION);
     }
     

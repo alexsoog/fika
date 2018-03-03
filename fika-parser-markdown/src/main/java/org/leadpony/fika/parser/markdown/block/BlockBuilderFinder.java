@@ -28,4 +28,7 @@ public interface BlockBuilderFinder {
     
     BlockBuilder findInterruptingBuilder(
             InputSequence input, BlockBuilder current, BuilderMode mode);
+
+    BlockBuilder findReplacingBuilder(
+            InputSequence input, BlockBuilder current, BuilderMode mode);
 }

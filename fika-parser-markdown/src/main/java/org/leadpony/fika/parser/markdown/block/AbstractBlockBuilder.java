@@ -28,17 +28,18 @@ public abstract class AbstractBlockBuilder implements BlockBuilder {
 
     private BlockContext context;
     private int firstLineNo;
-    private boolean canceled;
     private BlockBuilder successor;
     
     protected AbstractBlockBuilder() {
-        this.canceled = false;
     }
 
     @Override
-    public void bind(BlockContext context, int firstLineNo) {
+    public void bind(BlockContext context) {
+        if (this.context != null) {
+            return;
+        }
         this.context = context;
-        this.firstLineNo = firstLineNo;
+        this.firstLineNo = context.lineNo();
     }
     
     @Override
@@ -47,27 +48,28 @@ public abstract class AbstractBlockBuilder implements BlockBuilder {
     }
     
     @Override
-    public int lineNo() {
-        return context().lineNo() - firstLineNo + 1;
+    public int firstLineNo() {
+        return firstLineNo;
     }
     
     @Override
-    public void cancel() {
-        this.canceled = true;
+    public int lineCount() {
+        return context().lineNo() - firstLineNo();
     }
     
-    @Override
-    public boolean isCanceled() {
-        return canceled;
-    }
-   
     @Override
     public Result appendLine(InputSequence input) {
-        if (isInterruptible()) {
-            BlockBuilder interrupter = interrupt(input, BuilderMode.NORMAL);
-            if (interrupter != null) {
-                setSuccessor(interrupter);
-                return Result.INTERRUPTED;
+        if (lineCount() > 0) {
+            BlockBuilder successor = replace(input, BuilderMode.NORMAL);
+            if (successor != null) {
+                setSuccessor(successor);
+                return Result.REPLACED;
+            } else if (isInterruptible()) {
+                successor = interrupt(input, BuilderMode.NORMAL);
+                if (successor != null) {
+                    setSuccessor(successor);
+                    return Result.INTERRUPTED;
+                }
             }
         }
         return processLine(input);
@@ -101,18 +103,18 @@ public abstract class AbstractBlockBuilder implements BlockBuilder {
     }
     
     /**
-     * Interrupts this builder.
+     * Tries interrupting this builder.
      * 
-     * @param input new content.
+     * @param input current content.
      * @param mode current mode of this builder.
-     * @return the interrupting builder if found.
+     * @return the interrupting builder if found, or {@code null} if not found.
      */
     protected BlockBuilder interrupt(InputSequence input, BuilderMode mode) {
-        if (isInterruptible()) {
-            return context().finder().findInterruptingBuilder(input, this, mode);
-        } else {
-            return null;
-        }
+        return context().finder().findInterruptingBuilder(input, this, mode);
+    }
+    
+    protected BlockBuilder replace(InputSequence input, BuilderMode mode) {
+        return context().finder().findReplacingBuilder(input, this, mode);
     }
 
     protected NodeFactory getNodeFactory() {

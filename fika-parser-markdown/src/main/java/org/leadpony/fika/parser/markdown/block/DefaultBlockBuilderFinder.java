@@ -35,6 +35,7 @@ class DefaultBlockBuilderFinder implements BlockBuilderFinder {
     private final BlockContext context;
     private final List<BlockMatcher> matchers;
     private final Map<BlockType, List<BlockMatcher>> interrupters = new HashMap<>();
+    private final Map<BlockType, List<BlockMatcher>> replacers = new HashMap<>();
 
     DefaultBlockBuilderFinder(BlockContext context, List<BlockMatcher> matchers) {
         this.context = context;
@@ -73,6 +74,25 @@ class DefaultBlockBuilderFinder implements BlockBuilderFinder {
         }
         return null;
     }
+   
+    @Override
+    public BlockBuilder findReplacingBuilder(
+            InputSequence input, BlockBuilder current, BuilderMode mode) {
+        if (input.isBlank()) {
+            return null;
+        }
+        List<BlockMatcher> matchers = replacers.get(current.blockType());
+        if (matchers == null) {
+            return null;
+        }
+        for (BlockMatcher matcher: matchers) {
+            BlockBuilder builder = matcher.newReplacingBuilder(input, current, mode);
+            if (builder != null) {
+                return bindContextTo(builder);
+            }
+        }
+        return null;
+    }
     
     private BlockBuilder bindContextTo(BlockBuilder builder) {
         builder.bind(this.context);
@@ -82,19 +102,27 @@ class DefaultBlockBuilderFinder implements BlockBuilderFinder {
     private List<BlockMatcher> setUpMatchers(List<BlockMatcher> matchers) {
         Collections.sort(matchers, comparing(BlockMatcher::precedence));
         for (BlockMatcher matcher: matchers) {
-            addInterrupter(matcher);
+            addInterruptingMatcher(matcher);
+            addReplacingMatcher(matcher);
         }
         return matchers;
     }
     
-    private void addInterrupter(BlockMatcher matcher) {
-        for (BlockType type: matcher.interruptible()) {
-            List<BlockMatcher> list = interrupters.get(type);
-            if (list == null) {
-                list = new ArrayList<>();
-                interrupters.put(type, list);
-            }
+    private void addInterruptingMatcher(BlockMatcher matcher) {
+        for (BlockType type: matcher.typesToInterrupt()) {
+            List<BlockMatcher> list = interrupters.computeIfAbsent(type, DefaultBlockBuilderFinder::newMatcherList);
             list.add(matcher);
         }
+    }
+
+    private void addReplacingMatcher(BlockMatcher matcher) {
+        for (BlockType type: matcher.typesToReplace()) {
+            List<BlockMatcher> list = replacers.computeIfAbsent(type, DefaultBlockBuilderFinder::newMatcherList);
+            list.add(matcher);
+        }
+    }
+    
+    private static List<BlockMatcher> newMatcherList(BlockType type) {
+        return new ArrayList<>();
     }
 }

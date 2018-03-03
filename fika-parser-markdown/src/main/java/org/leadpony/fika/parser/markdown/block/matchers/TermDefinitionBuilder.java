@@ -15,56 +15,48 @@
  */
 package org.leadpony.fika.parser.markdown.block.matchers;
 
-import java.util.function.Consumer;
-
 import org.leadpony.fika.core.model.Block;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
-import org.leadpony.fika.parser.markdown.common.LinkDefinition;
 
 /**
+ * Builder of term definition in definition list.
+ * 
  * @author leadpony
  */
-class LinkDefinitionBuilder extends AbstractParagraphBuilder implements Consumer<LinkDefinition> {
+class TermDefinitionBuilder extends AbstractListItemBuilder {
+
+    private final int indentSize;
     
-    private final LinkDefinitionRecognizer recognizer = new LinkDefinitionRecognizer(this);
-   
-    @Override
-    public BlockType blockType() {
-        return BasicBlockType.LINK_DEFINITION;
+    TermDefinitionBuilder(int identSize) {
+        this.indentSize = identSize;
     }
 
     @Override
+    public BlockType blockType() {
+        return BasicBlockType.TERM_DEFINITIION;
+    }
+    
+    @Override
     public Result processLine(InputSequence input) {
-        if (lineCount() > 0 && input.isBlank()) {
-            return Result.COMPLETED;
+        super.processLine(input);
+        if (input.isBlank()) {
+            findAndInvokeChildBuilder(input);
+            return Result.CONTINUED;
+        } else if (lineCount() == 0 || input.hasLeadingSpaces(this.indentSize)) {
+            findAndInvokeChildBuilder(input.subSequence(this.indentSize));
+            return Result.CONTINUED;
         }
-        accumelateLine(input);
-        if (recognizer.acceptLine(input)) {
-            return Result.COMPLETED;
-        }
-        return Result.CONTINUED;
+        return Result.NOT_MATCHED;
     }
     
     @Override
     public boolean isInterruptible() {
         return true;
     }
-   
+
     @Override
     protected Block buildBlock() {
-        int linesConsumed = recognizer.flush();
-        return buildParagraph(linesConsumed);
-    }
-
-    /**
-     * Processes the link definition found.
-     * 
-     * @param definition the link definition found.
-     */
-    @Override
-    public void accept(LinkDefinition definition) {
-        context().getLinkDefinitionMap()
-            .put(definition.label(), definition);
+        return getNodeFactory().newDefinition();
     }
 }

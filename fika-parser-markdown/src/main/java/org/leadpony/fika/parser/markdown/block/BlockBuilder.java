@@ -34,7 +34,8 @@ public interface BlockBuilder {
         NOT_MATCHED,
         CONTINUED,
         COMPLETED,
-        INTERRUPTED
+        INTERRUPTED,
+        REPLACED
     }
     
     /**
@@ -49,17 +50,7 @@ public interface BlockBuilder {
      * 
      * @param context the builder context, never be {@code null}.
      */
-    default void bind(BlockContext context) {
-        bind(context, context.lineNo());
-    }
-    
-    /**
-     * Binds the context to this builder.
-     * 
-     * @param context the builder context.
-     * @param firstLineNo the first line number of this builder.
-     */
-    void bind(BlockContext context, int firstLineNo);
+    void bind(BlockContext context);
     
     /**
      * Returns the context bound to this builder.
@@ -67,18 +58,6 @@ public interface BlockBuilder {
      * @return the context bound to this builder.
      */
     BlockContext context();
-    
-    /**
-     * Cancels this builder.
-     */
-    void cancel();
-    
-    /**
-     * Checks if this builder is canceled.
-     * 
-     * @return {@code true} if canceled, {@code false} otherwise.
-     */
-    boolean isCanceled();
     
     /**
      * Checks if this builder has any children.
@@ -112,11 +91,19 @@ public interface BlockBuilder {
     }
     
     /**
-     * Return the current line number in this builder.
+     * Returns the first line number where this builder started.
      * 
-     * @return the current line number relative to the first line of this builder..
+     * @return the first line number of this builder, starting from one.
      */
-    int lineNo();
+    int firstLineNo();
+    
+    /**
+     * Return the number of lines processed by this builder.
+     * This method returns zero at the first line of the builder.
+     * 
+     * @return the number of lines processed.
+     */
+    int lineCount();
     
     /**
      * Appends a line to this builder.
@@ -139,7 +126,7 @@ public interface BlockBuilder {
     /**
      * Returns the successor of this builder.
      * 
-     * @return the successor of this builder.
+     * @return the successor of this builder, or {@code null}.
      */
     default BlockBuilder successor() {
         return null;

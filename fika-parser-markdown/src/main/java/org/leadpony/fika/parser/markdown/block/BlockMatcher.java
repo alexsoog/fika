@@ -53,16 +53,16 @@ public interface BlockMatcher {
     BlockBuilder newBuilder(InputSequence input);
     
     /**
-     * Returns the block types which this builder can interrupt.
+     * Returns the block types which this matcher can interrupt.
      * 
      * @return the set of block types.
      */
-    default Set<? extends BlockType> interruptible() {
+    default Set<? extends BlockType> typesToInterrupt() {
         return Collections.emptySet();
     }
     
     /**
-     * Creates a new interrupting block builder for the given content.
+     * Creates a new interrupting block builder for the given input.
      * 
      * @param input the content of the line.
      * @param current the builder to be interrupted.
@@ -70,6 +70,27 @@ public interface BlockMatcher {
      * @return new block builder if matched, or {@code null} if not matched.
      */
     default BlockBuilder newInterruptingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
+        return null;
+    }
+
+    /**
+     * Returns the block types which this matcher can replace.
+     * 
+     * @return the set of block types.
+     */
+    default Set<? extends BlockType> typesToReplace() {
+        return Collections.emptySet();
+    }
+    
+    /**
+     * Creates a new replacing block builder for the given input.
+     * 
+     * @param input the content of the line.
+     * @param current the builder to be replaced.
+     * @param mode the current builder mode.
+     * @return new block builder if matched, or {@code null} if not matched.
+     */
+    default BlockBuilder newReplacingBuilder(InputSequence input, BlockBuilder current, BuilderMode mode) {
         return null;
     }
 }

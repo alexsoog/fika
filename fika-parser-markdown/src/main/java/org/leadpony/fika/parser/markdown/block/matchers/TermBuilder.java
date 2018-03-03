@@ -16,48 +16,48 @@
 package org.leadpony.fika.parser.markdown.block.matchers;
 
 import org.leadpony.fika.core.model.Block;
-import org.leadpony.fika.core.model.Text;
-import org.leadpony.fika.parser.markdown.block.AbstractBlockBuilder;
+import org.leadpony.fika.core.model.Node;
+import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
-import org.leadpony.fika.parser.markdown.common.InputSequence;
+import org.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
 
 /**
- * Buidler of setext heading.
+ * Builder of term in definition list.
  * 
  * @author leadpony
  */
-class SetextHeadingBuilder extends AbstractBlockBuilder {
+class TermBuilder extends ContainerBlockBuilder {
+
+    private final ParagraphBuilder paragraphBuilder;
     
-    private final ParagraphBuilder replacedBuilder;
-    private final int level;
-    
-    SetextHeadingBuilder(ParagraphBuilder replaced, int level) {
-        this.replacedBuilder = replaced;
-        this.level = level;
+    TermBuilder(ParagraphBuilder replacedBuilder) {
+        this.paragraphBuilder = replacedBuilder;
     }
-    
+
     @Override
     public BlockType blockType() {
-        return BasicBlockType.SETEXT_HEADING;
+        return BasicBlockType.TERM;
     }
     
     @Override
     public int firstLineNo() {
-        return replacedBuilder.firstLineNo();
+        return paragraphBuilder.firstLineNo();
     }
 
     @Override
-    public Result processLine(InputSequence input) {
-        return Result.COMPLETED;
+    protected boolean isInterruptible() {
+        return true;
     }
-
+    
     @Override
     protected Block buildBlock() {
-        String title = this.replacedBuilder.buildContent(0);
-        Text text = getNodeFactory().newText(title);
-        Block heading = getNodeFactory().newHeading(this.level);
-        context().addInline(text);
-        heading.appendChild(text);
-        return heading;
+        return getNodeFactory().newTerm();
+    }
+
+    @Override
+    protected Node buildChildNode(BlockBuilder childBuilder) {
+        ParagraphBuilder paragraphBuilder = (ParagraphBuilder)childBuilder;
+        String content = paragraphBuilder.buildContent(0);
+        return getNodeFactory().newText(content);
     }
 }

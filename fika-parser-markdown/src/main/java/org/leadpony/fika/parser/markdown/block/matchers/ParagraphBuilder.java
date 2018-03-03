@@ -44,7 +44,7 @@ class ParagraphBuilder extends AbstractParagraphBuilder {
     
     @Override
     protected Result processLine(InputSequence input) {
-        if (lineNo() <= 1) {
+        if (lineCount() == 0) {
             accumelateLine(input);
             return Result.CONTINUED;
         } else if (input.isBlank()) {
@@ -57,7 +57,7 @@ class ParagraphBuilder extends AbstractParagraphBuilder {
 
     @Override
     protected boolean isInterruptible() {
-        return lineNo() > 1;
+        return true;
     }
     
     @Override

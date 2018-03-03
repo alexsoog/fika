@@ -49,7 +49,7 @@ class FencedCodeBuilder extends AbstractBlockBuilder {
     
     @Override
     public Result processLine(InputSequence input) {
-        if (lineNo() <= 1) {
+        if (lineCount() == 0) {
             return Result.CONTINUED;
         }
         if (testClosingFence(input)) {

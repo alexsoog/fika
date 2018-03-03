@@ -18,8 +18,8 @@ package org.leadpony.fika.parser.markdown.block.matchers;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.leadpony.fika.parser.markdown.block.AbstractBlocKMatcher;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
+import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
@@ -29,7 +29,7 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  * 
  * @author leadpony
  */
-public class AdmonitionMatcher extends AbstractBlocKMatcher {
+public class AdmonitionMatcher implements BlockMatcher {
 
     private static final Pattern TYPE_PATTERN = Pattern.compile(
             "\\s*(\\S+)" +

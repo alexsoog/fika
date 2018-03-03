@@ -28,10 +28,12 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  */
 abstract class AbstractListBuilder extends ContainerBlockBuilder {
 
+    private int childCount;
     private boolean loose;
     private int lastBlankLineNo;
     
     protected AbstractListBuilder() {
+        this.childCount = 0;
         this.loose = false;
         this.lastBlankLineNo = -1;
     }
@@ -43,24 +45,27 @@ abstract class AbstractListBuilder extends ContainerBlockBuilder {
     @Override
     public Result processLine(InputSequence input) {
         if (input.isBlank()) {
-            this.lastBlankLineNo = lineNo();
+            this.lastBlankLineNo = lineCount() + 1;
         }
         return Result.CONTINUED;
     }
     
     @Override
-    protected void openChildBuilder(BlockBuilder childBuilder) {
-        if (lineNo() == this.lastBlankLineNo + 1) {
+    public void openChildBuilder(BlockBuilder childBuilder) {
+        if (this.childCount > 0 && lineCount() == this.lastBlankLineNo) {
             this.loose = true;
         }
         super.openChildBuilder(childBuilder);
+        this.childCount++;
     }
     
     @Override
-    protected void closeChildBuilder(BlockBuilder childBuilder) {
-        AbstractListItemBuilder itemBuilder = (AbstractListItemBuilder)childBuilder;
-        if (itemBuilder.isLoose()) {
-            this.loose = true;
+    public void closeChildBuilder(BlockBuilder childBuilder) {
+        if (childBuilder instanceof AbstractListItemBuilder) {
+            AbstractListItemBuilder itemBuilder = (AbstractListItemBuilder)childBuilder;
+            if (itemBuilder.isLoose()) {
+                this.loose = true;
+            }
         }
         super.closeChildBuilder(childBuilder);
     }

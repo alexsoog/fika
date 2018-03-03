@@ -37,6 +37,14 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
     }
 
     @Override
+    public void bind(BlockContext context) {
+        super.bind(context);
+        if (this.childBuilder != null) {
+            this.childBuilder.bind(context);
+        }
+    }
+    
+    @Override
     public boolean hasChildBuilder() {
         return this.childBuilder != null;
     }
@@ -47,7 +55,7 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
     }
     
     @Override
-    public final Block build() {
+    public Block build() {
         if (hasChildBuilder()) {
             closeChildBuilder(this.childBuilder);
         }
@@ -63,6 +71,23 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
         return findAndInvokeChildBuilder(input);
     }
 
+    public void openChildBuilder(BlockBuilder childBuilder) {
+        Objects.requireNonNull(childBuilder, "childBuilder must not be null");
+        if (this.childBuilder != null) {
+            closeChildBuilder(this.childBuilder);
+        }
+        this.childBuilder = childBuilder;
+    }
+    
+    public void closeChildBuilder(BlockBuilder childBuilder) {
+        Objects.requireNonNull(childBuilder, "childBuilder must not be null");
+        Node node = buildChildNode(childBuilder);
+        if (node != null) {
+            this.childNodes.add(node);
+        }
+        this.childBuilder = null;
+    }
+    
     protected Result tryLazyContinuation(InputSequence input) {
         BlockBuilder last = lastBuilder();
         return last.appendLazyLine(input);
@@ -70,7 +95,7 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
     
     protected Result findAndInvokeChildBuilder(InputSequence input) {
         if (!hasChildBuilder()) {
-            if (findChildBuilder(input) == null) {
+            if (findAndOpenChildBuilder(input) == null) {
                 return Result.NOT_MATCHED;
             }
         }
@@ -80,7 +105,7 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
     protected Result invokeChildBuilderAndRetry(InputSequence input) {
         Result result = invokeChildBuilder(input);
         if (result == Result.NOT_MATCHED) {
-            if (findChildBuilder(input) == null) {
+            if (findAndOpenChildBuilder(input) == null) {
                 return Result.NOT_MATCHED;
             }
             result = invokeChildBuilder(input);
@@ -92,45 +117,40 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
         BlockBuilder child = childBuilder();
         assert(child != null);
         Result result = child.appendLine(input);
-        if (result == Result.COMPLETED || result == Result.NOT_MATCHED) {
-            closeChildBuilder(child);
-        } else if (result == Result.INTERRUPTED) {
+        if (result == Result.INTERRUPTED) {
             closeChildBuilder(child);
             child = child.successor();
             openChildBuilder(child);
             result = child.appendLine(input);
-            if (result == Result.COMPLETED || result == Result.NOT_MATCHED) {
-                closeChildBuilder(child);
-            }
+        } else if (result == Result.REPLACED) {
+            replaceChildBuilder(child, child.successor());
+            child = child.successor();
+            result = child.appendLine(input);
+        }
+        if (result == Result.COMPLETED || result == Result.NOT_MATCHED) {
+            closeChildBuilder(child);
         }
         return result;
     }
+    
+    protected BlockBuilder findAndOpenChildBuilder(InputSequence input) {
+        BlockBuilder found = findChildBuilder(input);
+        if (found != null) {
+            openChildBuilder(found);
+        }
+        return found;
+    }
 
     protected BlockBuilder findChildBuilder(InputSequence input) {
-        BlockBuilder matched = context().finder().findBuilder(input);
-        if (matched != null) {
-            openChildBuilder(matched);
-        }
-        return matched;
+        return context().finder().findBuilder(input);
     }
     
-    protected void openChildBuilder(BlockBuilder childBuilder) {
-        Objects.requireNonNull(childBuilder, "childBuilder must not be null");
-        if (this.childBuilder != null) {
-            closeChildBuilder(this.childBuilder);
-        }
-        this.childBuilder = childBuilder;
+    protected void replaceChildBuilder(BlockBuilder oldBuilder, BlockBuilder newBuilder) {
+        this.childBuilder = newBuilder;
     }
     
-    protected void closeChildBuilder(BlockBuilder childBuilder) {
-        Objects.requireNonNull(childBuilder, "childBuilder must not be null");
-        if (!childBuilder.isCanceled()) {
-            Node node = childBuilder.build();
-            if (node != null) {
-                this.childNodes.add(node);
-            }
-        }
-        this.childBuilder = null;
+    protected Node buildChildNode(BlockBuilder childBuilder) {
+        return childBuilder.build();
     }
     
     protected List<Node> childNodes() {
