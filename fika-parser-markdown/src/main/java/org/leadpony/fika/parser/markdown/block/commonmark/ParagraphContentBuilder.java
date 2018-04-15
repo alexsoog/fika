@@ -21,24 +21,37 @@ import static org.leadpony.fika.parser.markdown.common.Strings.trimWhitespace;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.leadpony.fika.core.model.Paragraph;
-import org.leadpony.fika.core.model.Text;
-import org.leadpony.fika.parser.markdown.block.AbstractBlockBuilder;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
+ * Builder of content in paragraph.
+ * 
  * @author leadpony
  */
-abstract class AbstractParagraphBuilder extends AbstractBlockBuilder {
+class ParagraphContentBuilder {
 
     private final List<String> lines = new ArrayList<>();
     
-    protected void accumulateLine(InputSequence line) {
-        this.lines.add(line.toSourceString());
+    /**
+     * Adds a new input to this content.
+     * 
+     * @param input the input to add.
+     */
+    public void addLine(InputSequence input) {
+        this.lines.add(input.toSourceString());
     }
     
     /**
-     * Builds the content of current paragraph.
+     * Returns the whole content of the paragraph.
+     * 
+     * @return the content of the paragraph.
+     */
+    public String toContent() {
+        return toContent(0);
+    }
+    
+    /**
+     * Returns the content of the paragraph.
      * 
      * The paragraph's raw content is formed by
      * concatenating the lines and removing initial and final whitespace.
@@ -46,24 +59,12 @@ abstract class AbstractParagraphBuilder extends AbstractBlockBuilder {
      * @param linesToSkip the number lines to skip.
      * @return the content of the paragraph.
      */
-    public String buildContent(int linesToSkip) {
+    public String toContent(int linesToSkip) {
         StringBuilder b = new StringBuilder();
         for (int i = linesToSkip; i < lines.size(); ++i) {
             String line = lines.get(i);
             b.append(trimLeadingWhitespace(line)).append('\n');
         }
         return trimWhitespace(b.toString());
-    }
-    
-    Paragraph buildParagraph(int skipLines) {
-        String content = buildContent(skipLines);
-        if (content.isEmpty()) {
-            return null;
-        }
-        Text text = getNodeFactory().newText(content);
-        context().addInline(text);
-        Paragraph block = getNodeFactory().newParagraph();
-        block.appendChild(text);
-        return block;
     }
 }

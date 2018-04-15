@@ -18,6 +18,9 @@ package org.leadpony.fika.parser.markdown.block.commonmark;
 import java.util.function.Consumer;
 
 import org.leadpony.fika.core.model.Block;
+import org.leadpony.fika.core.model.Paragraph;
+import org.leadpony.fika.core.model.Text;
+import org.leadpony.fika.parser.markdown.block.AbstractBlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 import org.leadpony.fika.parser.markdown.common.LinkDefinition;
@@ -25,8 +28,9 @@ import org.leadpony.fika.parser.markdown.common.LinkDefinition;
 /**
  * @author leadpony
  */
-class LinkDefinitionBuilder extends AbstractParagraphBuilder implements Consumer<LinkDefinition> {
+class LinkDefinitionBuilder extends AbstractBlockBuilder implements Consumer<LinkDefinition> {
     
+    private final ParagraphContentBuilder contentBuilder = new ParagraphContentBuilder();
     private final LinkDefinitionRecognizer recognizer = new LinkDefinitionRecognizer(this);
    
     @Override
@@ -39,7 +43,7 @@ class LinkDefinitionBuilder extends AbstractParagraphBuilder implements Consumer
         if (lineCount() > 0 && input.isBlank()) {
             return Result.COMPLETED;
         }
-        accumulateLine(input);
+        contentBuilder.addLine(input);
         if (recognizer.acceptLine(input)) {
             return Result.COMPLETED;
         }
@@ -54,7 +58,15 @@ class LinkDefinitionBuilder extends AbstractParagraphBuilder implements Consumer
     @Override
     protected Block buildBlock() {
         int linesConsumed = recognizer.flush();
-        return buildParagraph(linesConsumed);
+        String content = contentBuilder.toContent(linesConsumed);
+        if (content.isEmpty()) {
+            return null;
+        }
+        Text text = getNodeFactory().newText(content);
+        context().addInline(text);
+        Paragraph block = getNodeFactory().newParagraph();
+        block.appendChild(text);
+        return block;
     }
 
     /**

@@ -53,7 +53,7 @@ class SetextHeadingBuilder extends AbstractBlockBuilder {
 
     @Override
     protected Block buildBlock() {
-        String title = this.replacedBuilder.buildContent(0);
+        String title = this.replacedBuilder.getContent();
         Text text = getNodeFactory().newText(title);
         Block heading = getNodeFactory().newHeading(this.level);
         context().addInline(text);
