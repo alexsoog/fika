@@ -24,8 +24,8 @@ import org.leadpony.fika.core.model.Node;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
-import org.leadpony.fika.parser.markdown.block.matchers.BasicBlockType;
-import org.leadpony.fika.parser.markdown.block.matchers.ParagraphBuilder;
+import org.leadpony.fika.parser.markdown.block.commonmark.BasicBlockType;
+import org.leadpony.fika.parser.markdown.block.commonmark.ParagraphBuilder;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**

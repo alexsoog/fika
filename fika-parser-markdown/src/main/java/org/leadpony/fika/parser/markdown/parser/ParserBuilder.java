@@ -22,8 +22,8 @@ import java.util.Set;
 
 import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.inline.InlineHandler;
-import org.leadpony.fika.parser.markdown.inline.handlers.BackslashEscapeHandler;
-import org.leadpony.fika.parser.markdown.inline.handlers.CharacterReferenceHandler;
+import org.leadpony.fika.parser.markdown.inline.commonmark.BackslashEscapeHandler;
+import org.leadpony.fika.parser.markdown.inline.commonmark.CharacterReferenceHandler;
 
 /**
  * @author leadpony

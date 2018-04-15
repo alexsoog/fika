@@ -20,7 +20,7 @@ import static org.leadpony.fika.parser.markdown.common.Strings.capitalize;
 import org.leadpony.fika.core.model.Admonition;
 import org.leadpony.fika.core.model.Block;
 import org.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
-import org.leadpony.fika.parser.markdown.block.matchers.BasicBlockType;
+import org.leadpony.fika.parser.markdown.block.commonmark.BasicBlockType;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 

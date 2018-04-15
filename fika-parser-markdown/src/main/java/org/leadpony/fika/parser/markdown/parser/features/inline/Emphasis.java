@@ -17,8 +17,8 @@ package org.leadpony.fika.parser.markdown.parser.features.inline;
 
 import org.leadpony.fika.core.parser.BasicFeature;
 import org.leadpony.fika.core.parser.Feature;
-import org.leadpony.fika.parser.markdown.inline.handlers.AsteriskEmphasisHandler;
-import org.leadpony.fika.parser.markdown.inline.handlers.UnderscoreEmphasisHandler;
+import org.leadpony.fika.parser.markdown.inline.commonmark.AsteriskEmphasisHandler;
+import org.leadpony.fika.parser.markdown.inline.commonmark.UnderscoreEmphasisHandler;
 import org.leadpony.fika.parser.markdown.parser.FeatureProvider;
 import org.leadpony.fika.parser.markdown.parser.ParserBuilder;
 

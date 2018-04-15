@@ -17,8 +17,8 @@ package org.leadpony.fika.parser.markdown.parser.features.inline;
 
 import org.leadpony.fika.core.parser.BasicFeature;
 import org.leadpony.fika.core.parser.Feature;
-import org.leadpony.fika.parser.markdown.inline.handlers.BackslashLineBreakHandler;
-import org.leadpony.fika.parser.markdown.inline.handlers.LineBreakHandler;
+import org.leadpony.fika.parser.markdown.inline.commonmark.BackslashLineBreakHandler;
+import org.leadpony.fika.parser.markdown.inline.commonmark.LineBreakHandler;
 import org.leadpony.fika.parser.markdown.parser.FeatureProvider;
 import org.leadpony.fika.parser.markdown.parser.ParserBuilder;
 

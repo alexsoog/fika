@@ -17,8 +17,8 @@ package org.leadpony.fika.parser.markdown.parser.features.inline;
 
 import org.leadpony.fika.core.parser.BasicFeature;
 import org.leadpony.fika.core.parser.Feature;
-import org.leadpony.fika.parser.markdown.inline.handlers.ImageHandler;
-import org.leadpony.fika.parser.markdown.inline.handlers.LinkCloserHandler;
+import org.leadpony.fika.parser.markdown.inline.commonmark.ImageHandler;
+import org.leadpony.fika.parser.markdown.inline.commonmark.LinkCloserHandler;
 import org.leadpony.fika.parser.markdown.parser.FeatureProvider;
 import org.leadpony.fika.parser.markdown.parser.ParserBuilder;
 

@@ -17,7 +17,7 @@ package org.leadpony.fika.parser.markdown.parser.features.block;
 
 import org.leadpony.fika.core.parser.BasicFeature;
 import org.leadpony.fika.core.parser.Feature;
-import org.leadpony.fika.parser.markdown.block.matchers.HtmlBlockMatcher;
+import org.leadpony.fika.parser.markdown.block.commonmark.HtmlBlockMatcher;
 import org.leadpony.fika.parser.markdown.parser.FeatureProvider;
 import org.leadpony.fika.parser.markdown.parser.ParserBuilder;
 

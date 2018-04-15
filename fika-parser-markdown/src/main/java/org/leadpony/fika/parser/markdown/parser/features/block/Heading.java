@@ -17,8 +17,8 @@ package org.leadpony.fika.parser.markdown.parser.features.block;
 
 import org.leadpony.fika.core.parser.BasicFeature;
 import org.leadpony.fika.core.parser.Feature;
-import org.leadpony.fika.parser.markdown.block.matchers.AtxHeadingMatcher;
-import org.leadpony.fika.parser.markdown.block.matchers.SetextHeadingMatcher;
+import org.leadpony.fika.parser.markdown.block.commonmark.AtxHeadingMatcher;
+import org.leadpony.fika.parser.markdown.block.commonmark.SetextHeadingMatcher;
 import org.leadpony.fika.parser.markdown.parser.FeatureProvider;
 import org.leadpony.fika.parser.markdown.parser.ParserBuilder;
 
