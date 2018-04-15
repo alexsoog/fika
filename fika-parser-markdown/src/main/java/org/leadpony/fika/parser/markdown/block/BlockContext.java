@@ -17,7 +17,6 @@ package org.leadpony.fika.parser.markdown.block;
 
 import org.leadpony.fika.core.model.NodeFactory;
 import org.leadpony.fika.core.model.Text;
-import org.leadpony.fika.parser.markdown.common.InputSequence;
 import org.leadpony.fika.parser.markdown.common.LinkDefinitionMap;
 
 /**
@@ -34,8 +33,6 @@ public interface BlockContext {
      */
     int lineNo();
     
-    InputSequence peekLine(int index);
-
     /**
      * Returns the instance of node factory.
      * 

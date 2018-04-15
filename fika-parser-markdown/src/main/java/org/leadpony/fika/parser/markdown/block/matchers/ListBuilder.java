@@ -16,11 +16,13 @@
 package org.leadpony.fika.parser.markdown.block.matchers;
 
 import org.leadpony.fika.core.model.Block;
+import org.leadpony.fika.core.model.ListBlock;
 import org.leadpony.fika.core.model.ListType;
 import org.leadpony.fika.core.model.OrderedList;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockContext;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
+import org.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
@@ -29,12 +31,19 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  * 
  * @author leadpony
  */
-abstract class ListBuilder extends AbstractListBuilder {
+abstract class ListBuilder extends ContainerBlockBuilder {
     
     private final ListItemBuilder firstItemBuilder;
 
+    private boolean loose;
+    private InputSequence previousInput;
+   
     protected ListBuilder(ListItemBuilder firstItemMatcher) {
         this.firstItemBuilder = firstItemMatcher;
+    }
+    
+    boolean isLoose() {
+        return loose;
     }
     
     boolean canInterrupt(BlockBuilder builder) {
@@ -58,8 +67,26 @@ abstract class ListBuilder extends AbstractListBuilder {
     }
     
     @Override
-    public Result processLine(InputSequence input) {
-        super.processLine(input);
+    public void openChildBuilder(BlockBuilder childBuilder) {
+        if (hasCompletedChildren() && previousInput.isBlank()) {
+            this.loose = true;
+        }
+        super.openChildBuilder(childBuilder);
+    }
+    
+    @Override
+    public void closeChildBuilder(BlockBuilder childBuilder) {
+        if (childBuilder instanceof ListItemBuilder) {
+            ListItemBuilder itemBuilder = (ListItemBuilder)childBuilder;
+            if (itemBuilder.isLoose()) {
+                this.loose = true;
+            }
+        }
+        super.closeChildBuilder(childBuilder);
+    }
+    
+    @Override
+    protected Result processLine(InputSequence input) {
         if (lineCount() == 0) {
             openChildBuilder(this.firstItemBuilder);
         }
@@ -70,6 +97,11 @@ abstract class ListBuilder extends AbstractListBuilder {
             }
         }
         return Result.CONTINUED;
+    }
+    
+    @Override
+    protected void postprocessLine(InputSequence input) {
+        this.previousInput = input;
     }
     
     @Override
@@ -112,7 +144,9 @@ class BulletListBuilder extends ListBuilder {
 
     @Override
     protected Block buildBlock() {
-        return getNodeFactory().newLiskBlock(ListType.UNORDERED);
+        ListBlock block = getNodeFactory().newListBlock(ListType.UNORDERED);
+        block.setTight(!isLoose());
+        return block;
     }
 }
 
@@ -137,7 +171,8 @@ class OrderedListBuilder extends ListBuilder {
 
     @Override
     protected Block buildBlock() {
-        OrderedList block = (OrderedList)getNodeFactory().newLiskBlock(ListType.ORDERED);
+        OrderedList block = (OrderedList)getNodeFactory().newListBlock(ListType.ORDERED);
+        block.setTight(!isLoose());
         block.setStartNumber(startNumber);
         return block;
     }

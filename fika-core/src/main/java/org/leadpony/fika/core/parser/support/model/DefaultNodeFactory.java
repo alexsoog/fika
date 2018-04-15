@@ -129,7 +129,7 @@ public class DefaultNodeFactory implements NodeFactory {
     }
 
     @Override
-    public ListBlock newLiskBlock(ListType type) {
+    public ListBlock newListBlock(ListType type) {
         Objects.requireNonNull(type, "type must not be null");
         switch (type) {
         case ORDERED:
@@ -247,7 +247,7 @@ public class DefaultNodeFactory implements NodeFactory {
      * 
      * @author leadpony
      */
-    private static class DefinitionListImpl extends ContainerNode implements DefinitionList {
+    private static class DefinitionListImpl extends AbstractListBlock implements DefinitionList {
         
         DefinitionListImpl(NodeFactory factory) {
             super(factory);
@@ -468,7 +468,7 @@ public class DefaultNodeFactory implements NodeFactory {
      * 
      * @author leadpony
      */
-    private static class OrderedListImpl extends ContainerNode implements OrderedList {
+    private static class OrderedListImpl extends AbstractListBlock implements OrderedList {
 
         int startNumber;
         
@@ -541,7 +541,7 @@ public class DefaultNodeFactory implements NodeFactory {
      * 
      * @author leadpony
      */
-    private static class UnorderedListImpl extends ContainerNode implements UnorderedList {
+    private static class UnorderedListImpl extends AbstractListBlock implements UnorderedList {
         
         UnorderedListImpl(NodeFactory factory) {
             super(factory);

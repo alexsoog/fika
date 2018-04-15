@@ -15,7 +15,10 @@
  */
 package org.leadpony.fika.parser.markdown.block;
 
+import java.util.List;
+
 import org.leadpony.fika.core.model.Block;
+import org.leadpony.fika.core.model.Node;
 import org.leadpony.fika.core.model.NodeFactory;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
@@ -72,7 +75,9 @@ public abstract class AbstractBlockBuilder implements BlockBuilder {
                 }
             }
         }
-        return processLine(input);
+        Result result = processLine(input);
+        postprocessLine(input);
+        return result;
     }
     
     @Override
@@ -81,8 +86,11 @@ public abstract class AbstractBlockBuilder implements BlockBuilder {
     }
     
     @Override
-    public Block build() {
-        return buildBlock();
+    public void build(List<Node> nodes) {
+        Node node = buildBlock();
+        if (node != null) {
+            nodes.add(node);
+        }
     }
 
     /**
@@ -100,6 +108,9 @@ public abstract class AbstractBlockBuilder implements BlockBuilder {
     
     protected Result processLine(InputSequence input) {
         return Result.NOT_MATCHED;
+    }
+    
+    protected void postprocessLine(InputSequence input) {
     }
     
     /**

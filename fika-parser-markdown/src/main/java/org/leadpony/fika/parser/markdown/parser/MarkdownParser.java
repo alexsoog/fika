@@ -15,6 +15,8 @@
  */
 package org.leadpony.fika.parser.markdown.parser;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +25,7 @@ import org.leadpony.fika.core.model.Document;
 import org.leadpony.fika.core.model.NodeFactory;
 import org.leadpony.fika.core.model.Text;
 import org.leadpony.fika.core.parser.Parser;
+import org.leadpony.fika.core.parser.ParserException;
 import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BlockProcessor;
 import org.leadpony.fika.parser.markdown.block.DefaultBlockProcessor;
@@ -61,15 +64,23 @@ class MarkdownParser implements Parser {
 
     @Override
     public Document parse() {
-        return processAllBlocks();
+        try {
+            Document doc = processAllBlocks();
+            processAllInlines(this.blockProcessor.getInlines());
+            return doc;
+        } catch (IOException e) {
+            throw new ParserException(e);
+        }
     }
     
-    private Document processAllBlocks() {
+    private Document processAllBlocks() throws IOException {
         BlockProcessor processor = this.blockProcessor;
-        processor.processAll();
-        Document doc = processor.getDocument();
-        processAllInlines(processor.getInlines());
-        return doc;
+        BufferedReader reader = new BufferedReader(this.reader);
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+            processor.process(line);
+        }
+        return processor.getDocument();
     }
     
     private void processAllInlines(Set<Text> inlines) {
@@ -83,7 +94,7 @@ class MarkdownParser implements Parser {
     }
     
     protected BlockProcessor buildBlockProcessor(NodeFactory nodeFactory, List<BlockMatcher> matchers) {
-        return new DefaultBlockProcessor(this.reader, nodeFactory, linkDefinitions, matchers);
+        return new DefaultBlockProcessor(nodeFactory, linkDefinitions, matchers);
     }
     
     protected InlineProcessor buildInlineProcessor(NodeFactory nodeFactory, List<InlineHandler> handlers) {

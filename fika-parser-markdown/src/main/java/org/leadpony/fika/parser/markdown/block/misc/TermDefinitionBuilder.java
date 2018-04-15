@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.leadpony.fika.parser.markdown.block.matchers;
+package org.leadpony.fika.parser.markdown.block.misc;
 
 import org.leadpony.fika.core.model.Block;
+import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
+import org.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
+import org.leadpony.fika.parser.markdown.block.matchers.BasicBlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
@@ -24,12 +27,18 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  * 
  * @author leadpony
  */
-class TermDefinitionBuilder extends AbstractListItemBuilder {
+class TermDefinitionBuilder extends ContainerBlockBuilder {
 
     private final int indentSize;
+    private boolean loose;
+    private InputSequence previousInput;
     
     TermDefinitionBuilder(int identSize) {
         this.indentSize = identSize;
+    }
+    
+    boolean isLoose() {
+        return loose;
     }
 
     @Override
@@ -38,8 +47,12 @@ class TermDefinitionBuilder extends AbstractListItemBuilder {
     }
     
     @Override
-    public Result processLine(InputSequence input) {
-        super.processLine(input);
+    public boolean isInterruptible() {
+        return true;
+    }
+
+    @Override
+    protected Result processLine(InputSequence input) {
         if (input.isBlank()) {
             findAndInvokeChildBuilder(input);
             return Result.CONTINUED;
@@ -49,14 +62,22 @@ class TermDefinitionBuilder extends AbstractListItemBuilder {
         }
         return Result.NOT_MATCHED;
     }
-    
-    @Override
-    public boolean isInterruptible() {
-        return true;
-    }
 
+    @Override
+    protected void postprocessLine(InputSequence input) {
+        this.previousInput = input;
+    }
+    
     @Override
     protected Block buildBlock() {
         return getNodeFactory().newDefinition();
+    }
+
+    @Override
+    public void openChildBuilder(BlockBuilder childBuilder) {
+        if (hasCompletedChildren() && this.previousInput.isBlank()) {
+            this.loose = true;
+        }
+        super.openChildBuilder(childBuilder);
     }
 }

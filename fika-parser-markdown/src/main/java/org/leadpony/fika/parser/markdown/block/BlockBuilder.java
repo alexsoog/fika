@@ -15,7 +15,9 @@
  */
 package org.leadpony.fika.parser.markdown.block;
 
-import org.leadpony.fika.core.model.Block;
+import java.util.List;
+
+import org.leadpony.fika.core.model.Node;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
@@ -60,37 +62,6 @@ public interface BlockBuilder {
     BlockContext context();
     
     /**
-     * Checks if this builder has any children.
-     * 
-     * @return {@code true} if this builder has any children. {@code false} otherwise.
-     */
-    default boolean hasChildBuilder() {
-        return false;
-    }
-    
-    /**
-     * Returns the child builder of this builder.
-     * 
-     * @return the child builder.
-     */
-    default BlockBuilder childBuilder() {
-        return null;
-    }
-    
-    /**
-     * Returns the last descendant builder of this builder.
-     * 
-     * @return the last descendant builder.
-     */
-    default BlockBuilder lastBuilder() {
-        BlockBuilder builder = this;
-        while (builder.hasChildBuilder()) {
-            builder = builder.childBuilder();
-        }
-        return builder;
-    }
-    
-    /**
      * Returns the first line number where this builder started.
      * 
      * @return the first line number of this builder, starting from one.
@@ -124,6 +95,37 @@ public interface BlockBuilder {
     }
     
     /**
+     * Checks if this builder has any children.
+     * 
+     * @return {@code true} if this builder has any children. {@code false} otherwise.
+     */
+    default boolean hasChildBuilder() {
+        return false;
+    }
+    
+    /**
+     * Returns the child builder of this builder.
+     * 
+     * @return the child builder.
+     */
+    default BlockBuilder childBuilder() {
+        return null;
+    }
+    
+    /**
+     * Returns the last descendant builder of this builder.
+     * 
+     * @return the last descendant builder.
+     */
+    default BlockBuilder lastBuilder() {
+        BlockBuilder builder = this;
+        while (builder.hasChildBuilder()) {
+            builder = builder.childBuilder();
+        }
+        return builder;
+    }
+    
+    /**
      * Returns the successor of this builder.
      * 
      * @return the successor of this builder, or {@code null}.
@@ -133,9 +135,9 @@ public interface BlockBuilder {
     }
     
     /**
-     * Builds a block by this builder.
+     * Builds new blocks with this builder.
      * 
-     * @return the block built by this builder.
+     * @param nodes the list of nodes to which new built nodes will be added, never be {@code null}.
      */
-    Block build();
+    void build(List<Node> nodes);
 }

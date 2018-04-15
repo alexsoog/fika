@@ -33,7 +33,7 @@ abstract class AbstractParagraphBuilder extends AbstractBlockBuilder {
 
     private final List<String> lines = new ArrayList<>();
     
-    protected void accumelateLine(InputSequence line) {
+    protected void accumulateLine(InputSequence line) {
         this.lines.add(line.toSourceString());
     }
     
@@ -46,7 +46,7 @@ abstract class AbstractParagraphBuilder extends AbstractBlockBuilder {
      * @param linesToSkip the number lines to skip.
      * @return the content of the paragraph.
      */
-    String buildContent(int linesToSkip) {
+    public String buildContent(int linesToSkip) {
         StringBuilder b = new StringBuilder();
         for (int i = linesToSkip; i < lines.size(); ++i) {
             String line = lines.get(i);

@@ -13,38 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.leadpony.fika.parser.markdown.block;
-
-import java.util.Set;
-
-import org.leadpony.fika.core.model.Document;
-import org.leadpony.fika.core.model.Text;
-
 /**
- * Block processor.
+ * Provides miscellaneous block matchers and builders.
  * 
  * @author leadpony
  */
-public interface BlockProcessor {
-
-    /**
-     * Processes blocks in a line.
-     * 
-     * @param line the line to process.
-     */
-    void process(String line);
-    
-    /**
-     * Returns the document built by this processor.
-     * 
-     * @return the built document.
-     */
-    Document getDocument();
-
-    /**
-     * Returns the all text nodes found.
-     * 
-     * @return the set of text nodes.
-     */
-    Set<Text> getInlines();
-}
+package org.leadpony.fika.parser.markdown.block.misc;

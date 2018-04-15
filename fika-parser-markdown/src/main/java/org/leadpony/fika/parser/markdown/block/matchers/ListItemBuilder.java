@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import org.leadpony.fika.core.model.Block;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
+import org.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 
@@ -29,11 +30,13 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  * 
  * @author leadpony
  */
-abstract class ListItemBuilder extends AbstractListItemBuilder {
+abstract class ListItemBuilder extends ContainerBlockBuilder {
     
     private final int indentSize;
     private final boolean empty;
     private int linesNotMatched;
+    private boolean loose;
+    private InputSequence previousInput;
     
     protected ListItemBuilder(int indentSize, boolean empty) {
         this.indentSize = indentSize;
@@ -54,9 +57,35 @@ abstract class ListItemBuilder extends AbstractListItemBuilder {
         return !empty;
     }
     
+    boolean isLoose() {
+        return loose;
+    }
+    
     @Override
-    public Result processLine(InputSequence input) {
-        super.processLine(input);
+    public boolean isInterruptible() {
+        return true;
+    }
+    
+    @Override
+    public BlockBuilder interrupt(InputSequence input, BuilderMode mode) {
+        assert(isInterruptible());
+        int indentSize = input.countLeadingSpaces(0, this.indentSize);
+        if (indentSize < this.indentSize) {
+            return interrupterOfSameType(input);
+        }
+        return null;
+    }
+ 
+    @Override
+    public void openChildBuilder(BlockBuilder childBuilder) {
+        if (hasCompletedChildren() && this.previousInput.isBlank()) {
+            this.loose = true;
+        }
+        super.openChildBuilder(childBuilder);
+    }
+    
+    @Override
+    protected Result processLine(InputSequence input) {
         final boolean isBlank = input.isBlank();
         if (!isBlank && lineCount() > 0 && !input.hasLeadingSpaces(indentSize)) {
             // Not indented.
@@ -72,20 +101,10 @@ abstract class ListItemBuilder extends AbstractListItemBuilder {
         }
         return Result.CONTINUED;
     }
-    
+ 
     @Override
-    public boolean isInterruptible() {
-        return true;
-    }
-
-    @Override
-    public BlockBuilder interrupt(InputSequence input, BuilderMode mode) {
-        assert(isInterruptible());
-        int indentSize = input.countLeadingSpaces(0, this.indentSize);
-        if (indentSize < this.indentSize) {
-            return interrupterOfSameType(input);
-        }
-        return null;
+    protected void postprocessLine(InputSequence input) {
+        this.previousInput = input;
     }
     
     @Override

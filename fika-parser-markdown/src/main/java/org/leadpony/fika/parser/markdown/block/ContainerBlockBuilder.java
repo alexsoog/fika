@@ -32,6 +32,7 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
     
     private BlockBuilder childBuilder;
     private final List<Node> childNodes = new ArrayList<>();
+    private int numberOfCompletedChildren;
     
     protected ContainerBlockBuilder() {
     }
@@ -55,22 +56,17 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
     }
     
     @Override
-    public Block build() {
+    public void build(List<Node> nodes) {
         if (hasChildBuilder()) {
             closeChildBuilder(this.childBuilder);
         }
-        Block block = buildBlock();
-        if (block != null) {
-            block.appendChildren(childNodes());
+        Block newBlock = buildBlock();
+        if (newBlock != null) {
+            newBlock.appendChildren(collectChildNodes());
+            nodes.add(newBlock);
         }
-        return block;
     }
     
-    @Override
-    protected Result processLine(InputSequence input) {
-        return findAndInvokeChildBuilder(input);
-    }
-
     public void openChildBuilder(BlockBuilder childBuilder) {
         Objects.requireNonNull(childBuilder, "childBuilder must not be null");
         if (this.childBuilder != null) {
@@ -81,13 +77,33 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
     
     public void closeChildBuilder(BlockBuilder childBuilder) {
         Objects.requireNonNull(childBuilder, "childBuilder must not be null");
-        Node node = buildChildNode(childBuilder);
-        if (node != null) {
-            this.childNodes.add(node);
-        }
+        buildChild(childBuilder, this.childNodes);
+        this.childBuilder = null;
+        this.numberOfCompletedChildren++;
+    }
+    
+    public void resetChildBuilder() {
         this.childBuilder = null;
     }
     
+    /**
+     * Returns the number of completed children.
+     * 
+     * @return the number of completed children.
+     */
+    public int countCompletedChildren() {
+        return this.numberOfCompletedChildren;
+    }
+    
+    public boolean hasCompletedChildren() {
+        return countCompletedChildren() > 0;
+    }
+    
+    @Override
+    protected Result processLine(InputSequence input) {
+        return findAndInvokeChildBuilder(input);
+    }
+
     protected Result tryLazyContinuation(InputSequence input) {
         BlockBuilder last = lastBuilder();
         return last.appendLazyLine(input);
@@ -116,20 +132,26 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
     protected Result invokeChildBuilder(InputSequence input) {
         BlockBuilder child = childBuilder();
         assert(child != null);
-        Result result = child.appendLine(input);
-        if (result == Result.INTERRUPTED) {
-            closeChildBuilder(child);
-            child = child.successor();
-            openChildBuilder(child);
+        int count = 2;
+        Result result;
+        do {
             result = child.appendLine(input);
-        } else if (result == Result.REPLACED) {
-            replaceChildBuilder(child, child.successor());
-            child = child.successor();
-            result = child.appendLine(input);
-        }
-        if (result == Result.COMPLETED || result == Result.NOT_MATCHED) {
-            closeChildBuilder(child);
-        }
+            if (result == Result.INTERRUPTED) {
+                BlockBuilder successor = child.successor();
+                closeChildBuilder(child);
+                openChildBuilder(successor);
+                child = successor;
+            } else if (result == Result.REPLACED) {
+                BlockBuilder successor = child.successor();
+                replaceChildBuilder(child, successor);
+                child = successor;
+            } else if (result == Result.COMPLETED || result == Result.NOT_MATCHED) {
+                closeChildBuilder(child);
+                break;
+            } else {
+                break;
+            }
+        } while (count-- > 0);
         return result;
     }
     
@@ -149,11 +171,11 @@ public abstract class ContainerBlockBuilder extends AbstractBlockBuilder {
         this.childBuilder = newBuilder;
     }
     
-    protected Node buildChildNode(BlockBuilder childBuilder) {
-        return childBuilder.build();
+    protected void buildChild(BlockBuilder builder, List<Node> nodes) {
+        builder.build(nodes);
     }
     
-    protected List<Node> childNodes() {
+    protected List<Node> collectChildNodes() {
         return childNodes;
     }
 }

@@ -134,7 +134,7 @@ public interface NodeFactory {
      * @return newly created node.
      * @throws NullPointerException if given {@code type} is null.
      */
-    ListBlock newLiskBlock(ListType type);
+    ListBlock newListBlock(ListType type);
 
     /**
      * Creates a new node of {@link ListItem} type.

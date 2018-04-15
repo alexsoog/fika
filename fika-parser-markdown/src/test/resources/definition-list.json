@@ -4,5 +4,23 @@
     "section": "Definition lists",
     "markdown": "Apple\n:   Pomaceous fruit of plants of the genus Malus in\n\tthe family Rosaceae.\nOrange\n:   The fruit of an evergreen tree of the genus Citrus.",
     "html": "<dl><dt>Apple</dt><dd>Pomaceous fruit of plants of the genus Malus in\nthe family Rosaceae.</dd><dt>Orange</dt><dd>The fruit of an evergreen tree of the genus Citrus.</dd></dl>"
+  },
+  {
+    "example": 2,
+    "section": "Definition lists",
+    "markdown": ": foo\n: bar\n",
+    "html": "<dl><dd>foo</dd><dd>bar</dd></dl>"
+  },
+  {
+    "example": 3,
+    "section": "Definition lists",
+    "markdown": "Mercury\n:   The closest planet to the Sun.\nVenus\n:   The second closest planet to the Sun.\nEarth\n",
+    "html": "<dl><dt>Mercury</dt><dd>The closest planet to the Sun.</dd><dt>Venus</dt><dd>The second closest planet to the Sun.</dd></dl><p>Earth</p>"
+  },
+  {
+    "example": 4,
+    "section": "Definition lists",
+    "markdown": "Mercury\n:   The closest planet to the Sun.\nVenus\n:   The second closest planet to the Sun.\nEarth\n# Mars",
+    "html": "<dl><dt>Mercury</dt><dd>The closest planet to the Sun.</dd><dt>Venus</dt><dd>The second closest planet to the Sun.</dd></dl><p>Earth</p><h1>Mars</h1>"
   }
 ]

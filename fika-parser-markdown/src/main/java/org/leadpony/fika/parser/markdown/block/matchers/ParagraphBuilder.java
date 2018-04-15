@@ -26,7 +26,7 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
  * 
  * @author leadpony
  */
-class ParagraphBuilder extends AbstractParagraphBuilder {
+public class ParagraphBuilder extends AbstractParagraphBuilder {
     
     @Override
     public BlockType blockType() {
@@ -45,12 +45,12 @@ class ParagraphBuilder extends AbstractParagraphBuilder {
     @Override
     protected Result processLine(InputSequence input) {
         if (lineCount() == 0) {
-            accumelateLine(input);
+            accumulateLine(input);
             return Result.CONTINUED;
         } else if (input.isBlank()) {
             return Result.COMPLETED;
         } else {
-            accumelateLine(input);
+            accumulateLine(input);
             return Result.CONTINUED;
         }
     }

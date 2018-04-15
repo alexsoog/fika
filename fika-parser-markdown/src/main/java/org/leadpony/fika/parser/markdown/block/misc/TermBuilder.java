@@ -13,20 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.leadpony.fika.parser.markdown.block.matchers;
+package org.leadpony.fika.parser.markdown.block.misc;
 
 import org.leadpony.fika.core.model.Block;
-import org.leadpony.fika.core.model.Node;
-import org.leadpony.fika.parser.markdown.block.BlockBuilder;
+import org.leadpony.fika.parser.markdown.block.AbstractBlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
-import org.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
+import org.leadpony.fika.parser.markdown.block.matchers.BasicBlockType;
+import org.leadpony.fika.parser.markdown.block.matchers.ParagraphBuilder;
+import org.leadpony.fika.parser.markdown.common.InputSequence;
 
 /**
  * Builder of term in definition list.
  * 
  * @author leadpony
  */
-class TermBuilder extends ContainerBlockBuilder {
+class TermBuilder extends AbstractBlockBuilder {
 
     private final ParagraphBuilder paragraphBuilder;
     
@@ -43,21 +44,32 @@ class TermBuilder extends ContainerBlockBuilder {
     public int firstLineNo() {
         return paragraphBuilder.firstLineNo();
     }
-
+    
+    public ParagraphBuilder internalBuilder() {
+        return paragraphBuilder;
+    }
+    
     @Override
     protected boolean isInterruptible() {
         return true;
     }
     
     @Override
-    protected Block buildBlock() {
-        return getNodeFactory().newTerm();
+    protected Result processLine(InputSequence input) {
+        Result result = paragraphBuilder.appendLine(input);
+        if (result == Result.CONTINUED) {
+            return result;
+        } else {
+            setSuccessor(paragraphBuilder);
+            return Result.REPLACED;
+        }
     }
-
+    
     @Override
-    protected Node buildChildNode(BlockBuilder childBuilder) {
-        ParagraphBuilder paragraphBuilder = (ParagraphBuilder)childBuilder;
+    protected Block buildBlock() {
+        Block block = getNodeFactory().newTerm();
         String content = paragraphBuilder.buildContent(0);
-        return getNodeFactory().newText(content);
+        block.appendChild(getNodeFactory().newText(content));
+        return block;
     }
 }

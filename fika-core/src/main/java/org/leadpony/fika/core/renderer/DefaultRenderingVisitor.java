@@ -16,6 +16,7 @@
 package org.leadpony.fika.core.renderer;
 
 import org.leadpony.fika.core.model.Admonition;
+import org.leadpony.fika.core.model.Block;
 import org.leadpony.fika.core.model.BlockQuote;
 import org.leadpony.fika.core.model.CodeBlock;
 import org.leadpony.fika.core.model.CodeSpan;
@@ -29,7 +30,9 @@ import org.leadpony.fika.core.model.HtmlBlock;
 import org.leadpony.fika.core.model.HtmlInline;
 import org.leadpony.fika.core.model.Image;
 import org.leadpony.fika.core.model.Link;
+import org.leadpony.fika.core.model.ListBlock;
 import org.leadpony.fika.core.model.ListItem;
+import org.leadpony.fika.core.model.Node;
 import org.leadpony.fika.core.model.OrderedList;
 import org.leadpony.fika.core.model.Paragraph;
 import org.leadpony.fika.core.model.Term;
@@ -103,7 +106,7 @@ public class DefaultRenderingVisitor implements Visitor {
     @Override
     public void visit(Definition node) {
         formatter.startTag("dd");
-        visitChildren(node);
+        visitListChildren(node);
         formatter.endTag("dd");
     }
 
@@ -172,7 +175,7 @@ public class DefaultRenderingVisitor implements Visitor {
     @Override
     public void visit(ListItem node) {
         formatter.startTag("li");
-        visitChildren(node);
+        visitListChildren(node);
         formatter.endTag("li");
     }
 
@@ -217,5 +220,31 @@ public class DefaultRenderingVisitor implements Visitor {
         formatter.startTag("ul");
         visitChildren(node);
         formatter.endTag("ul");
+    }
+    
+    private static boolean testTightness(Block node) {
+        Node parent = node.parentNode();
+        if (parent == null || !(parent instanceof ListBlock)) {
+            return false;
+        }
+        return ((ListBlock)parent).isTight();
+    }
+    
+    private void visitListChildren(Block node) {
+        if (testTightness(node)) {
+            visitChildrenButParagraph(node);
+        } else {
+            visitChildren(node);
+        }
+    }
+    
+    private void visitChildrenButParagraph(Block node) {
+        for (Node child: node.childNodes()) {
+            if (child instanceof Paragraph) {
+                visitChildren(child);
+            } else {
+                child.accept(this);
+            }
+        }
     }
 }

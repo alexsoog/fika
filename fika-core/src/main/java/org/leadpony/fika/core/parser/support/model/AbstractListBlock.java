@@ -13,28 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.leadpony.fika.parser.markdown.parser.features.block;
+package org.leadpony.fika.core.parser.support.model;
 
-import org.leadpony.fika.core.parser.BasicFeature;
-import org.leadpony.fika.core.parser.Feature;
-import org.leadpony.fika.parser.markdown.block.misc.AdmonitionMatcher;
-import org.leadpony.fika.parser.markdown.parser.FeatureProvider;
-import org.leadpony.fika.parser.markdown.parser.ParserBuilder;
+import org.leadpony.fika.core.model.ListBlock;
+import org.leadpony.fika.core.model.NodeFactory;
 
 /**
- * Feature provider of admonition.
- * 
  * @author leadpony
  */
-public class Admonition implements FeatureProvider {
+abstract class AbstractListBlock extends ContainerNode implements ListBlock {
 
-    @Override
-    public Feature feature() {
-        return BasicFeature.ADMONITION;
+    private boolean tight;
+    
+    protected AbstractListBlock(NodeFactory factory) {
+        super(factory);
+        this.tight = false;
     }
-
+    
     @Override
-    public void provide(ParserBuilder builder) {
-        builder.add(new AdmonitionMatcher());
+    public boolean isTight() {
+        return tight;
+    }
+    
+    @Override
+    public void setTight(boolean tight) {
+        this.tight = tight;
     }
 }

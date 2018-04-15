@@ -39,7 +39,7 @@ class LinkDefinitionBuilder extends AbstractParagraphBuilder implements Consumer
         if (lineCount() > 0 && input.isBlank()) {
             return Result.COMPLETED;
         }
-        accumelateLine(input);
+        accumulateLine(input);
         if (recognizer.acceptLine(input)) {
             return Result.COMPLETED;
         }
