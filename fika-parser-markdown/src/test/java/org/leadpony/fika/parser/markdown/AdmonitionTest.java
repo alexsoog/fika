@@ -15,11 +15,8 @@
  */
 package org.leadpony.fika.parser.markdown;
 
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import java.util.stream.Stream;
+
 import org.leadpony.fika.core.parser.BasicFeature;
 import org.leadpony.fika.core.parser.MarkupLanguage;
 import org.leadpony.fika.core.parser.ParserFactory;
@@ -27,8 +24,6 @@ import org.leadpony.fika.core.parser.ParserFactory;
 /**
  * @author leadpony
  */
-@SuppressWarnings("unused")
-@RunWith(Parameterized.class)
 public class AdmonitionTest extends AbstractSpecTest {
 
     private static final ParserFactory factory = 
@@ -36,21 +31,12 @@ public class AdmonitionTest extends AbstractSpecTest {
                 .withFeature(BasicFeature.ADMONITION)
                 .build();
     
-    public AdmonitionTest(int index, String source, String expected) {
-        super(index, source, expected);
-    }
-  
-    @Parameters(name = "{0}: {1}")
-    public static Iterable<Object[]> parameters() {
-        return parameters("/admonition.json");
-    }
-    
-    @Before
-    public void setUp() {
-    }
-
     @Override
     protected ParserFactory getParserFactory() {
         return factory;
+    }
+
+    public static Stream<Fixture> provideFixtures() {
+        return Fixture.fromJson("/admonition.json");
     }
 }

@@ -15,15 +15,8 @@
  */
 package org.leadpony.fika.parser.markdown;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
-
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonReader;
-
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.leadpony.fika.core.model.Document;
 import org.leadpony.fika.core.parser.MarkupLanguage;
 import org.leadpony.fika.core.parser.Parser;
@@ -38,16 +31,13 @@ public abstract class AbstractSpecTest {
     private static final ParserFactory factory = 
             ParserFactory.newInstance(MarkupLanguage.MARKDOWN);
 
-    private final int index;
-    protected final Fixture fixture;
-    
-    protected AbstractSpecTest(int index, String source, String expected) {
-        this.index = index;
-        this.fixture = new Fixture(source, expected);
+    protected AbstractSpecTest() {
     }
     
-    @Test
-    public void test() {
+    @ParameterizedTest
+    @MethodSource("provideFixtures")
+    public void test(Fixture fixture) {
+        //Assumptions.assumeTrue(fixture.index() == 51);
         Parser parser = getParserFactory().newParser(fixture.source());
         Document doc = parser.parse();
         HtmlRenderer renderer = HtmlRenderer.builder()
@@ -58,33 +48,7 @@ public abstract class AbstractSpecTest {
         HtmlAssert.assertThat(actual).isEqualTo(expected);
     }
     
-    public int index() {
-        return index;
-    }
-    
     protected ParserFactory getParserFactory() {
         return factory;
-    }
-    
-    protected static Iterable<Object[]> parameters(String path) {
-        JsonArray array = loadSpecJson(path);
-        Iterator<Object[]> it = array.stream()
-            .map(v->v.asJsonObject())
-            .map(v->new Object[] {v.getInt("example"), v.getString("markdown"), v.getString("html")})
-            .iterator();
-        return ()->it;
-    }
-    
-    private static JsonArray loadSpecJson(String path) {
-        InputStream resource = AbstractSpecTest.class.getResourceAsStream(path);
-        if (resource == null) {
-            return null;
-        }
-        try (InputStream in = resource) {
-            JsonReader reader = Json.createReader(in);
-            return reader.readArray();
-        } catch (IOException e) {
-            return null;
-        }
     }
 }

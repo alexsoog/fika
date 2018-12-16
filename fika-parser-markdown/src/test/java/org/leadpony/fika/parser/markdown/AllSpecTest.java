@@ -15,30 +15,14 @@
  */
 package org.leadpony.fika.parser.markdown;
 
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import java.util.stream.Stream;
 
 /**
  * @author leadpony
  */
-@SuppressWarnings("unused")
-@RunWith(Parameterized.class)
 public class AllSpecTest extends AbstractSpecTest {
 
-    public AllSpecTest(int index, String source, String expected) {
-        super(index, source, expected);
-    }
-  
-    @Parameters(name = "{0}: {1}")
-    public static Iterable<Object[]> parameters() {
-        return parameters("/spec.json");
-    }
-    
-    @Before
-    public void setUp() {
-        //Assume.assumeTrue(index() == 51);
+    public static Stream<Fixture> provideFixtures() {
+        return Fixture.fromJson("/spec.json");
     }
 }

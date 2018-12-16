@@ -24,9 +24,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.junit.Assume;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.leadpony.fika.core.model.Document;
 import org.leadpony.fika.core.parser.MarkupLanguage;
 import org.leadpony.fika.core.parser.Parser;
@@ -44,10 +44,10 @@ public class SpecDocumentTest {
     private static final Path OUTPUT_PATH = Paths.get("target", "spec.html");
     private InputStream resource;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         resource = getClass().getResourceAsStream("/spec.txt");
-        Assume.assumeTrue(resource != null);
+        Assumptions.assumeTrue(resource != null);
     }
 
     @Test

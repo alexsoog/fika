@@ -15,17 +15,42 @@
  */
 package org.leadpony.fika.parser.markdown;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
+import java.util.stream.Stream;
+
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+import javax.json.JsonValue;
+
 /**
+ * Test fixture.
+ * 
  * @author leadpony
  */
-class Fixture {
+public class Fixture {
     
+    private final int index;
     private final String source;
     private final String expected;
     
     Fixture(String source, String expected) {
+        this.index = 0;
         this.source = source;
         this.expected = expected;
+    }
+    
+    private Fixture(int index, String source, String expected) {
+        this.index = index;
+        this.source = source;
+        this.expected = expected;
+    }
+
+    int index() {
+        return index;
     }
     
     String source() {
@@ -34,5 +59,46 @@ class Fixture {
     
     String expected() {
         return expected;
+    }
+    
+    @Override
+    public String toString() {
+        return source();
+    }
+    
+    public static Stream<Fixture> fromJson(String name) {
+        try {
+            return new FixtureLoader().loadFromJson(name);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+    
+    private static class FixtureLoader {
+        
+        public Stream<Fixture> loadFromJson(String name) throws IOException {
+            return readJsonArray(name).stream()
+                    .map(JsonValue::asJsonObject)
+                    .map(this::mapToFixture);
+        }
+        
+        private JsonArray readJsonArray(String name) throws IOException {
+            InputStream resource = getClass().getResourceAsStream(name);
+            if (resource == null) {
+                throw new IOException(name + " not found");
+            }
+            try (InputStream in = resource; JsonReader reader = Json.createReader(in)) {
+                return reader.readArray();
+            } catch (IOException e) {
+                throw e;
+            }
+        }
+        
+        private Fixture mapToFixture(JsonObject object) {
+            return new Fixture(
+                    object.getInt("example"),
+                    object.getString("markdown"), 
+                    object.getString("html"));
+        }
     }
 }

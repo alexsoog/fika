@@ -15,14 +15,12 @@
  */
 package io.github.leadpony.fika.publication.common;
 
-import java.util.Arrays;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.leadpony.fika.publication.common.AntPathPattern;
 
 import static org.assertj.core.api.Assertions.*;
@@ -30,39 +28,27 @@ import static org.assertj.core.api.Assertions.*;
 /**
  * @author leadpony
  */
-@RunWith(Parameterized.class)
 public class AntPathPatternTest {
     
-    private final String pattern;
-    private final String path;
-    private final boolean result;
-    
-    @Parameters(name = "{0}: {1}")
-    public static Iterable<Object[]> parameters() {
-        return Arrays.asList(new Object[][] {
-            { "*.png", "foo.png", true },
-            { "*.png", "foo/bar.png", false },
-            { "**/*.png", "foo.png", true },
-            { "**/*.png", "foo/bar.png", true },
-            { "**/*.png", "foo/bar/baz.png", true },
-            { "**/*.png", "foo.gif", false },
-            { "images/*.png", "images/foo.png", true },
-            { "images/*.png", "foo.png", false },
-            { "images/*.png", "foo/bar.png", false }
-        });
+    public static Stream<Arguments> arguments() {
+        return Stream.of(
+            Arguments.of("*.png", "foo.png", true),
+            Arguments.of("*.png", "foo/bar.png", false),
+            Arguments.of("**/*.png", "foo.png", true),
+            Arguments.of("**/*.png", "foo/bar.png", true),
+            Arguments.of("**/*.png", "foo/bar/baz.png", true),
+            Arguments.of("**/*.png", "foo.gif", false),
+            Arguments.of("images/*.png", "images/foo.png", true),
+            Arguments.of("images/*.png", "foo.png", false),
+            Arguments.of("images/*.png", "foo/bar.png", false)
+        );
     }
     
-    public AntPathPatternTest(String pattern, String path, boolean result) {
-        this.pattern = pattern;
-        this.path = path;
-        this.result = result;
-    }
-
-    @Test
-    public void test() {
-        Pattern pattern = AntPathPattern.compile(this.pattern);
-        Matcher m = pattern.matcher(path);
+    @ParameterizedTest(name="[{index}] {0}: {1}")
+    @MethodSource("arguments")
+    public void test(String pattern, String path, boolean expected) {
+        Matcher m = AntPathPattern.compile(pattern).matcher(path);
         boolean result = m.matches();
-        assertThat(result).isEqualTo(this.result);
+        assertThat(result).isEqualTo(expected);
     }
 }
