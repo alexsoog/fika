@@ -12,6 +12,10 @@
     <artifactId>fika-parser-markdown</artifactId>
     <packaging>jar</packaging>
 
+    <properties>
+        <module.name>org.leadpony.fika.parser.markdown</module.name>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -49,14 +53,7 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <Automatic-Module-Name>org.leadpony.fika.parser.markdown</Automatic-Module-Name>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
+                <artifactId>maven-source-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
