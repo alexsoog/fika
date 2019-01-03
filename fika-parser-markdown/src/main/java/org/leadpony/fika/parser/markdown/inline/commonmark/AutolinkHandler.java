@@ -18,12 +18,12 @@ package org.leadpony.fika.parser.markdown.inline.commonmark;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.leadpony.fika.core.model.Link;
-import org.leadpony.fika.core.model.Text;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 import org.leadpony.fika.parser.markdown.common.UrlEncoder;
 import org.leadpony.fika.parser.markdown.inline.AbstractInlineHandler;
 import org.leadpony.fika.parser.markdown.inline.HandlerType;
+import org.leadpony.fika.parser.model.Link;
+import org.leadpony.fika.parser.model.Text;
 
 /**
  * Handler for Autolinks.

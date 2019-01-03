@@ -15,10 +15,10 @@
  */
 package org.leadpony.fika.parser.markdown.inline.commonmark;
 
-import org.leadpony.fika.core.model.Node;
-import org.leadpony.fika.core.model.Text;
 import org.leadpony.fika.parser.markdown.common.LinkDefinition;
 import org.leadpony.fika.parser.markdown.inline.Delimiter;
+import org.leadpony.fika.parser.model.Node;
+import org.leadpony.fika.parser.model.Text;
 
 /**
  * Opening delimiter for links and images.

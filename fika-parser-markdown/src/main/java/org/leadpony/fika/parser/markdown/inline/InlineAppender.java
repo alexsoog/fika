@@ -15,7 +15,7 @@
  */
 package org.leadpony.fika.parser.markdown.inline;
 
-import org.leadpony.fika.core.model.Node;
+import org.leadpony.fika.parser.model.Node;
 
 /**
  * @author leadpony

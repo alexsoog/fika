@@ -17,8 +17,8 @@ package org.leadpony.fika.parser.markdown.block;
 
 import java.util.List;
 
-import org.leadpony.fika.core.model.Node;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
+import org.leadpony.fika.parser.model.Node;
 
 /**
  * Block builder interface.

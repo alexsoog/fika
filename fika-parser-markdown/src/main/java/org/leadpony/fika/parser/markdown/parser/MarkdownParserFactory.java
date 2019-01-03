@@ -20,12 +20,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.leadpony.fika.core.model.NodeFactory;
-import org.leadpony.fika.core.parser.Feature;
-import org.leadpony.fika.core.parser.Parser;
-import org.leadpony.fika.core.parser.ParserFactory;
-import org.leadpony.fika.core.parser.ParserFactoryBuilder;
-import org.leadpony.fika.core.parser.support.model.DefaultNodeFactory;
+import org.leadpony.fika.parser.core.Feature;
+import org.leadpony.fika.parser.core.Parser;
+import org.leadpony.fika.parser.core.ParserFactory;
+import org.leadpony.fika.parser.core.ParserFactoryBuilder;
+import org.leadpony.fika.parser.model.NodeFactory;
+import org.leadpony.fika.parser.spi.model.DefaultNodeFactory;
 
 /**
  * Factory of markdown parsers.

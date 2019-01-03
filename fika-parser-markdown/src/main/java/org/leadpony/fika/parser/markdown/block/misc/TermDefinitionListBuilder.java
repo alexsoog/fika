@@ -17,16 +17,16 @@ package org.leadpony.fika.parser.markdown.block.misc;
 
 import java.util.List;
 
-import org.leadpony.fika.core.model.Block;
-import org.leadpony.fika.core.model.ListBlock;
-import org.leadpony.fika.core.model.ListType;
-import org.leadpony.fika.core.model.Node;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
 import org.leadpony.fika.parser.markdown.block.commonmark.BasicBlockType;
 import org.leadpony.fika.parser.markdown.block.commonmark.ParagraphBuilder;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
+import org.leadpony.fika.parser.model.Block;
+import org.leadpony.fika.parser.model.ListBlock;
+import org.leadpony.fika.parser.model.ListType;
+import org.leadpony.fika.parser.model.Node;
 
 /**
  * Builder of term definition list.

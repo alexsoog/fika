@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-import org.leadpony.fika.core.parser.Feature;
+import org.leadpony.fika.parser.core.Feature;
 
 /**
  * Feature provider interface.

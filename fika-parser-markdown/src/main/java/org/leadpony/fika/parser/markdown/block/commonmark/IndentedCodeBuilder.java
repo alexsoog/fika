@@ -18,10 +18,10 @@ package org.leadpony.fika.parser.markdown.block.commonmark;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.leadpony.fika.core.model.CodeBlock;
 import org.leadpony.fika.parser.markdown.block.AbstractBlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
+import org.leadpony.fika.parser.model.CodeBlock;
 
 class IndentedCodeBuilder extends AbstractBlockBuilder {
    

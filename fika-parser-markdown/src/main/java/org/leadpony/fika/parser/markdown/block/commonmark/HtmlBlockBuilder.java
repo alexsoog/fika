@@ -22,11 +22,11 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.leadpony.fika.core.model.Block;
 import org.leadpony.fika.parser.markdown.block.AbstractBlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.HtmlMatchers;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
+import org.leadpony.fika.parser.model.Block;
 
 /**
  * @author leadpony

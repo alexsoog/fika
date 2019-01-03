@@ -15,16 +15,16 @@
  */
 package org.leadpony.fika.parser.markdown.block.commonmark;
 
-import org.leadpony.fika.core.model.Block;
-import org.leadpony.fika.core.model.ListBlock;
-import org.leadpony.fika.core.model.ListType;
-import org.leadpony.fika.core.model.OrderedList;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockContext;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
 import org.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
+import org.leadpony.fika.parser.model.Block;
+import org.leadpony.fika.parser.model.ListBlock;
+import org.leadpony.fika.parser.model.ListType;
+import org.leadpony.fika.parser.model.OrderedList;
 
 /**
  * Block matcher for lists.

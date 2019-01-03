@@ -15,11 +15,11 @@
  */
 package org.leadpony.fika.parser.markdown.block.commonmark;
 
-import org.leadpony.fika.core.model.Block;
-import org.leadpony.fika.core.model.Text;
 import org.leadpony.fika.parser.markdown.block.AbstractBlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
+import org.leadpony.fika.parser.model.Block;
+import org.leadpony.fika.parser.model.Text;
 
 /**
  * Buidler of setext heading.

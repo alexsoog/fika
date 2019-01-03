@@ -17,10 +17,10 @@ package org.leadpony.fika.parser.markdown.inline.commonmark;
 
 import java.util.regex.Pattern;
 
-import org.leadpony.fika.core.model.CodeSpan;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 import org.leadpony.fika.parser.markdown.inline.AbstractInlineHandler;
 import org.leadpony.fika.parser.markdown.inline.HandlerType;
+import org.leadpony.fika.parser.model.CodeSpan;
 
 /**
  * @author leadpony

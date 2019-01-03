@@ -15,12 +15,12 @@
  */
 package org.leadpony.fika.parser.markdown.block.misc;
 
-import org.leadpony.fika.core.model.Block;
 import org.leadpony.fika.parser.markdown.block.AbstractBlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.block.commonmark.BasicBlockType;
 import org.leadpony.fika.parser.markdown.block.commonmark.ParagraphBuilder;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
+import org.leadpony.fika.parser.model.Block;
 
 /**
  * Builder of term in definition list.

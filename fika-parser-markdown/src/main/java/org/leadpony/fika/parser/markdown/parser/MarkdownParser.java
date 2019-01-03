@@ -21,11 +21,8 @@ import java.io.Reader;
 import java.util.List;
 import java.util.Set;
 
-import org.leadpony.fika.core.model.Document;
-import org.leadpony.fika.core.model.NodeFactory;
-import org.leadpony.fika.core.model.Text;
-import org.leadpony.fika.core.parser.Parser;
-import org.leadpony.fika.core.parser.ParserException;
+import org.leadpony.fika.parser.core.Parser;
+import org.leadpony.fika.parser.core.ParserException;
 import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BlockProcessor;
 import org.leadpony.fika.parser.markdown.block.DefaultBlockProcessor;
@@ -33,6 +30,9 @@ import org.leadpony.fika.parser.markdown.common.LinkDefinitionMap;
 import org.leadpony.fika.parser.markdown.inline.DefaultInlineProcessor;
 import org.leadpony.fika.parser.markdown.inline.InlineHandler;
 import org.leadpony.fika.parser.markdown.inline.InlineProcessor;
+import org.leadpony.fika.parser.model.Document;
+import org.leadpony.fika.parser.model.NodeFactory;
+import org.leadpony.fika.parser.model.Text;
 
 /**
  * The parser to parse source written in Markdown.

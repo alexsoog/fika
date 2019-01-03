@@ -27,11 +27,11 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.leadpony.fika.core.model.Document;
-import org.leadpony.fika.core.parser.MarkupLanguage;
-import org.leadpony.fika.core.parser.Parser;
-import org.leadpony.fika.core.parser.ParserFactory;
-import org.leadpony.fika.core.renderer.HtmlRenderer;
+import org.leadpony.fika.parser.core.MarkupLanguage;
+import org.leadpony.fika.parser.core.Parser;
+import org.leadpony.fika.parser.core.ParserFactory;
+import org.leadpony.fika.parser.model.Document;
+import org.leadpony.fika.parser.renderer.HtmlRenderer;
 
 /**
  * @author leadpony

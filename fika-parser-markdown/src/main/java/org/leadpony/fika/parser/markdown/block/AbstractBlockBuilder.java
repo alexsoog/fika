@@ -17,10 +17,10 @@ package org.leadpony.fika.parser.markdown.block;
 
 import java.util.List;
 
-import org.leadpony.fika.core.model.Block;
-import org.leadpony.fika.core.model.Node;
-import org.leadpony.fika.core.model.NodeFactory;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
+import org.leadpony.fika.parser.model.Block;
+import org.leadpony.fika.parser.model.Node;
+import org.leadpony.fika.parser.model.NodeFactory;
 
 /**
  * Skeletal implementation of {@link BlockBuilder}.

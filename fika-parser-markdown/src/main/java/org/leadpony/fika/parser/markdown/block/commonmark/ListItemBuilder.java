@@ -18,12 +18,12 @@ package org.leadpony.fika.parser.markdown.block.commonmark;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.leadpony.fika.core.model.Block;
 import org.leadpony.fika.parser.markdown.block.BlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BuilderMode;
 import org.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
+import org.leadpony.fika.parser.model.Block;
 
 /**
  * Builder of list items.

@@ -15,15 +15,15 @@
  */
 
 /**
- * Defines Markdown parser module.
+ * Defines the Markdown parser module.
  */
 module org.leadpony.fika.parser.markdown {
-    requires org.leadpony.fika.core;
-    
+    requires org.leadpony.fika.parser;
+
     uses org.leadpony.fika.parser.markdown.parser.FeatureProvider;
-    
-    provides org.leadpony.fika.core.parser.ParserService
-        with org.leadpony.fika.parser.markdown.parser.MarkdownParserService;
+
+    provides org.leadpony.fika.parser.spi.ParserFactoryProvider
+        with org.leadpony.fika.parser.markdown.parser.MarkdownParserFactoryProvider;
 
     provides org.leadpony.fika.parser.markdown.parser.FeatureProvider
         with org.leadpony.fika.parser.markdown.parser.features.block.Admonition,

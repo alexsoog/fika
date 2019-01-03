@@ -15,8 +15,8 @@
  */
 package org.leadpony.fika.parser.markdown.block;
 
-import org.leadpony.fika.core.model.Document;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
+import org.leadpony.fika.parser.model.Document;
 
 /**
  * Builder of document node.

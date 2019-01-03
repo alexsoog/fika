@@ -17,10 +17,10 @@ package org.leadpony.fika.parser.markdown.inline;
 
 import java.util.List;
 
-import org.leadpony.fika.core.model.Node;
-import org.leadpony.fika.core.model.NodeFactory;
-import org.leadpony.fika.core.model.Text;
 import org.leadpony.fika.parser.markdown.common.LinkDefinitionMap;
+import org.leadpony.fika.parser.model.Node;
+import org.leadpony.fika.parser.model.NodeFactory;
+import org.leadpony.fika.parser.model.Text;
 
 /**
  * Default implementation of {@link InlineProcessor}.

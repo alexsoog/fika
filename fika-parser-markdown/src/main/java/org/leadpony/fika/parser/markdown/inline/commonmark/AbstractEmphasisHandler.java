@@ -18,11 +18,11 @@ package org.leadpony.fika.parser.markdown.inline.commonmark;
 import static org.leadpony.fika.parser.markdown.common.Characters.isUnicodePunctuation;
 import static org.leadpony.fika.parser.markdown.common.Characters.isUnicodeWhitespace;
 
-import org.leadpony.fika.core.model.Node;
-import org.leadpony.fika.core.model.Text;
 import org.leadpony.fika.parser.markdown.inline.AbstractInlineHandler;
 import org.leadpony.fika.parser.markdown.inline.Delimiter;
 import org.leadpony.fika.parser.markdown.inline.DelimiterRun;
+import org.leadpony.fika.parser.model.Node;
+import org.leadpony.fika.parser.model.Text;
 
 /**
  * @author leadpony

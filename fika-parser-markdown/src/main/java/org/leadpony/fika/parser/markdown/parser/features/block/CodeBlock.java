@@ -15,8 +15,8 @@
  */
 package org.leadpony.fika.parser.markdown.parser.features.block;
 
-import org.leadpony.fika.core.parser.BasicFeature;
-import org.leadpony.fika.core.parser.Feature;
+import org.leadpony.fika.parser.core.BasicFeature;
+import org.leadpony.fika.parser.core.Feature;
 import org.leadpony.fika.parser.markdown.block.commonmark.FencedCodeMatcher;
 import org.leadpony.fika.parser.markdown.block.commonmark.IndentedCodeMatcher;
 import org.leadpony.fika.parser.markdown.parser.FeatureProvider;

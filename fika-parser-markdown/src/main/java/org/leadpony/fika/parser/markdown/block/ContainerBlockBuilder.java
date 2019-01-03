@@ -19,9 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.leadpony.fika.core.model.Block;
-import org.leadpony.fika.core.model.Node;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
+import org.leadpony.fika.parser.model.Block;
+import org.leadpony.fika.parser.model.Node;
 
 /**
  * Builder of container blocks such as documents, block quotes, and lists.

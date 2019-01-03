@@ -19,11 +19,11 @@ import static org.leadpony.fika.parser.markdown.common.Characters.SPACE;
 import static org.leadpony.fika.parser.markdown.common.Strings.expandReferences;
 import static org.leadpony.fika.parser.markdown.common.Strings.unescape;
 
-import org.leadpony.fika.core.model.Block;
-import org.leadpony.fika.core.model.CodeBlock;
 import org.leadpony.fika.parser.markdown.block.AbstractBlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
+import org.leadpony.fika.parser.model.Block;
+import org.leadpony.fika.parser.model.CodeBlock;
 
 class FencedCodeBuilder extends AbstractBlockBuilder {
     

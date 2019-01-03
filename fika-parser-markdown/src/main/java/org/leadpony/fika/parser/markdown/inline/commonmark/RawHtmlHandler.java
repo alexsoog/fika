@@ -17,11 +17,11 @@ package org.leadpony.fika.parser.markdown.inline.commonmark;
 
 import java.util.regex.Matcher;
 
-import org.leadpony.fika.core.model.HtmlInline;
 import org.leadpony.fika.parser.markdown.common.HtmlMatchers;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 import org.leadpony.fika.parser.markdown.inline.AbstractInlineHandler;
 import org.leadpony.fika.parser.markdown.inline.HandlerType;
+import org.leadpony.fika.parser.model.HtmlInline;
 
 /**
  * @author leadpony

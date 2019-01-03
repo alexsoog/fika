@@ -20,12 +20,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.leadpony.fika.core.model.Document;
-import org.leadpony.fika.core.model.Node;
-import org.leadpony.fika.core.model.NodeFactory;
-import org.leadpony.fika.core.model.Text;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 import org.leadpony.fika.parser.markdown.common.LinkDefinitionMap;
+import org.leadpony.fika.parser.model.Document;
+import org.leadpony.fika.parser.model.Node;
+import org.leadpony.fika.parser.model.NodeFactory;
+import org.leadpony.fika.parser.model.Text;
 
 /**
  * Default implementation of {@link BlockProcessor}.

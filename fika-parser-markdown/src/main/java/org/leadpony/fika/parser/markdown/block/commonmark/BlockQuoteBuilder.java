@@ -18,10 +18,10 @@ package org.leadpony.fika.parser.markdown.block.commonmark;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.leadpony.fika.core.model.BlockQuote;
 import org.leadpony.fika.parser.markdown.block.ContainerBlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
+import org.leadpony.fika.parser.model.BlockQuote;
 
 /**
  * @author leadpony

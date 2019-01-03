@@ -15,8 +15,8 @@
  */
 package org.leadpony.fika.parser.markdown.parser.features.block;
 
-import org.leadpony.fika.core.parser.BasicFeature;
-import org.leadpony.fika.core.parser.Feature;
+import org.leadpony.fika.parser.core.BasicFeature;
+import org.leadpony.fika.parser.core.Feature;
 import org.leadpony.fika.parser.markdown.block.commonmark.BulletListMatcher;
 import org.leadpony.fika.parser.markdown.block.commonmark.OrderedListMatcher;
 import org.leadpony.fika.parser.markdown.parser.FeatureProvider;
