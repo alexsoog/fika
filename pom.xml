@@ -17,11 +17,7 @@
 
     <modules>
         <module>fika-core</module>
-        <module>fika-publication</module>
-        <module>fika-cli</module>
         <module>fika-parser-markdown</module>
-        <module>fika-themes</module>
-        <module>fika-distribution</module>
     </modules>
 
     <dependencyManagement>
