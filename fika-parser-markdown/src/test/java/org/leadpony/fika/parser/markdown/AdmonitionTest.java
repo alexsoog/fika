@@ -18,19 +18,21 @@ package org.leadpony.fika.parser.markdown;
 import java.util.stream.Stream;
 
 import org.leadpony.fika.parser.core.BasicFeature;
-import org.leadpony.fika.parser.core.MarkupLanguage;
 import org.leadpony.fika.parser.core.ParserFactory;
+import org.leadpony.fika.parser.core.ParserService;
 
 /**
  * @author leadpony
  */
 public class AdmonitionTest extends AbstractSpecTest {
 
-    private static final ParserFactory factory = 
-            ParserFactory.builder(MarkupLanguage.MARKDOWN)
-                .withFeature(BasicFeature.ADMONITION)
-                .build();
-    
+    private static final ParserService service = ParserService.get("text/markdown");
+
+    private static final ParserFactory factory =
+            service.createParserFactoryBuilder()
+                    .withFeature(BasicFeature.ADMONITION)
+                    .build();
+
     @Override
     protected ParserFactory getParserFactory() {
         return factory;

@@ -24,9 +24,9 @@ import org.leadpony.fika.parser.markdown.common.InputSequence;
 import org.leadpony.fika.parser.model.CodeBlock;
 
 class IndentedCodeBuilder extends AbstractBlockBuilder {
-   
+
     static final int INDENT_SIZE = 4;
-    
+
     private final List<String> lines;
     private int lastNonBlankLineNo;
 
@@ -38,7 +38,7 @@ class IndentedCodeBuilder extends AbstractBlockBuilder {
     public BlockType blockType() {
         return BasicBlockType.INDENTED_CODE;
     }
-    
+
     @Override
     public Result processLine(InputSequence input) {
         if (lineCount() == 0 || input.hasLeadingSpaces(INDENT_SIZE)) {
@@ -57,7 +57,7 @@ class IndentedCodeBuilder extends AbstractBlockBuilder {
         for (int i = 1; i <= lastNonBlankLineNo; ++i) {
             builder.append(lines.get(i - 1)).append('\n');
         }
-        return getNodeFactory().newCodeBlock(builder.toString());
+        return getNodeFactory().createCodeBlock(builder.toString(), null);
     }
 
     private void accumelateLine(InputSequence input) {
@@ -67,7 +67,7 @@ class IndentedCodeBuilder extends AbstractBlockBuilder {
             this.lastNonBlankLineNo = lineCount() + 1;
         }
     }
-    
+
     private void appendBlank() {
         this.lines.add("");
     }

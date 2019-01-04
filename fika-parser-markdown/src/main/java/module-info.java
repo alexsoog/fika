@@ -22,8 +22,8 @@ module org.leadpony.fika.parser.markdown {
 
     uses org.leadpony.fika.parser.markdown.parser.FeatureProvider;
 
-    provides org.leadpony.fika.parser.spi.ParserFactoryProvider
-        with org.leadpony.fika.parser.markdown.parser.MarkdownParserFactoryProvider;
+    provides org.leadpony.fika.parser.spi.ParserProvider
+        with org.leadpony.fika.parser.markdown.parser.MarkdownParserProvider;
 
     provides org.leadpony.fika.parser.markdown.parser.FeatureProvider
         with org.leadpony.fika.parser.markdown.parser.features.block.Admonition,

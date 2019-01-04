@@ -15,8 +15,8 @@
  */
 
 /**
- * Provides the parser interface for markuped text.
- * 
+ * Provides interfaces for parsing markuped text.
+ *
  * @author leadpony
  */
 package org.leadpony.fika.parser.core;

@@ -16,10 +16,15 @@
 package org.leadpony.fika.parser.model;
 
 /**
+ * A line break of hard type.
+ *
  * @author leadpony
  */
 public interface HardLineBreak extends LineBreak {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

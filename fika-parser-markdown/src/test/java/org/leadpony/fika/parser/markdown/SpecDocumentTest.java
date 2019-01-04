@@ -18,7 +18,6 @@ package org.leadpony.fika.parser.markdown;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,9 +26,8 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.leadpony.fika.parser.core.MarkupLanguage;
 import org.leadpony.fika.parser.core.Parser;
-import org.leadpony.fika.parser.core.ParserFactory;
+import org.leadpony.fika.parser.core.ParserService;
 import org.leadpony.fika.parser.model.Document;
 import org.leadpony.fika.parser.renderer.HtmlRenderer;
 
@@ -38,12 +36,11 @@ import org.leadpony.fika.parser.renderer.HtmlRenderer;
  */
 public class SpecDocumentTest {
 
-    private static final ParserFactory factory = 
-            ParserFactory.newInstance(MarkupLanguage.MARKDOWN);
-    
+    private static final ParserService service = ParserService.get("text/markdown");
+
     private static final Path OUTPUT_PATH = Paths.get("target", "spec.html");
     private InputStream resource;
-    
+
     @BeforeEach
     public void setUp() {
         resource = getClass().getResourceAsStream("/spec.txt");
@@ -53,12 +50,10 @@ public class SpecDocumentTest {
     @Test
     public void test() {
         Document doc = null;
-        try (Reader reader = new InputStreamReader(resource)) {
-            Parser parser = factory.newParser(reader);
+        try (Parser parser = service.createParser(new InputStreamReader(resource))) {
             doc = parser.parse();
-        } catch (IOException e) {
         }
-        
+
         HtmlRenderer renderer = HtmlRenderer.builder().build();
         try (Writer writer = Files.newBufferedWriter(OUTPUT_PATH)) {
             renderer.render(doc, writer);

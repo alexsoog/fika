@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
+ * Provides helper classes for implementing the service provider.
+ * <p>
+ * Please note that this package is not intended to be used directly by end
+ * users.
+ * </p>
+
  * @author leadpony
- *
  */
 package org.leadpony.fika.parser.spi.model;

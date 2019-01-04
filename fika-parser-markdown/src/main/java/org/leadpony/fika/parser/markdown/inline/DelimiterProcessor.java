@@ -96,7 +96,7 @@ public class DelimiterProcessor {
     
     private void makePair(Delimiter opener, Delimiter closer) {
         opener.makePairWith(closer);
-        removeDelimitersBeween(opener, closer);
+        removeDelimitersBetween(opener, closer);
     }
     
     private void removeEmptyRun(Delimiter run) {
@@ -104,7 +104,7 @@ public class DelimiterProcessor {
         stack.remove(run);
     }
 
-    private void removeDelimitersBeween(Delimiter opener, Delimiter closer) {
+    private void removeDelimitersBetween(Delimiter opener, Delimiter closer) {
         Iterator<Delimiter> it = stack.iterator(opener);
         it.next();
         while (it.hasNext()) {

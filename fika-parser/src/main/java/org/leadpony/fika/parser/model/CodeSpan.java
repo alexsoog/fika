@@ -16,10 +16,15 @@
 package org.leadpony.fika.parser.model;
 
 /**
+ * An inline node who holds code.
+ *
  * @author leadpony
  */
 public interface CodeSpan extends Inline, Code {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

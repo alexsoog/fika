@@ -16,7 +16,9 @@
 package org.leadpony.fika.parser.model;
 
 /**
+ * An object who holds HTML as character data.
+ *
  * @author leadpony
  */
-public interface Html extends CharData {
+public interface Html extends CharSequence {
 }

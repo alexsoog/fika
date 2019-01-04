@@ -15,8 +15,13 @@
  */
 
 /**
- * Provides the components supporting parser implementations.
- * 
+ * Provides the service provider interface for providing the parser service.
+ *
+ * <p>
+ * Please note that this package is not intended to be used directly by end
+ * users.
+ * </p>
+ *
  * @author leadpony
  */
 package org.leadpony.fika.parser.spi;

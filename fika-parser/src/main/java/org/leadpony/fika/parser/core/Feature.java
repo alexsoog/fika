@@ -16,17 +16,16 @@
 package org.leadpony.fika.parser.core;
 
 /**
- * Feature provided by markup languages.
- * 
+ * A feature provided by markup languages.
+ *
  * @author leadpony
  */
 public interface Feature {
 
     /**
-     * Returns the name of this feature.
-     * The name must be unique in all features.
-     * 
-     * @return the name of this feature.
+     * Returns the name of this feature. The name must be unique in all features.
+     *
+     * @return the name of this feature, never be {@code null}.
      */
     String name();
 }

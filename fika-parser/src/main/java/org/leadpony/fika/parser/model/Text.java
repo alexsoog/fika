@@ -16,10 +16,15 @@
 package org.leadpony.fika.parser.model;
 
 /**
+ * An inline node which holds character data.
+ *
  * @author leadpony
  */
-public interface Text extends Inline, CharData {
+public interface Text extends Inline, CharSequence {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

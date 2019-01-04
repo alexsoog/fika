@@ -48,8 +48,8 @@ class AtxHeadingBuilder extends AbstractBlockBuilder {
     
     @Override
     protected Heading buildBlock() {
-        Heading block = getNodeFactory().newHeading(this.level);
-        Text text = getNodeFactory().newText(this.title);
+        Heading block = getNodeFactory().createHeading(this.level);
+        Text text = getNodeFactory().createText(this.title);
         block.appendChild(text);
         context().addInline(text);
         return block;

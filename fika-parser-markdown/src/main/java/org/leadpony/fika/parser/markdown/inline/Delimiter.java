@@ -22,23 +22,23 @@ import org.leadpony.fika.parser.model.Text;
  * @author leadpony
  */
 public abstract class Delimiter extends DelimiterStack.Entry {
-    
-    private final Text text;
+
+    private Text text;
     private boolean active;
-    
+
     protected Delimiter(Text text) {
         this.text = text;
         this.active = true;
     }
-    
+
     public Text text() {
         return text;
     }
-    
+
     public boolean isActive() {
         return active;
     }
-    
+
     public void deactive() {
         this.active = false;
     }
@@ -49,20 +49,20 @@ public abstract class Delimiter extends DelimiterStack.Entry {
 
     /**
      * Returns the delimiter characters composing of this delimiter run.
-     * 
+     *
      * @return the delimiter characters.
      */
     public abstract String delimiter();
 
     public abstract boolean canBeOpener();
-    
+
     public abstract boolean canBeCloser();
-    
+
     public abstract boolean isSameTypeAs(Delimiter other);
-    
+
     /**
      * Checks if this delimiter run can be paired with specified delimiter run.
-     * 
+     *
      * @param closer the delimiter run to be paired.
      * @return true if this delimiter run can be paired.
      */
@@ -72,18 +72,28 @@ public abstract class Delimiter extends DelimiterStack.Entry {
                 closer.canBeCloser()
                 );
     }
-    
+
     public abstract Node makePairWith(Delimiter closer, Object... params);
-    
+
     @Override
     public String toString() {
         return text.toString();
     }
-    
+
+    /**
+     * Replaces the text containing delimiter with the new one.
+     *
+     * @param newText
+     */
+    protected void replaceText(Text newText) {
+        this.text.getParentNode().replaceChild(newText, this.text);
+        this.text = newText;
+    }
+
     protected static void wrapNodes(Node wrapper, Text opener, Text closer) {
-        Node current = opener.nextNode();
+        Node current = opener.getNextSibling();
         while (current != closer) {
-            Node next = current.nextNode();
+            Node next = current.getNextSibling();
             wrapper.appendChild(current);
             current = next;
         }

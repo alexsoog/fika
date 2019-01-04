@@ -16,21 +16,22 @@
 package org.leadpony.fika.parser.model;
 
 /**
- * Predefined type of list.
- * 
+ * Defines type of {@link ListBlock}.
+ *
  * @author leadpony
+ * @see ListBlock
  */
 public enum ListType {
     /**
-     * Ordered item list.
+     * The list contains ordered items.
      */
     ORDERED,
     /**
-     * Unordered item list.
+     * The list contains unordered items.
      */
     UNORDERED,
     /**
-     * Definition list.
+     * The list contains terms and definitions.
      */
     DEFINITION
 }

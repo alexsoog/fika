@@ -16,41 +16,25 @@
 package org.leadpony.fika.parser.model;
 
 /**
- * Admonition node.
- * 
+ * An admonition.
+ *
  * @author leadpony
  */
 public interface Admonition extends Block {
-    
+
     /**
      * Returns the type qualifier of this admonition.
-     * 
+     *
      * @return the type qualifier of this admonition.
      */
-    String getType();
-    
-    /**
-     * Assigns the type of this admonition.
-     * 
-     * @param type the type to assign, cannot be {@code null}.
-     * @throws NullPointerException if given {@code type} is {@code null}.
-     */
-    void setType(String type);
-    
+    String type();
+
     /**
      * Returns the title of this admonition.
-     * 
+     *
      * @return the title of this admonition.
      */
-    String getTitle();
-    
-    /**
-     * Assigns the title of this admonition.
-     * 
-     * @param title the title to assign, cannot be {@code null}.
-     * @throws NullPointerException if given {@code title} is {@code null}.
-     */
-    void setTitle(String title);
+    String title();
 
     /**
      * {@inheritDoc}

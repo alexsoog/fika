@@ -24,24 +24,22 @@ import org.leadpony.fika.parser.markdown.block.commonmark.BasicBlockType;
 import org.leadpony.fika.parser.markdown.block.commonmark.ParagraphBuilder;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 import org.leadpony.fika.parser.model.Block;
-import org.leadpony.fika.parser.model.ListBlock;
-import org.leadpony.fika.parser.model.ListType;
 import org.leadpony.fika.parser.model.Node;
 
 /**
  * Builder of term definition list.
- * 
+ *
  * @author leadpony
  */
 class TermDefinitionListBuilder extends ContainerBlockBuilder {
-    
+
     private boolean loose;
-    
+
     @Override
     public BlockType blockType() {
         return BasicBlockType.TERM_DEFINITION_LIST;
     }
-    
+
     @Override
     public void closeChildBuilder(BlockBuilder childBuilder) {
         if (childBuilder instanceof TermDefinitionBuilder) {
@@ -66,12 +64,10 @@ class TermDefinitionListBuilder extends ContainerBlockBuilder {
             super.build(nodes);
         }
     }
-    
+
     @Override
     protected Block buildBlock() {
-        ListBlock block =getNodeFactory().newListBlock(ListType.DEFINITION);
-        block.setTight(!loose);
-        return block;
+        return getNodeFactory().createDefinitionList(!loose);
     }
 
     @Override
@@ -84,7 +80,7 @@ class TermDefinitionListBuilder extends ContainerBlockBuilder {
         child.bind(context());
         return child;
     }
-    
+
     @Override
     protected Result invokeChildBuilder(InputSequence input) {
         BlockBuilder child = childBuilder();
@@ -94,7 +90,7 @@ class TermDefinitionListBuilder extends ContainerBlockBuilder {
             return super.invokeChildBuilder(input);
         }
     }
-    
+
     private Result invokeTermBuiler(BlockBuilder childBuilder, InputSequence input) {
         Result result = childBuilder.appendLine(input);
         if (result == Result.CONTINUED) {
@@ -110,7 +106,7 @@ class TermDefinitionListBuilder extends ContainerBlockBuilder {
             return Result.INTERRUPTED;
         }
     }
-    
+
     private void buildExcludingLastTerm(List<Node> nodes) {
         Block block = buildBlock();
         block.appendChildren(collectChildNodes());

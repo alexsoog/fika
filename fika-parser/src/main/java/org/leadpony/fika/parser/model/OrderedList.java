@@ -16,8 +16,8 @@
 package org.leadpony.fika.parser.model;
 
 /**
- * Ordered item list.
- * 
+ * A list block in which the items are ordered.
+ *
  * @author leadpony
  */
 public interface OrderedList extends ListBlock {
@@ -29,7 +29,7 @@ public interface OrderedList extends ListBlock {
     default void accept(Visitor visitor) {
         visitor.visit(this);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -37,13 +37,11 @@ public interface OrderedList extends ListBlock {
     default ListType listType() {
         return ListType.ORDERED;
     }
-    
+
     /**
      * Returns the starting number of this list.
-     * 
+     *
      * @return the starting number.
      */
-    int getStartNumber();
-    
-    void setStartNumber(int startNumber);
+    int startNumber();
 }

@@ -15,7 +15,7 @@
  */
 
 /**
- * Defines the parser API.
+ * Defines the Fika parser API.
  */
 module org.leadpony.fika.parser {
     exports org.leadpony.fika.parser.model;
@@ -25,5 +25,5 @@ module org.leadpony.fika.parser {
     exports org.leadpony.fika.parser.spi;
     exports org.leadpony.fika.parser.spi.model;
 
-    uses org.leadpony.fika.parser.spi.ParserFactoryProvider;
+    uses org.leadpony.fika.parser.spi.ParserProvider;
 }

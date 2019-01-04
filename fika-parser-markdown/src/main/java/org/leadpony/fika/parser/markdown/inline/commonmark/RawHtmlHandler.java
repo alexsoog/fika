@@ -51,6 +51,6 @@ public class RawHtmlHandler extends AbstractInlineHandler {
     }
     
     private HtmlInline buildNode(String html) {
-        return getNodeFactory().newHtmlInline(html);
+        return getNodeFactory().createHtmlInline(html);
     }
 }

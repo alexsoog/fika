@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
- * @author leadpony
+ * Provides the document models for composing abstract syntax tree.
  *
+ * @author leadpony
  */
 package org.leadpony.fika.parser.model;

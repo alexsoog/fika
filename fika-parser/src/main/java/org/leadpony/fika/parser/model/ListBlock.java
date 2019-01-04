@@ -16,39 +16,32 @@
 package org.leadpony.fika.parser.model;
 
 /**
- * List block.
- * 
+ * A list block.
+ *
  * @author leadpony
  */
 public interface ListBlock extends Block {
-    
+
     /**
      * Returns the type of this list.
-     * 
+     *
      * @return the type of this list. never be {@code null}.
      */
     ListType listType();
-    
+
     /**
-     * Checks if this list is tight or not. 
-     * 
-     * @return {@code true} if this list is tight, {@code false} otherwise. 
+     * Checks if this list is tight or not.
+     *
+     * @return {@code true} if this list is tight, {@code false} otherwise.
      */
     boolean isTight();
-    
+
     /**
-     * Checks if this list is loose or not. 
-     * 
-     * @return {@code true} if this list is loose, {@code false} otherwise. 
+     * Checks if this list is loose or not.
+     *
+     * @return {@code true} if this list is loose, {@code false} otherwise.
      */
     default boolean isLoose() {
         return !isTight();
     }
-    
-    /**
-     * Makes this list tight or loose.
-     * 
-     * @param tight {@code true} if this list is tight, {@code false} otherwise.
-     */
-    void setTight(boolean tight);
 }

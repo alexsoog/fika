@@ -16,40 +16,42 @@
 package org.leadpony.fika.parser.core;
 
 /**
- * Builder of parser factory.
- * 
+ * A builder for building a parser factory.
+ *
  * @author leadpony
  */
 public interface ParserFactoryBuilder {
 
     /**
-     * Provides the factory with the specified feature.
-     * 
-     * @param feature the name of the feature.
+     * Specifies the feature to add to the factory.
+     *
+     * @param feature the name of the feature, cannot be {@code null}.
      * @return this builder.
+     * @throws NullPointerException if the specified {@code feature} is {@code null}.
      */
     ParserFactoryBuilder withFeature(String feature);
 
-    /**
-     * Provides the factory with the specified feature.
-     * 
-     * @param feature the feature.
-     * @return this builder.
-     */
     default ParserFactoryBuilder withFeature(Feature feature) {
         return withFeature(feature.name());
     }
-    
+
+    /**
+     * Specifies the feature to remove from the factory.
+     *
+     * @param feature the name of the feature, cannot be {@code null}.
+     * @return this builder.
+     * @throws NullPointerException if the specified {@code feature} is {@code null}.
+     */
     ParserFactoryBuilder withoutFeature(String feature);
 
     default ParserFactoryBuilder withoutFeature(Feature feature) {
         return withoutFeature(feature.name());
     }
-    
+
     /**
-     * Builds an instance of {@link ParserFactory}.
-     * 
-     * @return newly created instance of {@link ParserFactory}.
+     * Builds an instance of parser factory.
+     *
+     * @return newly created instance of parser factory.
      */
     ParserFactory build();
 }

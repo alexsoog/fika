@@ -40,6 +40,6 @@ class ThematicBreakBuilder extends AbstractBlockBuilder {
     
     @Override
     protected Block buildBlock() {
-        return getNodeFactory().newThematicBreak();
+        return getNodeFactory().createThematicBreak();
     }
 }

@@ -16,11 +16,15 @@
 package org.leadpony.fika.parser.model;
 
 /**
- * @author leadpony
+ * A paragraph.
  *
+ * @author leadpony
  */
 public interface Paragraph extends Block {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

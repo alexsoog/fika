@@ -16,8 +16,8 @@
 package org.leadpony.fika.parser.model;
 
 /**
- * Unordered item list.
- * 
+ * A list block in which the items are not ordered.
+ *
  * @author leadpony
  */
 public interface UnorderedList extends ListBlock {

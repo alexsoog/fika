@@ -16,10 +16,15 @@
 package org.leadpony.fika.parser.model;
 
 /**
+ * An item in a list.
+ *
  * @author leadpony
  */
 public interface ListItem extends Block {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

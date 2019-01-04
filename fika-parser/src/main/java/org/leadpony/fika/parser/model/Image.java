@@ -16,18 +16,29 @@
 package org.leadpony.fika.parser.model;
 
 /**
+ * An image block.
+ *
  * @author leadpony
  */
 public interface Image extends Block {
-    
-    String getLocation();
-    
-    void setLocation(String location);
-    
-    String getTitle();
-    
-    void setTitle(String title);
 
+    /**
+     * Returns the location of this image.
+     *
+     * @return the location of this image.
+     */
+    String location();
+
+    /**
+     * Returns the title of this image.
+     *
+     * @return the title of this image, may be {@code null}.
+     */
+    String title();
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

@@ -23,17 +23,16 @@ import org.leadpony.fika.parser.markdown.block.AbstractBlockBuilder;
 import org.leadpony.fika.parser.markdown.block.BlockType;
 import org.leadpony.fika.parser.markdown.common.InputSequence;
 import org.leadpony.fika.parser.model.Block;
-import org.leadpony.fika.parser.model.CodeBlock;
 
 class FencedCodeBuilder extends AbstractBlockBuilder {
-    
+
     private final int indentSize;
     private final char fenceChar;
     private final int fenceLength;
     private final String infoString;
-    
+
     private final StringBuilder builder;
-    
+
     FencedCodeBuilder(int indentSize, char fenceChar, int fenceLength, String infoString) {
         this.indentSize = indentSize;
         this.fenceChar = fenceChar;
@@ -41,12 +40,12 @@ class FencedCodeBuilder extends AbstractBlockBuilder {
         this.infoString = infoString;
         this.builder = new StringBuilder();
     }
-  
+
     @Override
     public BlockType blockType() {
         return BasicBlockType.FENCED_CODE;
     }
-    
+
     @Override
     public Result processLine(InputSequence input) {
         if (lineCount() == 0) {
@@ -55,20 +54,16 @@ class FencedCodeBuilder extends AbstractBlockBuilder {
         if (testClosingFence(input)) {
             return Result.COMPLETED;
         }
-        accumelateLine(input);
+        accumulateLine(input);
         return Result.CONTINUED;
     }
 
     @Override
     protected Block buildBlock() {
-        CodeBlock block = getNodeFactory().newCodeBlock(builder.toString());
         String infoString = unescape(expandReferences(this.infoString));
         String[] words = infoString.split("\\s+");
         String language = words[0];
-        if (!language.isEmpty()) {
-            block.setLanguage(language);
-        }
-        return block;
+        return getNodeFactory().createCodeBlock(builder.toString(), language.isEmpty() ? null : language);
     }
 
     private boolean testClosingFence(InputSequence input) {
@@ -84,7 +79,7 @@ class FencedCodeBuilder extends AbstractBlockBuilder {
         while (++i < input.length()) {
             c = input.charAt(i);
             if (c == fenceChar) {
-                ++length;    
+                ++length;
             } else if (c == SPACE) {
                 break;
             } else {
@@ -102,10 +97,10 @@ class FencedCodeBuilder extends AbstractBlockBuilder {
         }
         return true;
     }
-    
-    private void accumelateLine(InputSequence input) {
+
+    private void accumulateLine(InputSequence input) {
         if (indentSize > 0) {
-            int beginIndex = input.countLeadingSpaces(0,  indentSize);
+            int beginIndex = input.countLeadingSpaces(0, indentSize);
             input = input.subSequence(beginIndex);
         }
         builder.append(input.toSourceString()).append('\n');

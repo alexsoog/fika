@@ -15,13 +15,38 @@
  */
 package org.leadpony.fika.parser.core;
 
+import java.io.Closeable;
+
 import org.leadpony.fika.parser.model.Document;
 
 /**
- * @author leadpony
+ * A parser for parsing the source text.
  *
+ * <p>
+ * Note that methods provided by this interface are not safe for use by multiple
+ * concurrent threads.
+ * </p>
+ *
+ * @author leadpony
  */
-public interface Parser {
+public interface Parser extends Closeable {
 
+    /**
+     * Closes this parser and frees any resources associated with the parser. This
+     * method closes the underlying input source.
+     *
+     * @throws ParsingException if an I/O error occurs.
+     */
+    @Override
+    public void close();
+
+    /**
+     * Parses the input source and returns the parsed document.
+     *
+     * @return the parsed document, never be {@code null}.
+     * @throws ParsingException      if an error occurs while parsing.
+     * @throws IllegalStateException if {@link #parse()} or {@link #close()} method
+     *                               is already called.
+     */
     Document parse();
 }

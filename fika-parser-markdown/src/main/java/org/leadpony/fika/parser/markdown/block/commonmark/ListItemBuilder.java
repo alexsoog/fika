@@ -109,7 +109,7 @@ abstract class ListItemBuilder extends ContainerBlockBuilder {
     
     @Override
     protected Block buildBlock() {
-        return getNodeFactory().newListItem();
+        return getNodeFactory().createListItem();
     }
     
     private InputSequence contentAfterMarker(InputSequence input) {

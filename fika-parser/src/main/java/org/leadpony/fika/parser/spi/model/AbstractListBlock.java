@@ -21,22 +21,17 @@ import org.leadpony.fika.parser.model.NodeFactory;
 /**
  * @author leadpony
  */
-abstract class AbstractListBlock extends ContainerNode implements ListBlock {
+abstract class AbstractListBlock extends AbstractContainerNode implements ListBlock {
 
     private boolean tight;
-    
-    protected AbstractListBlock(NodeFactory factory) {
+
+    protected AbstractListBlock(NodeFactory factory, boolean tight) {
         super(factory);
-        this.tight = false;
+        this.tight = tight;
     }
-    
+
     @Override
     public boolean isTight() {
         return tight;
-    }
-    
-    @Override
-    public void setTight(boolean tight) {
-        this.tight = tight;
     }
 }

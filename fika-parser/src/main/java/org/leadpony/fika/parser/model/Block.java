@@ -16,10 +16,15 @@
 package org.leadpony.fika.parser.model;
 
 /**
+ * The base type of all block nodes.
+ *
  * @author leadpony
  */
 public interface Block extends Node {
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
     }

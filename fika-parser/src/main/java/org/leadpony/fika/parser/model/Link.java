@@ -16,18 +16,29 @@
 package org.leadpony.fika.parser.model;
 
 /**
+ * An inline node representing a hyper link.
+ *
  * @author leadpony
  */
 public interface Link extends Inline {
 
-    String getDestination();
-    
-    void setDestination(String destination);
-    
-    String getTitle();
-    
-    void setTitle(String title);
+    /**
+     * Returns the destination of this link.
+     *
+     * @return the destination of this link.
+     */
+    String destination();
 
+    /**
+     * Returns the title of this link.
+     *
+     * @return the title of this link. may be {@code null}.
+     */
+    String title();
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

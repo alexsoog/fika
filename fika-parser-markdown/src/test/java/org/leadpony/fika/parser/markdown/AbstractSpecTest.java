@@ -17,9 +17,9 @@ package org.leadpony.fika.parser.markdown;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.leadpony.fika.parser.core.MarkupLanguage;
 import org.leadpony.fika.parser.core.Parser;
 import org.leadpony.fika.parser.core.ParserFactory;
+import org.leadpony.fika.parser.core.ParserService;
 import org.leadpony.fika.parser.model.Document;
 import org.leadpony.fika.parser.renderer.HtmlRenderer;
 
@@ -27,27 +27,27 @@ import org.leadpony.fika.parser.renderer.HtmlRenderer;
  * @author leadpony
  */
 public abstract class AbstractSpecTest {
-   
-    private static final ParserFactory factory = 
-            ParserFactory.newInstance(MarkupLanguage.MARKDOWN);
+
+    private static final ParserService service = ParserService.get("text/markdown");
+    private static final ParserFactory factory = service.createParserFactory();
 
     protected AbstractSpecTest() {
     }
-    
+
     @ParameterizedTest
     @MethodSource("provideFixtures")
     public void test(Fixture fixture) {
-        //Assumptions.assumeTrue(fixture.index() == 51);
-        Parser parser = getParserFactory().newParser(fixture.source());
-        Document doc = parser.parse();
-        HtmlRenderer renderer = HtmlRenderer.builder()
-                .withOption(HtmlRenderer.Option.HTML_FRAGMENT)
-                .build();
+        // Assumptions.assumeTrue(fixture.index() == 51);
+        Document doc = null;
+        try (Parser parser = getParserFactory().createParser(fixture.source())) {
+            doc = parser.parse();
+        }
+        HtmlRenderer renderer = HtmlRenderer.builder().withOption(HtmlRenderer.Option.HTML_FRAGMENT).build();
         String actual = renderer.render(doc);
         String expected = fixture.expected();
         HtmlAssert.assertThat(actual).isEqualTo(expected);
     }
-    
+
     protected ParserFactory getParserFactory() {
         return factory;
     }

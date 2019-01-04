@@ -33,19 +33,19 @@ import org.leadpony.fika.parser.model.Text;
  * @author leadpony
  */
 public class LinkCloserHandler extends AbstractInlineHandler {
-  
+
     private static final char TRIGGER_LETTER = ']';
-   
+
     @Override
     public char[] triggerLetters() {
         return new char[] { TRIGGER_LETTER };
     }
- 
+
     @Override
     public HandlerType handlerType() {
         return BasicHandlerType.LINK_CLOSER;
     }
-   
+
     @Override
     public int handleContent(String input, int currentIndex) {
         Text text = buildNode(AbstractLinkDelimiter.CLOSING_CONTENT);
@@ -64,11 +64,11 @@ public class LinkCloserHandler extends AbstractInlineHandler {
         }
         return 1;
     }
-    
+
     private Text buildNode(String content) {
-        return getNodeFactory().newText(content);
+        return getNodeFactory().createText(content);
     }
-    
+
     private int parseLink(InputSequence input, Delimiter opener, Delimiter closer) {
         if (input.length() > 0) {
             char first = input.charAt(0);
@@ -84,7 +84,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
         }
         return parseShortcutReferenceLink(opener, closer);
     }
-    
+
     private int parseInlineLink(InputSequence input, Delimiter opener, Delimiter closer) {
         InlineLinkParser parser = new InlineLinkParser(input, 0);
         LinkDefinition definition = parser.parse();
@@ -94,7 +94,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
         makeLink(opener, closer, definition);
         return parser.index();
     }
-    
+
     private int parseFullReferenceLink(InputSequence input, Delimiter opener, Delimiter closer) {
         int i = 1;
         for (; i < input.length(); ++i) {
@@ -118,7 +118,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
             return -1;
         }
     }
-    
+
     private int parseCollapsedReferenceLink(Delimiter opener, Delimiter closer) {
         String label = extractLinkLabel(opener, closer);
         LinkDefinition definition = findDefinition(label);
@@ -129,7 +129,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
             return -1;
         }
     }
-    
+
     private int parseShortcutReferenceLink(Delimiter opener, Delimiter closer) {
         String label = extractLinkLabel(opener, closer);
         LinkDefinition definition = findDefinition(label);
@@ -140,7 +140,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
             return -1;
         }
     }
-    
+
     private Delimiter findOpener(Delimiter closer) {
         DelimiterStack stack = getDelimiterStack();
         Iterator<Delimiter> it = stack.descendingIterator();
@@ -152,7 +152,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
         }
         return null;
     }
-    
+
     private String extractLinkLabel(Delimiter opener, Delimiter closer) {
         AbstractLinkDelimiter linkOpener = (AbstractLinkDelimiter)opener;
         int openerLength = linkOpener.delimiter().length();
@@ -160,11 +160,11 @@ public class LinkCloserHandler extends AbstractInlineHandler {
         int endIndex = ((ClosingDelimiter)closer).position;
         return context().input().substring(beginIndex, endIndex);
     }
-    
+
     private LinkDefinition findDefinition(String label) {
         return context().getLinkDefinitionMap().get(label);
     }
-    
+
     private Node makeLink(Delimiter opener, Delimiter closer, LinkDefinition definition) {
         Node newNode = opener.makePairWith(closer, definition);
         processDelimitersInText(opener);
@@ -176,7 +176,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
         closer.text().unlink();
         return newNode;
     }
-    
+
     private void deactiveOpenersBefore(Delimiter opener) {
         DelimiterStack stack = getDelimiterStack();
         Iterator<Delimiter> it = stack.descendingIterator(opener);
@@ -187,13 +187,13 @@ public class LinkCloserHandler extends AbstractInlineHandler {
             }
         }
     }
-    
+
     private void processDelimitersInText(Delimiter opener) {
         context().getDelimiterProcessor().processDelimiters(opener);
     }
-    
+
     private static class ClosingDelimiter extends Delimiter {
-        
+
         private final int position;
 
         protected ClosingDelimiter(Text text, int position) {
@@ -203,7 +203,7 @@ public class LinkCloserHandler extends AbstractInlineHandler {
 
         @Override
         public String delimiter() {
-            return text().getContent();
+            return text().textContent();
         }
 
         @Override

@@ -16,11 +16,15 @@
 package org.leadpony.fika.parser.model;
 
 /**
- * @author leadpony
+ * A inline node who holds HTML.
  *
+ * @author leadpony
  */
 public interface HtmlInline extends Inline, Html {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

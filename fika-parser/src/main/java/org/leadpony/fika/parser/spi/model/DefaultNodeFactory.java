@@ -15,7 +15,7 @@
  */
 package org.leadpony.fika.parser.spi.model;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 import org.leadpony.fika.parser.model.Admonition;
 import org.leadpony.fika.parser.model.BlockQuote;
@@ -31,9 +31,7 @@ import org.leadpony.fika.parser.model.HtmlBlock;
 import org.leadpony.fika.parser.model.HtmlInline;
 import org.leadpony.fika.parser.model.Image;
 import org.leadpony.fika.parser.model.Link;
-import org.leadpony.fika.parser.model.ListBlock;
 import org.leadpony.fika.parser.model.ListItem;
-import org.leadpony.fika.parser.model.ListType;
 import org.leadpony.fika.parser.model.NodeFactory;
 import org.leadpony.fika.parser.model.OrderedList;
 import org.leadpony.fika.parser.model.Paragraph;
@@ -44,198 +42,256 @@ import org.leadpony.fika.parser.model.UnorderedList;
 
 /**
  * Default implementation of {@link NodeFactory}.
- * 
+ *
  * @author leadpony
  */
 public class DefaultNodeFactory implements NodeFactory {
-    
+
+    /**
+     * Constructs this node factory.
+     */
     public DefaultNodeFactory() {
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Admonition newAdmonition(String type) {
-        Objects.requireNonNull(type, "type must not be null");
-        return new AdmonitionImpl(this, type);
+    public Admonition createAdmonition(String type, String title) {
+        requireNonNull(type, "type must not be null");
+        return new AdmonitionImpl(this, type, title);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public BlockQuote newBlockQuote() {
+    public BlockQuote createBlockQuote() {
         return new BlockQuoteImpl(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public CodeBlock newCodeBlock(String content) {
-        Objects.requireNonNull(content, "content must not be null");
-        return new CodeBlockImpl(this, content);
+    public CodeBlock createCodeBlock(String content, String language) {
+        requireNonNull(content, "content must not be null");
+        return new CodeBlockImpl(this, content, language);
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public CodeSpan newCodeSpan(String content) {
-        Objects.requireNonNull(content, "content must not be null");
+    public CodeSpan createCodeSpan(String content) {
+        requireNonNull(content, "content must not be null");
         return new CodeSpanImpl(this, content);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Definition newDefinition() {
+    public Definition createDefinition() {
         return new DefinitionImpl(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Document newDocument() {
+    public Document createDocument() {
         return new DocumentImpl(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Emphasis newEmphasis(int strength) {
+    public Emphasis createEmphasis(int strength) {
         if (strength < Emphasis.MIN_STRENGTH || strength > Emphasis.MAX_STRENGTH) {
             throw new IllegalArgumentException("strength is out of range");
         }
         return new EmphasisImpl(this, strength);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public HardLineBreak newHardLineBreak() {
+    public HardLineBreak createHardLineBreak() {
         return new HardLineBreakImpl(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Heading newHeading(int level) {
+    public Heading createHeading(int level) {
         if (level < Heading.MIN_LEVEL || level > Heading.MAX_LEVEL) {
             throw new IllegalArgumentException("level is out of range");
         }
         return new HeadingImpl(this, level);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public HtmlBlock newHtmlBlock(String content) {
-        Objects.requireNonNull(content, "content must not be null");
+    public HtmlBlock createHtmlBlock(String content) {
+        requireNonNull(content, "content must not be null");
         return new HtmlBlockImpl(this, content);
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public HtmlInline newHtmlInline(String content) {
-        Objects.requireNonNull(content, "content must not be null");
+    public HtmlInline createHtmlInline(String content) {
+        requireNonNull(content, "content must not be null");
         return new HtmlInlineImpl(this, content);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Image newImage() {
-        return new ImageImpl(this);
+    public Image createImage(String location, String title) {
+        requireNonNull(location, "location must not be null");
+        return new ImageImpl(this, location, title);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Link newLink() {
-        return new LinkImpl(this);
+    public Link createLink(String destination, String title) {
+        requireNonNull(destination, "destination must not be null");
+        return new LinkImpl(this, destination, title);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ListBlock newListBlock(ListType type) {
-        Objects.requireNonNull(type, "type must not be null");
-        switch (type) {
-        case ORDERED:
-            return new OrderedListImpl(this);
-        case UNORDERED:
-            return new UnorderedListImpl(this);
-        case DEFINITION:
-            return new DefinitionListImpl(this);
-        }
-        return null;
+    public OrderedList createOrderedList(boolean tight, int startNumber) {
+        return new OrderedListImpl(this, tight, startNumber);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ListItem newListItem() {
+    public UnorderedList createUnorderedList(boolean tight) {
+        return new UnorderedListImpl(this, tight);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public DefinitionList createDefinitionList(boolean tight) {
+        return new DefinitionListImpl(this, tight);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ListItem createListItem() {
         return new ListItemImpl(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Paragraph newParagraph() {
+    public Paragraph createParagraph() {
         return new ParagraphImpl(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Term newTerm() {
+    public Term createTerm() {
         return new TermImpl(this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Text newText(String content) {
-        Objects.requireNonNull(content, "content must not be null");
+    public Text createText(String content) {
+        requireNonNull(content, "content must not be null");
         return new TextImpl(this, content);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public ThematicBreak newThematicBreak() {
+    public ThematicBreak createThematicBreak() {
         return new ThematicBreakImpl(this);
     }
-    
+
     /**
      * Implementation of {@link Admonition}.
-     * 
+     *
      * @author leadpony
      */
-    private static class AdmonitionImpl extends ContainerNode implements Admonition {
-        
+    private static class AdmonitionImpl extends AbstractContainerNode implements Admonition {
+
         private String type;
         private String title;
-        
-        AdmonitionImpl(NodeFactory factory, String type) {
+
+        AdmonitionImpl(NodeFactory factory, String type, String title) {
             super(factory);
             this.type = type;
+            this.title = title;
         }
 
         @Override
-        public String getType() {
+        public String type() {
             return type;
         }
 
         @Override
-        public void setType(String type) {
-            Objects.requireNonNull(type, "type must not be null");
-            this.type = type;
-        }
-
-        @Override
-        public String getTitle() {
+        public String title() {
             return title;
         }
-
-        @Override
-        public void setTitle(String title) {
-            Objects.requireNonNull(title, "title must not be null");
-            this.title = title;
-        }
     }
-    
+
     /**
      * Implementation of {@link BlockQuote}.
-     * 
+     *
      * @author leadpony
      */
-    private static class BlockQuoteImpl extends ContainerNode implements BlockQuote {
-        
+    private static class BlockQuoteImpl extends AbstractContainerNode implements BlockQuote {
+
         BlockQuoteImpl(NodeFactory factory) {
             super(factory);
         }
     }
-    
+
     /**
      * Implementation of {@link CodeBlock}.
-     * 
+     *
      * @author leadpony
      */
-    private static class CodeBlockImpl extends CodeNode implements CodeBlock {
+    private static class CodeBlockImpl extends AbstractCodeNode implements CodeBlock {
 
-        CodeBlockImpl(NodeFactory factory, String content) {
-            super(factory, content);
+        CodeBlockImpl(NodeFactory factory, String content, String language) {
+            super(factory, content, language);
         }
     }
-    
+
     /**
      * Implementation of {@link CodeSpan}.
-     * 
+     *
      * @author leadpony
      */
-    private static class CodeSpanImpl extends CodeNode implements CodeSpan {
+    private static class CodeSpanImpl extends AbstractCodeNode implements CodeSpan {
 
         CodeSpanImpl(NodeFactory factory, String content) {
             super(factory, content);
@@ -244,23 +300,23 @@ public class DefaultNodeFactory implements NodeFactory {
 
     /**
      * Implementation of {@link DefinitionList}.
-     * 
+     *
      * @author leadpony
      */
     private static class DefinitionListImpl extends AbstractListBlock implements DefinitionList {
-        
-        DefinitionListImpl(NodeFactory factory) {
-            super(factory);
+
+        DefinitionListImpl(NodeFactory factory, boolean tight) {
+            super(factory, tight);
         }
     }
-    
+
     /**
      * Implementation of {@link Definition}.
-     * 
+     *
      * @author leadpony
      */
-    private static class DefinitionImpl extends ContainerNode implements Definition {
-        
+    private static class DefinitionImpl extends AbstractContainerNode implements Definition {
+
         DefinitionImpl(NodeFactory factory) {
             super(factory);
         }
@@ -268,51 +324,43 @@ public class DefaultNodeFactory implements NodeFactory {
 
     /**
      * Implementation of {@link Document}.
-     * 
+     *
      * @author leadpony
      */
-    private static class DocumentImpl extends ContainerNode implements Document {
-        
+    private static class DocumentImpl extends AbstractContainerNode implements Document {
+
         DocumentImpl(NodeFactory factory) {
             super(factory);
         }
     }
-  
+
     /**
      * Implementation of {@link Emphasis}.
-     * 
+     *
      * @author leadpony
      */
-    private static class EmphasisImpl extends ContainerNode implements Emphasis {
-        
-        private int strength;
-        
+    private static class EmphasisImpl extends AbstractContainerNode implements Emphasis {
+
+        private final int strength;
+
         EmphasisImpl(NodeFactory factory, int strength) {
             super(factory);
             this.strength = strength;
         }
-        
+
         @Override
-        public int getStrength() {
+        public int strength() {
             return strength;
         }
-        
-        @Override
-        public void setStrength(int strength) {
-            if (strength < Emphasis.MIN_STRENGTH || strength > Emphasis.MAX_STRENGTH) {
-                throw new IllegalArgumentException("strength is out of range");
-            }
-            this.strength = strength;
-        }
     }
-    
+
     /**
      * Implementation of {@link HardLineBreak}.
-     * 
+     *
      * @author leadpony
      */
-    private static class HardLineBreakImpl extends BaseNode implements HardLineBreak {
-        
+    private static class HardLineBreakImpl extends AbstractNode implements HardLineBreak {
+
         HardLineBreakImpl(NodeFactory factory) {
             super(factory);
         }
@@ -320,39 +368,31 @@ public class DefaultNodeFactory implements NodeFactory {
 
     /**
      * Implementation of {@link Heading}.
-     * 
+     *
      * @author leadpony
      */
-    private static class HeadingImpl extends ContainerNode implements Heading {
-        
+    private static class HeadingImpl extends AbstractContainerNode implements Heading {
+
         private int level;
-        
+
         HeadingImpl(NodeFactory factory, int level) {
             super(factory);
             this.level = level;
         }
 
         @Override
-        public int getLevel() {
+        public int level() {
             return level;
         }
-        
-        @Override
-        public void setLevel(int level) {
-            if (level < Heading.MIN_LEVEL || level > Heading.MAX_LEVEL) {
-                throw new IllegalArgumentException("level is out of range");
-            }
-            this.level = level;
-        }
     }
-    
+
     /**
      * Implementation of {@link HtmlBlock}.
-     * 
+     *
      * @author leadpony
      */
-    private static class HtmlBlockImpl extends HtmlNode implements HtmlBlock {
-        
+    private static class HtmlBlockImpl extends AbstractHtmlNode implements HtmlBlock {
+
         HtmlBlockImpl(NodeFactory factory, String content) {
             super(factory, content);
         }
@@ -360,11 +400,11 @@ public class DefaultNodeFactory implements NodeFactory {
 
     /**
      * Implementation of {@link HtmlInline}.
-     * 
+     *
      * @author leadpony
      */
-    private static class HtmlInlineImpl extends HtmlNode implements HtmlInline {
-        
+    private static class HtmlInlineImpl extends AbstractHtmlNode implements HtmlInline {
+
         HtmlInlineImpl(NodeFactory factory, String content) {
             super(factory, content);
         }
@@ -372,77 +412,57 @@ public class DefaultNodeFactory implements NodeFactory {
 
     /**
      * Implementation of {@link Image}.
-     * 
+     *
      * @author leadpony
      */
-    private static class ImageImpl extends ContainerNode implements Image {
-        
-        private String location;
-        private String title;
+    private static class ImageImpl extends AbstractContainerNode implements Image {
 
-        ImageImpl(NodeFactory factory) {
+        private final String location;
+        private final String title;
+
+        ImageImpl(NodeFactory factory, String location, String title) {
             super(factory);
-            this.location = null;
-            this.title = null;
+            this.location = location;
+            this.title = title;
         }
 
         @Override
-        public String getLocation() {
+        public String location() {
             return location;
         }
 
         @Override
-        public void setLocation(String location) {
-            this.location = location;
-        }
-
-        @Override
-        public String getTitle() {
+        public String title() {
             return title;
         }
-
-        @Override
-        public void setTitle(String title) {
-            this.title = title;
-        }
     }
-    
+
     /**
      * Implementation of {@link Link}.
-     * 
+     *
      * @author leadpony
      */
-    private static class LinkImpl extends ContainerNode implements Link {
-        
-        private String destination;
-        private String title;
-        
-        LinkImpl(NodeFactory factory) {
+    private static class LinkImpl extends AbstractContainerNode implements Link {
+
+        private final String destination;
+        private final String title;
+
+        LinkImpl(NodeFactory factory, String destination, String title) {
             super(factory);
-            this.destination = null;
-            this.title = null;
+            this.destination = destination;
+            this.title = title;
         }
 
         @Override
-        public String getDestination() {
+        public String destination() {
             return destination;
         }
 
         @Override
-        public void setDestination(String destination) {
-            this.destination = destination;
-        }
-
-        @Override
-        public String getTitle() {
+        public String title() {
             return title;
         }
 
-        @Override
-        public void setTitle(String title) {
-            this.title = title;
-        }
-        
         @Override
         public String toString() {
             StringBuilder b = new StringBuilder();
@@ -453,60 +473,55 @@ public class DefaultNodeFactory implements NodeFactory {
 
     /**
      * Implementation of {@link ListItem}.
-     * 
+     *
      * @author leadpony
      */
-    private static class ListItemImpl extends ContainerNode implements ListItem {
-        
+    private static class ListItemImpl extends AbstractContainerNode implements ListItem {
+
         ListItemImpl(NodeFactory factory) {
             super(factory);
         }
     }
-    
+
     /**
      * Implementation of {@link OrderedList}.
-     * 
+     *
      * @author leadpony
      */
     private static class OrderedListImpl extends AbstractListBlock implements OrderedList {
 
-        int startNumber;
-        
-        OrderedListImpl(NodeFactory factory) {
-            super(factory);
-            this.startNumber = 1;
+        private final int startNumber;
+
+        OrderedListImpl(NodeFactory factory, boolean tight, int startNumber) {
+            super(factory, tight);
+            this.startNumber = startNumber;
         }
 
         @Override
-        public int getStartNumber() {
+        public int startNumber() {
             return startNumber;
         }
-        
-        @Override
-        public void setStartNumber(int startNumber) {
-            this.startNumber = startNumber;
-        }
     }
-    
+
     /**
      * Implementation of {@link Paragraph}.
-     * 
+     *
      * @author leadpony
      */
-    private static class ParagraphImpl extends ContainerNode implements Paragraph {
-        
+    private static class ParagraphImpl extends AbstractContainerNode implements Paragraph {
+
         ParagraphImpl(NodeFactory factory) {
             super(factory);
         }
     }
- 
+
     /**
      * Implementation of {@link Term}.
-     * 
+     *
      * @author leadpony
      */
-    private static class TermImpl extends ContainerNode implements Term {
-        
+    private static class TermImpl extends AbstractContainerNode implements Term {
+
         TermImpl(NodeFactory factory) {
             super(factory);
         }
@@ -514,23 +529,23 @@ public class DefaultNodeFactory implements NodeFactory {
 
     /**
      * Implementation of {@link Text}.
-     * 
+     *
      * @author leadpony
      */
-    private static class TextImpl extends CharDataNode implements Text {
-        
+    private static class TextImpl extends AbstractCharSequenceNode implements Text {
+
         TextImpl(NodeFactory factory, String content) {
             super(factory, content);
         }
     }
-    
+
     /**
      * Implementation of {@link ThematicBreak}.
-     * 
+     *
      * @author leadpony
      */
-    private static class ThematicBreakImpl extends BaseNode implements ThematicBreak {
-  
+    private static class ThematicBreakImpl extends AbstractNode implements ThematicBreak {
+
         ThematicBreakImpl(NodeFactory factory) {
             super(factory);
         }
@@ -538,13 +553,13 @@ public class DefaultNodeFactory implements NodeFactory {
 
     /**
      * Implementation of {@link UnorderedList}.
-     * 
+     *
      * @author leadpony
      */
     private static class UnorderedListImpl extends AbstractListBlock implements UnorderedList {
-        
-        UnorderedListImpl(NodeFactory factory) {
-            super(factory);
+
+        UnorderedListImpl(NodeFactory factory, boolean tight) {
+            super(factory, tight);
         }
     }
 }

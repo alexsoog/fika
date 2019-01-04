@@ -67,7 +67,7 @@ public class CodeSpanHandler extends AbstractInlineHandler {
     
     private CodeSpan buildNode(InputSequence input, int start, int end) {
         String code = normalizeCode(input.substring(start, end));
-        return getNodeFactory().newCodeSpan(code);
+        return getNodeFactory().createCodeSpan(code);
     }
     
     private static String normalizeCode(String string) {

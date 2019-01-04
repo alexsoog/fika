@@ -46,7 +46,7 @@ class HtmlBlockBuilder extends AbstractBlockBuilder {
 
     @Override
     protected Block buildBlock() {
-        return getNodeFactory().newHtmlBlock(builder.toString());
+        return getNodeFactory().createHtmlBlock(builder.toString());
     }
     
     protected void accumelateLine(InputSequence input) {

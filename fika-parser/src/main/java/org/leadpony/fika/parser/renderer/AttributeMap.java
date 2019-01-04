@@ -15,43 +15,34 @@
  */
 package org.leadpony.fika.parser.renderer;
 
-import java.util.AbstractMap;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
- * A set of attributes that belongs to an XML element.
- * 
+ * A map of attributes which belongs to an XML element.
+ *
  * @author leadpony
  */
-public class AttributeMap extends AbstractMap<String, String> {
-    
-    private final Map<String, String> map = new HashMap<>();
-    
-    @Override
-    public Set<Map.Entry<String, String>> entrySet() {
-        return map.entrySet();
-    }
-    
-    public AttributeMap add(String key, String value) {
+@SuppressWarnings("serial")
+class AttributeMap extends HashMap<String, String> {
+
+    AttributeMap add(String key, String value) {
         if (value == null) {
             return this;
         }
-        map.put(key, value);
+        put(key, value);
         return this;
     }
 
-    public AttributeMap addClass(String value) {
+    AttributeMap addClass(String value) {
         if (value == null) {
             return this;
         }
         StringBuilder builder = new StringBuilder();
-        if (map.containsKey("class")) {
-            builder.append(map.get("class")).append(" ");
+        if (containsKey("class")) {
+            builder.append(get("class")).append(" ");
         }
         builder.append(value);
-        map.put("class", builder.toString());
+        put("class", builder.toString());
         return this;
     }
 }

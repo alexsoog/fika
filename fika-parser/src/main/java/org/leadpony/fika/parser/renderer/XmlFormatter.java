@@ -20,31 +20,88 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
+ * A formatter interface which will format the rendered XML document before presenting.
+ *
  * @author leadpony
  */
 public interface XmlFormatter {
-    
-    void setWriter(Writer writer);
-    
+
+    /**
+     * Assigns the writer with which the formatted XML document will be written.
+     *
+     * @param writer the object with which this formatter will write the XML
+     *               document.
+     * @return this formatter.
+     * @throws NullPointerException if the specified {@code writer} is {@code null}.
+     */
+    XmlFormatter withWriter(Writer writer);
+
+    /**
+     * Outputs a document type declaration.
+     *
+     * @param type the type of the document, such as "html".
+     */
     void doctype(String type);
-    
-    default void startTag(String tagName) {
-        startTag(tagName, Collections.emptyMap());
+
+    /**
+     * Outputs a start tag without any attributes.
+     *
+     * @param name the name of the tag.
+     */
+    default void startTag(String name) {
+        startTag(name, Collections.emptyMap());
     }
 
-    void startTag(String tagName, Map<String, String> attributes);
+    /**
+     * Outputs a start tag with element attributes.
+     *
+     * @param name       the name of the tag.
+     * @param attributes the attributes of the tag.
+     */
+    void startTag(String name, Map<String, String> attributes);
 
-    void endTag(String tagName);
+    /**
+     * Outputs an end tag.
+     *
+     * @param name the name of the tag.
+     */
+    void endTag(String name);
 
-    default void emptyTag(String tagName) {
-        emptyTag(tagName, Collections.emptyMap());
+    /**
+     * Outputs an empty tag without any attributes.
+     *
+     * @param name the name of the tag.
+     */
+    default void emptyTag(String name) {
+        emptyTag(name, Collections.emptyMap());
     }
 
-    void emptyTag(String tagName, Map<String, String> attributes);
+    /**
+     * Outputs an empty tag with element attributes.
+     *
+     * @param name       the name of the tag.
+     * @param attributes the attributes of the tag.
+     */
+    void emptyTag(String name, Map<String, String> attributes);
 
+    /**
+     * Outputs text content.
+     *
+     * @param text the text content to output.
+     */
     void text(String text);
-    
-    void preformatted(String text);
-    
+
+    /**
+     * Outputs a preformatted text.
+     *
+     * @param text the preformatted text to output.
+     */
+    void preformattedText(String text);
+
+    /**
+     * Outputs raw XML content.
+     *
+     * @param xml the raw XML content to output.
+     */
     void rawXml(String xml);
 }

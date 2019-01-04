@@ -16,7 +16,6 @@
 package org.leadpony.fika.parser.markdown.inline.commonmark;
 
 import org.leadpony.fika.parser.markdown.common.LinkDefinition;
-import org.leadpony.fika.parser.model.Image;
 import org.leadpony.fika.parser.model.Node;
 import org.leadpony.fika.parser.model.Text;
 
@@ -27,12 +26,12 @@ public class ImageHandler extends LinkHandler {
 
     private static final char TRIGGER_LETTER = '!';
     private static final String OPENING_CONTENT = "![";
-    
+
     @Override
     public char[] triggerLetters() {
         return new char[] { TRIGGER_LETTER };
     }
-    
+
     @Override
     public int handleContent(String input, int offset) {
         if (input.length() <= offset + 1 || input.charAt(offset + 1) != '[') {
@@ -52,10 +51,7 @@ public class ImageHandler extends LinkHandler {
 
         @Override
         protected Node buildWrapNode(LinkDefinition definition) {
-            Image image = getNodeFactory().newImage(); 
-            image.setLocation(definition.destination());
-            image.setTitle(definition.title());
-            return image;
+            return getNodeFactory().createImage(definition.destination(), definition.title());
         }
     }
 }

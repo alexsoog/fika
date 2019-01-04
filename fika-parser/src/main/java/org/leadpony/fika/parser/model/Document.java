@@ -16,11 +16,15 @@
 package org.leadpony.fika.parser.model;
 
 /**
- * @author leadpony
+ * The root block node emcompassing all nodes in the abstract syntax tree.
  *
+ * @author leadpony
  */
 public interface Document extends Block {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

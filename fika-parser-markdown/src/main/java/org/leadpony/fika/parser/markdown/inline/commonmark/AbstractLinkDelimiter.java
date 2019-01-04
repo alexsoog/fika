@@ -22,7 +22,7 @@ import org.leadpony.fika.parser.model.Text;
 
 /**
  * Opening delimiter for links and images.
- * 
+ *
  * @author leadpony
  */
 abstract class AbstractLinkDelimiter extends Delimiter {
@@ -31,13 +31,13 @@ abstract class AbstractLinkDelimiter extends Delimiter {
      * The symbol of closing delimiter.
      */
     public static final String CLOSING_CONTENT = "]";
-    
+
     private final String delimiter;
     private final int position;
 
     AbstractLinkDelimiter(Text text, int position) {
         super(text);
-        this.delimiter = text.getContent();
+        this.delimiter = text.textContent();
         this.position = position;
     }
 
@@ -50,16 +50,16 @@ abstract class AbstractLinkDelimiter extends Delimiter {
     public boolean canBeOpener() {
         return true;
     }
-    
+
     @Override
     public boolean canBeCloser() {
         return false;
     }
-   
+
     @Override
     public boolean isSameTypeAs(Delimiter other) {
         String delimiter = other.delimiter();
-        return delimiter.equals(delimiter()) || delimiter.equals(CLOSING_CONTENT); 
+        return delimiter.equals(delimiter()) || delimiter.equals(CLOSING_CONTENT);
     }
 
     @Override
@@ -70,17 +70,17 @@ abstract class AbstractLinkDelimiter extends Delimiter {
         Node wrapper = buildWrapNode((LinkDefinition)params[0]);
         wrapNodes(wrapper, text(), closer.text());
         // Inserts wrapper immediate after the opener.
-        text().parentNode().insertChildAfter(wrapper, text());
+        text().getParentNode().insertChildAfter(wrapper, text());
         return wrapper;
     }
-    
+
     public int getPosition() {
         return position;
     }
-    
+
     /**
      * Builds a new wrapping node.
-     * 
+     *
      * @param definition the link definition.
      * @return newly created node.
      */

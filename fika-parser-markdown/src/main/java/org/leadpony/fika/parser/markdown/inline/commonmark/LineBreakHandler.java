@@ -44,7 +44,7 @@ public class LineBreakHandler extends AbstractInlineHandler {
         if (precedingSpaces > 0) {
             appender.removeContent(precedingSpaces);
             if (precedingSpaces >= 2 && currentIndex < input.length() - 1) {
-                appender.appendNode(getNodeFactory().newHardLineBreak());
+                appender.appendNode(getNodeFactory().createHardLineBreak());
                 return 1 + followingSpaces;
             }
         }

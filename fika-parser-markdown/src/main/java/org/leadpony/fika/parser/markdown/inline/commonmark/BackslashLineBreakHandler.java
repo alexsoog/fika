@@ -40,7 +40,7 @@ public class BackslashLineBreakHandler extends AbstractInlineHandler {
         if (currentIndex + 1 < input.length()) {
             char c = input.charAt(currentIndex + 1);
             if (c == '\n') {
-                getAppender().appendNode(getNodeFactory().newHardLineBreak());
+                getAppender().appendNode(getNodeFactory().createHardLineBreak());
                 return 2;
             }
         }

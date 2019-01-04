@@ -49,6 +49,6 @@ class BlockQuoteBuilder extends ContainerBlockBuilder {
 
     @Override
     protected BlockQuote buildBlock() {
-        return getNodeFactory().newBlockQuote();
+        return getNodeFactory().createBlockQuote();
     }
 }

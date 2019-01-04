@@ -16,8 +16,8 @@
 package org.leadpony.fika.parser.model;
 
 /**
- * List of terms and definitions.
- * 
+ * A list of terms and definitions.
+ *
  * @author leadpony
  */
 public interface DefinitionList extends ListBlock {

@@ -16,11 +16,15 @@
 package org.leadpony.fika.parser.model;
 
 /**
- * @author leadpony
+ * A thematic break.
  *
+ * @author leadpony
  */
 public interface ThematicBreak extends Block {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

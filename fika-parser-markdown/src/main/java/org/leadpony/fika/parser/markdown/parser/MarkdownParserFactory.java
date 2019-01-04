@@ -15,6 +15,8 @@
  */
 package org.leadpony.fika.parser.markdown.parser;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.Reader;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,37 +31,35 @@ import org.leadpony.fika.parser.spi.model.DefaultNodeFactory;
 
 /**
  * Factory of markdown parsers.
- * 
+ *
  * @author leadpony
  */
 class MarkdownParserFactory implements ParserFactory {
-    
+
     private final Set<FeatureProvider> featureSet;
     private final NodeFactory nodeFactory;
-    
+
     MarkdownParserFactory(Builder builder) {
         this.featureSet = builder.activeFeatureSet;
         this.nodeFactory = new DefaultNodeFactory();
     }
 
     @Override
-    public Parser newParser(Reader reader) {
-        if (reader == null) {
-            throw new NullPointerException("reader must not be null.");
-        }
+    public Parser createParser(Reader reader) {
+        requireNonNull(reader, "reader must not be null.");
         return new MarkdownParser(reader, this.nodeFactory, this.featureSet);
     }
-    
+
     /**
      * Builder of {@link MarkdownParserFactory}.
-     * 
+     *
      * @author leadpony
      */
     static class Builder implements ParserFactoryBuilder {
-        
+
         private final Map<String, FeatureProvider> availableFeatures;
         private final Set<FeatureProvider> activeFeatureSet;
-        
+
         Builder(Map<String, FeatureProvider> availableFeatures, Set<Feature> defaultFeatureSet) {
             this.availableFeatures = availableFeatures;
             this.activeFeatureSet = defaultizeFeatureSet(availableFeatures, defaultFeatureSet);
@@ -89,7 +89,7 @@ class MarkdownParserFactory implements ParserFactory {
         public ParserFactory build() {
             return new MarkdownParserFactory(this);
         }
-        
+
         protected Set<FeatureProvider> defaultizeFeatureSet(
                 Map<String, FeatureProvider> availableFeature,
                 Set<Feature> defaultSet) {

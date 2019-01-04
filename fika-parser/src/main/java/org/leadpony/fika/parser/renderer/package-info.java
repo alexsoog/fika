@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 /**
- * @author leadpony
+ * Provides the basic renderers for rendering parsed documents.
  *
+ * @author leadpony
  */
 package org.leadpony.fika.parser.renderer;

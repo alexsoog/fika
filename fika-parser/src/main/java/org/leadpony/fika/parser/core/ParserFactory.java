@@ -19,99 +19,38 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.Objects;
 
-import org.leadpony.fika.parser.spi.ParserFactoryProvider;
-
 /**
- * Factory of {@link Parser} instances.
- * 
+ * A factory for producing parser instances.
+ *
+ * <p>
+ * All the methods in this interface are safe for use by multiple concurrent
+ * threads.
+ * </p>
+ *
  * @author leadpony
  */
 public interface ParserFactory {
-    
-    /**
-     * Creates an instance of this type.
-     * 
-     * @param language the markup language to parse.
-     * @return newly created instance of this type.
-     * @throws NullPointerException if specified language is {@code null}.
-     */
-    static ParserFactory newInstance(MarkupLanguage language) {
-        Objects.requireNonNull(language, "language must not be null");
-        return newInstance(language.mediaType(), language.variant());
-    }
 
     /**
-     * Creates an instance of this type.
-     * 
-     * @param mediaType the media type of the source to parse.
-     * @return newly created instance of this type.
-     * @throws NullPointerException if one of parameters is {@code null}.
+     * Creates a parser instance for parsing the text which will be read by the
+     * specified reader.
+     *
+     * @param reader the reader which will read the text to parse, cannot be
+     *               {@code null}.
+     * @return newly created instance of parser.
+     * @throws NullPointerException if the specified {@code reader} is {@code null}.
      */
-    static ParserFactory newInstance(String mediaType) {
-        return newInstance(mediaType, "");
-    }
+    Parser createParser(Reader reader);
 
     /**
-     * Creates an instance of this type.
-     * 
-     * @param mediaType the media type of the source to parse.
-     * @param variant the qualifier representing the media type variant.
-     * @return newly created instance of this type.
-     * @throws NullPointerException if one of parameters is {@code null}.
+     * Creates a parser instance for parsing the text specified as a string.
+     *
+     * @param text the string containing the text to parse, cannot be {@code null}
+     * @return newly created instance of parser.
+     * @throws NullPointerException if the specified {@code text} is {@code null}.
      */
-    static ParserFactory newInstance(String mediaType, String variant) {
-        return builder(mediaType, variant).build();
+    default Parser createParser(String text) {
+        Objects.requireNonNull(text, "text must not be null.");
+        return createParser(new StringReader(text));
     }
-    
-    /**
-     * Creates an instance the builder of this type.
-     * 
-     * @param language the markup language to parse.
-     * @return newly created instance of the builder.
-     * @throws NullPointerException if specified language is {@code null}.
-     */
-    static ParserFactoryBuilder builder(MarkupLanguage language) {
-        Objects.requireNonNull(language, "language must not be null");
-        return builder(language.mediaType(), language.variant());
-    }
-    
-    /**
-     * Creates an instance the builder of this type.
-     * 
-     * @param mediaType the media type of the source to parse.
-     * @param variant the qualifier representing the media type variant.
-     * @return newly created instance of the builder.
-     * @throws NullPointerException if one of parameters is {@code null}.
-     */
-    static ParserFactoryBuilder builder(String mediaType, String variant) {
-        Objects.requireNonNull(mediaType, "mediaType must not be null");
-        Objects.requireNonNull(variant, "variant must not be null");
-        ParserFactoryProvider service = ParserFactoryProvider.findService(mediaType, variant);
-        if (service != null) {
-            return service.newBuilder(mediaType, variant);
-        }
-        return null;
-    }
-    
-    /**
-     * Creates a parser instance to parse the text given as a string.
-     * 
-     * @param text the string containing the text to parse.
-     * @return newly created instance of {@link Parser}.
-     * @throws NullPointerException if specified text is {@code null}.
-     */
-    default Parser newParser(String text) {
-        Objects.requireNonNull(text, "text must not be null");
-        return newParser(new StringReader(text));
-    }
-
-    /**
-     * Creates a parser instance to parse the text which will be 
-     * read by the specified reader.
-     * 
-     * @param reader the reader which will read the text to parse.
-     * @return newly created instance of {@link Parser}.
-     * @throws NullPointerException if specified reader is {@code null}.
-     */
-    Parser newParser(Reader reader);
 }

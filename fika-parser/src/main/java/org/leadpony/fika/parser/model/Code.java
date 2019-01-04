@@ -16,11 +16,16 @@
 package org.leadpony.fika.parser.model;
 
 /**
+ * An object who holds code.
+ *
  * @author leadpony
  */
-public interface Code extends CharData {
+public interface Code extends CharSequence {
 
-    String getLanguage();
-    
-    void setLanguage(String language);
+    /**
+     * Returns the language of this code.
+     *
+     * @return the language of this code, {@code null} if language is not specified.
+     */
+    String language();
 }

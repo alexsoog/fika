@@ -70,7 +70,7 @@ class TermDefinitionBuilder extends ContainerBlockBuilder {
     
     @Override
     protected Block buildBlock() {
-        return getNodeFactory().newDefinition();
+        return getNodeFactory().createDefinition();
     }
 
     @Override

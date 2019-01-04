@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.leadpony.fika.parser.core.Parser;
-import org.leadpony.fika.parser.core.ParserException;
+import org.leadpony.fika.parser.core.ParsingException;
 import org.leadpony.fika.parser.markdown.block.BlockMatcher;
 import org.leadpony.fika.parser.markdown.block.BlockProcessor;
 import org.leadpony.fika.parser.markdown.block.DefaultBlockProcessor;
@@ -35,26 +35,30 @@ import org.leadpony.fika.parser.model.NodeFactory;
 import org.leadpony.fika.parser.model.Text;
 
 /**
- * The parser to parse source written in Markdown.
- * 
+ * The parser for parsing the source written in Markdown.
+ *
  * @author leadpony
  */
 class MarkdownParser implements Parser {
-    
+
     // reader of the source.
     private final Reader reader;
 
+    private boolean alreadyRead;
+    private boolean alreadyClosed;
+
     // link reference definitions.
     private final LinkDefinitionMap linkDefinitions;
-    
+
     // block processor.
     private final BlockProcessor blockProcessor;
-    
+
     // inline processor.
     private final InlineProcessor inlineProcessor;
-    
+
     public MarkdownParser(Reader reader, NodeFactory nodeFactory, Set<FeatureProvider> featureSet) {
         this.reader = reader;
+        this.alreadyRead = this.alreadyClosed = false;
         this.linkDefinitions = new LinkDefinitionMap();
         ParserBuilder builder = new ParserBuilder();
         registerFeatures(featureSet, builder);
@@ -63,16 +67,31 @@ class MarkdownParser implements Parser {
     }
 
     @Override
+    public void close() {
+        if (!alreadyClosed) {
+            try {
+                reader.close();
+                alreadyClosed = true;
+            } catch (IOException e) {
+                throw new ParsingException(e.getMessage(), e);
+            }
+        }
+    }
+
+    @Override
     public Document parse() {
+        if (this.alreadyRead || this.alreadyClosed) {
+            throw new IllegalStateException();
+        }
         try {
             Document doc = processAllBlocks();
             processAllInlines(this.blockProcessor.getInlines());
             return doc;
         } catch (IOException e) {
-            throw new ParserException(e);
+            throw new ParsingException(e.getMessage(), e);
         }
     }
-    
+
     private Document processAllBlocks() throws IOException {
         BlockProcessor processor = this.blockProcessor;
         BufferedReader reader = new BufferedReader(this.reader);
@@ -82,25 +101,25 @@ class MarkdownParser implements Parser {
         }
         return processor.getDocument();
     }
-    
+
     private void processAllInlines(Set<Text> inlines) {
         for (Text text: inlines) {
             processInline(text);
         }
     }
-    
+
     private void processInline(Text text) {
         inlineProcessor.processInlines(text);
     }
-    
+
     protected BlockProcessor buildBlockProcessor(NodeFactory nodeFactory, List<BlockMatcher> matchers) {
         return new DefaultBlockProcessor(nodeFactory, linkDefinitions, matchers);
     }
-    
+
     protected InlineProcessor buildInlineProcessor(NodeFactory nodeFactory, List<InlineHandler> handlers) {
         return new DefaultInlineProcessor(nodeFactory, linkDefinitions, handlers);
     }
-    
+
     protected void registerFeatures(Set<FeatureProvider> features, ParserBuilder builder) {
         for (FeatureProvider feature: features) {
             feature.provide(builder);

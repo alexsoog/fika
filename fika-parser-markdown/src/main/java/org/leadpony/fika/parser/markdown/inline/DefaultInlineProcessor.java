@@ -24,14 +24,14 @@ import org.leadpony.fika.parser.model.Text;
 
 /**
  * Default implementation of {@link InlineProcessor}.
- * 
+ *
  * @author leadpony
  */
-public class DefaultInlineProcessor 
+public class DefaultInlineProcessor
     implements InlineProcessor, InlineHandler.Context, InlineAppender {
-    
+
     private final InlineHandler[] handlers;
-  
+
     private final NodeFactory nodeFactory;
     private final LinkDefinitionMap linkDefinitionMap;
     private final DelimiterStack delimiterStack = new DelimiterStack();
@@ -40,62 +40,62 @@ public class DefaultInlineProcessor
     private Text firstText;
     private Node parentNode;
     private Node nextSibling;
-    
+
     private String input;
     private int currentIndex;
-    
+
     private int appendedNodeCount;
     private StringBuilder textBuffer = null;
-    
+
     public DefaultInlineProcessor(
-            NodeFactory nodeFactory, 
+            NodeFactory nodeFactory,
             LinkDefinitionMap linkDefinitionMap,
             List<InlineHandler> handlers) {
         this.nodeFactory = nodeFactory;
-        this.linkDefinitionMap = linkDefinitionMap; 
+        this.linkDefinitionMap = linkDefinitionMap;
         this.handlers = new InlineHandler[MAX_TRIGGER_CODE + 1];
         installHandlers(handlers);
     }
-    
+
     @Override
     public void processInlines(Text text) {
         resetProcessor(text);
         parseInlines();
         processDelimiters();
     }
-    
+
     /* InlinerHandler.Context interface */
 
     @Override
     public NodeFactory getNodeFactory() {
         return nodeFactory;
     }
-    
+
     @Override
     public String input() {
         return input;
     }
-  
+
     @Override
     public InlineAppender getAppender() {
         return this;
     }
-        
+
     @Override
     public DelimiterStack getDelimiterStack() {
         return delimiterStack;
     }
-    
+
     @Override
     public DelimiterProcessor getDelimiterProcessor() {
         return delimiterProcessor;
     }
-   
+
     @Override
     public LinkDefinitionMap getLinkDefinitionMap() {
         return linkDefinitionMap;
     }
-    
+
     /* InlineAppender interface */
 
     @Override
@@ -107,19 +107,19 @@ public class DefaultInlineProcessor
         appendOrInsertNode(newNode);
         return this;
     }
-    
+
     @Override
     public final InlineAppender appendContent(char c) {
         this.textBuffer.append(c);
         return this;
     }
-   
+
     @Override
     public InlineAppender appendContent(int codePoint) {
         this.textBuffer.appendCodePoint(codePoint);
         return this;
     }
-    
+
     @Override
     public InlineAppender appendContent(String s) {
         this.textBuffer.append(s);
@@ -133,7 +133,7 @@ public class DefaultInlineProcessor
         String s = input.substring(beginIndex, endIndex);
         return appendContent(s);
     }
-    
+
     @Override
     public InlineAppender removeContent(int length) {
         int newLength = this.textBuffer.length() - length;
@@ -142,16 +142,16 @@ public class DefaultInlineProcessor
     }
 
     /* helper methods */
-    
+
     private void installHandlers(List<InlineHandler> handlers) {
         for (InlineHandler handler: handlers) {
             installHandler(handler);
         }
     }
-    
+
     /**
      * Installs an inline handler.
-     * 
+     *
      * @param newHandler the inline handler to install.
      */
     private void installHandler(InlineHandler newHandler) {
@@ -168,17 +168,17 @@ public class DefaultInlineProcessor
         }
         newHandler.bind(this);
     }
-    
+
     private void resetProcessor(Text text) {
         this.firstText = text;
-        this.parentNode = text.parentNode();
-        this.nextSibling = text.nextNode();
-        this.input = text.getContent();
+        this.parentNode = text.getParentNode();
+        this.nextSibling = text.getNextSibling();
+        this.input = text.textContent();
         this.currentIndex = 0;
         this.appendedNodeCount = 0;
-        this.textBuffer = new StringBuilder(text.getContent().length());
+        this.textBuffer = new StringBuilder(text.textContent().length());
     }
-    
+
     private void parseInlines() {
         final String input = this.input;
         final int length = input.length();
@@ -201,7 +201,7 @@ public class DefaultInlineProcessor
         }
         flushTextBuffer();
     }
-    
+
     private int invokeHandler(InlineHandler handler, int index) {
         this.currentIndex = index;
         int consumed = handler.handleContent(this.input, index);
@@ -211,7 +211,7 @@ public class DefaultInlineProcessor
         }
         return consumed;
     }
-    
+
     private void appendOrInsertNode(Node child) {
         if (nextSibling == null) {
             parentNode.appendChild(child);
@@ -220,7 +220,7 @@ public class DefaultInlineProcessor
         }
         this.appendedNodeCount++;
     }
-  
+
     private void flushTextBuffer() {
         String content = "";
         if (textBuffer.length() > 0) {
@@ -230,15 +230,16 @@ public class DefaultInlineProcessor
         if (appendedNodeCount == 0) {
             if (content.isEmpty()) {
                 firstText.unlink();
-            } else {
-                firstText.setContent(content);
+            } else if (!firstText.textContent().equals(content)) {
+                Text text = getNodeFactory().createText(content);
+                parentNode.replaceChild(text, firstText);
             }
         } else {
-            Text text = getNodeFactory().newText(content);
+            Text text = getNodeFactory().createText(content);
             appendOrInsertNode(text);
         }
     }
-    
+
     private void processDelimiters() {
         DelimiterStack delimiterStack = getDelimiterStack();
         if (delimiterStack.size() > 0) {

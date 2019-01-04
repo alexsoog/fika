@@ -62,9 +62,9 @@ class LinkDefinitionBuilder extends AbstractBlockBuilder implements Consumer<Lin
         if (content.isEmpty()) {
             return null;
         }
-        Text text = getNodeFactory().newText(content);
+        Text text = getNodeFactory().createText(content);
         context().addInline(text);
-        Paragraph block = getNodeFactory().newParagraph();
+        Paragraph block = getNodeFactory().createParagraph();
         block.appendChild(text);
         return block;
     }

@@ -16,15 +16,15 @@
 package org.leadpony.fika.parser.model;
 
 /**
- * Visitor of nodes.
- * 
+ * A visitor of the nodes in the abstract syntax tree.
+ *
  * @author leadpony
  */
 public interface Visitor {
 
     /**
      * Visits a node of {@link Admonition} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(Admonition node) {
@@ -33,7 +33,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link BlockQuote} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(BlockQuote node) {
@@ -42,7 +42,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link CodeBlock} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(CodeBlock node) {
@@ -51,7 +51,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link CodeSpan} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(CodeSpan node) {
@@ -59,7 +59,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link Definition} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(Definition node) {
@@ -68,7 +68,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link DefinitionList} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(DefinitionList node) {
@@ -77,7 +77,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link Document} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(Document node) {
@@ -86,16 +86,16 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link Emphasis} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(Emphasis node) {
         visitChildren(node);
     }
-    
+
     /**
      * Visits a node of {@link HardLineBreak} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(HardLineBreak node) {
@@ -103,7 +103,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link Heading} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(Heading node) {
@@ -112,7 +112,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link HtmlBlock} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(HtmlBlock node) {
@@ -120,7 +120,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link HtmlInline} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(HtmlInline node) {
@@ -128,7 +128,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link Image} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(Image node) {
@@ -137,7 +137,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link Link} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(Link node) {
@@ -146,7 +146,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link ListItem} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(ListItem node) {
@@ -155,7 +155,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link OrderedList} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(OrderedList node) {
@@ -164,7 +164,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link Paragraph} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(Paragraph node) {
@@ -173,7 +173,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link Term} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(Term node) {
@@ -182,15 +182,15 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link Text} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(Text node) {
     }
-    
+
     /**
      * Visits a node of {@link ThematicBreak} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(ThematicBreak node) {
@@ -198,7 +198,7 @@ public interface Visitor {
 
     /**
      * Visits a node of {@link UnorderedList} type.
-     *  
+     *
      * @param node the node to visit, cannot be {@code null}.
      */
     default void visit(UnorderedList node) {
@@ -207,11 +207,11 @@ public interface Visitor {
 
     /**
      * Visits children of the specified node.
-     * 
-     * @param node the node owning children to visit, cannot be {@code null}.
+     *
+     * @param node the node who owns children to visit, cannot be {@code null}.
      */
     default void visitChildren(Node node) {
-        for (Node child: node.childNodes()) {
+        for (Node child : node.getChildNodes()) {
             child.accept(this);
         }
     }

@@ -21,14 +21,32 @@ import java.io.Writer;
 import org.leadpony.fika.parser.model.Node;
 
 /**
- * Common renderer interface.
- * 
+ * A common renderer interface for rendering a node and its descendants.
+ *
  * @author leadpony
  */
 public interface Renderer {
-    
+
+    /**
+     * Renders a node and its descendants and writes the rendered content using the
+     * writer.
+     *
+     * @param node   the starting node to render.
+     * @param writer the writer with which this renderer will write the rendered
+     *               content.
+     * @throws NullPointerException if the specified {@code node} or {@code writer}
+     *                              is {@code null}.
+     */
     void render(Node node, Writer writer);
-    
+
+    /**
+     * Renders a node and its descendants and returns the rendered content as a
+     * string.
+     *
+     * @param node the starting node to render.
+     * @return the rendered content.
+     * @throws NullPointerException if the specified {@code node} is {@code null}.
+     */
     default String render(Node node) {
         StringWriter writer = new StringWriter();
         render(node, writer);

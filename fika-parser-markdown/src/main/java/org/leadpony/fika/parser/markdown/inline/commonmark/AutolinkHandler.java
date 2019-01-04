@@ -27,25 +27,25 @@ import org.leadpony.fika.parser.model.Text;
 
 /**
  * Handler for Autolinks.
- * 
+ *
  * @author leadpony
  */
 public class AutolinkHandler extends AbstractInlineHandler {
 
     private static final char TRIGGER_LETTER = '<';
-    
+
     private static final Pattern URL_PATTERN = Pattern.compile(
             "<[a-zA-Z][a-zA-Z0-9+.-]{1,31}:[^\\s\\p{Cntrl}<>]*>"
             );
     /*
-     * An email autolink consists of <, followed by an email address, 
-     * followed by >. 
+     * An email autolink consists of <, followed by an email address,
+     * followed by >.
      */
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
-            "<[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?" + 
+            "<[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?" +
             "(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*>"
             );
-    
+
     @Override
     public char[] triggerLetters() {
         return new char[] { TRIGGER_LETTER };
@@ -55,7 +55,7 @@ public class AutolinkHandler extends AbstractInlineHandler {
     public HandlerType handlerType() {
         return BasicHandlerType.AUTOLINK;
     }
-    
+
     @Override
     public int handleContent(InputSequence input) {
         int end = 0;
@@ -73,21 +73,21 @@ public class AutolinkHandler extends AbstractInlineHandler {
         }
         return end;
     }
-    
+
     private Link buildUriAutoLink(String str) {
         return buildAutoLink(str, str);
     }
-    
+
     private Link buildEmailAutoLink(String str) {
         String url = "mailto:" + str;
         return buildAutoLink(url, str);
     }
 
     private Link buildAutoLink(String url, String label) {
-        Link newNode = getNodeFactory().newLink();
         UrlEncoder encoder = new UrlEncoder();
-        newNode.setDestination(encoder.encode(url));
-        Text text = getNodeFactory().newText(label);
+        String destination = encoder.encode(url);
+        Link newNode = getNodeFactory().createLink(destination, null);
+        Text text = getNodeFactory().createText(label);
         newNode.appendChild(text);
         return newNode;
     }

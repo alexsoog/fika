@@ -16,11 +16,15 @@
 package org.leadpony.fika.parser.model;
 
 /**
- * @author leadpony
+ * A block quote.
  *
+ * @author leadpony
  */
 public interface BlockQuote extends Block {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

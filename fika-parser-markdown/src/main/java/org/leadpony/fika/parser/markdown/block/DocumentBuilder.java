@@ -38,6 +38,6 @@ public class DocumentBuilder extends ContainerBlockBuilder {
     
     @Override
     protected Document buildBlock() {
-        return getNodeFactory().newDocument();
+        return getNodeFactory().createDocument();
     }
 }

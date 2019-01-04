@@ -16,10 +16,15 @@
 package org.leadpony.fika.parser.model;
 
 /**
+ * A block node who holds code.
+ *
  * @author leadpony
  */
 public interface CodeBlock extends Block, Code {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     default void accept(Visitor visitor) {
         visitor.visit(this);

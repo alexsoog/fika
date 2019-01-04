@@ -16,8 +16,8 @@
 package org.leadpony.fika.parser.model;
 
 /**
- * Inline node.
- * 
+ * The base type of all inline nodes.
+ *
  * @author leadpony
  */
 public interface Inline extends Node {

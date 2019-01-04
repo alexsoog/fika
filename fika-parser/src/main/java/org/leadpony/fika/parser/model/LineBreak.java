@@ -16,6 +16,8 @@
 package org.leadpony.fika.parser.model;
 
 /**
+ * A line break.
+ *
  * @author leadpony
  */
 public interface LineBreak extends Inline {

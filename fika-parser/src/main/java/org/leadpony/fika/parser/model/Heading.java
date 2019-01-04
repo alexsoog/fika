@@ -16,12 +16,12 @@
 package org.leadpony.fika.parser.model;
 
 /**
- * Heading block.
- * 
+ * A heading block.
+ *
  * @author leadpony
  */
 public interface Heading extends Block {
-    
+
     /**
      * The minimum level for headings.
      */
@@ -34,18 +34,11 @@ public interface Heading extends Block {
 
     /**
      * Returns the level of this heading.
-     * 
-     * @return the level of the heading.
+     *
+     * @return the level of the heading, from {@link #MIN_LEVEL} to
+     *         {@link #MAX_LEVEL}.
      */
-    int getLevel();
-
-    /**
-     * Assigns the level of this heading.
-     * 
-     * @param level the level of the heading to assign.
-     * @throws IllegalArgumentException if given {@code level} if out of range.
-     */
-    void setLevel(int level);
+    int level();
 
     /**
      * {@inheritDoc}

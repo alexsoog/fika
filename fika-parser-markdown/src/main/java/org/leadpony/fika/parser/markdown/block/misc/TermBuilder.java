@@ -67,9 +67,9 @@ class TermBuilder extends AbstractBlockBuilder {
     
     @Override
     protected Block buildBlock() {
-        Block block = getNodeFactory().newTerm();
+        Block block = getNodeFactory().createTerm();
         String content = paragraphBuilder.getContent();
-        block.appendChild(getNodeFactory().newText(content));
+        block.appendChild(getNodeFactory().createText(content));
         return block;
     }
 }
