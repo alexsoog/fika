@@ -15,8 +15,8 @@
     </properties>
 
     <modules>
-        <module>fika-parser</module>
-        <module>fika-parser-markdown</module>
+        <module>fika-core</module>
+        <module>fika-format-markdown</module>
     </modules>
 
     <dependencyManagement>

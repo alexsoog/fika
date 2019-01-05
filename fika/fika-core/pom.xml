@@ -8,7 +8,7 @@
         <version>0.9.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>fika-parser</artifactId>
+    <artifactId>fika-core</artifactId>
     <packaging>jar</packaging>
 
     <properties>

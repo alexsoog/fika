@@ -9,7 +9,7 @@
         <version>0.9.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>fika-parser-markdown</artifactId>
+    <artifactId>fika-format-markdown</artifactId>
     <packaging>jar</packaging>
 
     <properties>
