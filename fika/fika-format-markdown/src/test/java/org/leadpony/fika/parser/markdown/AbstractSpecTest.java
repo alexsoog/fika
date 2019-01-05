@@ -15,13 +15,19 @@
  */
 package org.leadpony.fika.parser.markdown;
 
+import java.io.StringWriter;
+
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.leadpony.fika.core.core.Parser;
 import org.leadpony.fika.core.core.ParserFactory;
 import org.leadpony.fika.core.core.ParserService;
 import org.leadpony.fika.core.model.Document;
-import org.leadpony.fika.core.renderer.HtmlRenderer;
+import org.leadpony.fika.core.model.Node;
+import org.leadpony.fika.core.DocumentService;
+import org.leadpony.fika.core.DocumentWriter;
+import org.leadpony.fika.core.DocumentWriterBuilder;
 
 /**
  * @author leadpony
@@ -31,7 +37,14 @@ public abstract class AbstractSpecTest {
     private static final ParserService service = ParserService.get("text/markdown");
     private static final ParserFactory factory = service.createParserFactory();
 
+    private static DocumentService htmlService;
+
     protected AbstractSpecTest() {
+    }
+
+    @BeforeAll
+    public static void setUpOnce() {
+        htmlService = DocumentService.forType("text/html");
     }
 
     @ParameterizedTest
@@ -42,10 +55,19 @@ public abstract class AbstractSpecTest {
         try (Parser parser = getParserFactory().createParser(fixture.source())) {
             doc = parser.parse();
         }
-        HtmlRenderer renderer = HtmlRenderer.builder().withOption(HtmlRenderer.Option.HTML_FRAGMENT).build();
-        String actual = renderer.render(doc);
+
+        String actual = writeToString(doc);
         String expected = fixture.expected();
         HtmlAssert.assertThat(actual).isEqualTo(expected);
+    }
+
+    private String writeToString(Node doc) {
+        StringWriter stringWriter = new StringWriter();
+        DocumentWriterBuilder builder = htmlService.createWriterBuilder(stringWriter).withFragmentOnly(true);
+        try (DocumentWriter writer = builder.build()) {
+            writer.write(doc);
+        }
+        return stringWriter.toString();
     }
 
     protected ParserFactory getParserFactory() {

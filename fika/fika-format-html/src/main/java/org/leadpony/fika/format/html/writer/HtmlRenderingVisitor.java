@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.leadpony.fika.core.renderer;
+package org.leadpony.fika.format.html.writer;
 
 import org.leadpony.fika.core.model.Admonition;
 import org.leadpony.fika.core.model.Block;

@@ -18,7 +18,6 @@ package org.leadpony.fika.parser.markdown;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,10 +25,11 @@ import java.nio.file.Paths;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.leadpony.fika.core.DocumentService;
+import org.leadpony.fika.core.DocumentWriter;
 import org.leadpony.fika.core.core.Parser;
 import org.leadpony.fika.core.core.ParserService;
 import org.leadpony.fika.core.model.Document;
-import org.leadpony.fika.core.renderer.HtmlRenderer;
 
 /**
  * @author leadpony
@@ -54,9 +54,9 @@ public class SpecDocumentTest {
             doc = parser.parse();
         }
 
-        HtmlRenderer renderer = HtmlRenderer.builder().build();
-        try (Writer writer = Files.newBufferedWriter(OUTPUT_PATH)) {
-            renderer.render(doc, writer);
+        DocumentService htmlService = DocumentService.forType("text/html");
+        try (DocumentWriter writer =  htmlService.createWriter(Files.newBufferedWriter(OUTPUT_PATH))) {
+            writer.write(doc);
         } catch (IOException e) {
         }
     }

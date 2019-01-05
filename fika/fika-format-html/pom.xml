@@ -9,11 +9,11 @@
         <version>0.9.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>fika-format-markdown</artifactId>
+    <artifactId>fika-format-html</artifactId>
     <packaging>jar</packaging>
 
     <properties>
-        <module.name>org.leadpony.fika.format.markdown</module.name>
+        <module.name>org.leadpony.fika.format.html</module.name>
     </properties>
 
     <dependencies>
@@ -28,12 +28,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>fika-format-html</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
@@ -46,16 +40,6 @@
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.json</groupId>
-            <artifactId>javax.json-api</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.json</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

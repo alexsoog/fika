@@ -14,9 +14,26 @@
  * limitations under the License.
  */
 
+package org.leadpony.fika.format.html;
+
+import static java.util.Objects.requireNonNull;
+
+import java.io.Writer;
+
+import org.leadpony.fika.core.DocumentService;
+import org.leadpony.fika.core.DocumentWriterBuilder;
+import org.leadpony.fika.format.html.writer.HtmlDocumentWriterBuilder;
+
 /**
- * Provides the basic renderers for rendering parsed documents.
+ * A document service for HTML format.
  *
  * @author leadpony
  */
-package org.leadpony.fika.core.renderer;
+class HtmlDocumentService implements DocumentService {
+
+    @Override
+    public DocumentWriterBuilder createWriterBuilder(Writer writer) {
+        requireNonNull(writer, "writer must not be null.");
+        return new HtmlDocumentWriterBuilder(writer);
+    }
+}

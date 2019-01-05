@@ -15,10 +15,10 @@
  */
 
 /**
- * Defines the Markdown parser module.
+ * Defines the Markdown format module.
  */
 module org.leadpony.fika.format.markdown {
-    requires org.leadpony.fika.parser;
+    requires org.leadpony.fika.core;
     requires org.leadpony.fika.format.base;
 
     uses org.leadpony.fika.format.markdown.parser.FeatureProvider;

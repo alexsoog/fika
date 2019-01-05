@@ -15,15 +15,8 @@
  */
 
 /**
- * Defines the Fika core API.
+ * Provides the document service for HTML format.
+ *
+ * @author leadpony
  */
-module org.leadpony.fika.core {
-    exports org.leadpony.fika.core;
-    exports org.leadpony.fika.core.model;
-    exports org.leadpony.fika.core.spi;
-
-    exports org.leadpony.fika.core.core;
-
-    uses org.leadpony.fika.core.spi.ParserProvider;
-    uses org.leadpony.fika.core.spi.DocumentServiceProvider;
-}
+package org.leadpony.fika.format.html;

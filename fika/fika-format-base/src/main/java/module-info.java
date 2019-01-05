@@ -17,5 +17,5 @@
 module org.leadpony.fika.format.base {
     exports org.leadpony.fika.format.base.model;
 
-    requires transitive org.leadpony.fika.parser;
+    requires transitive org.leadpony.fika.core;
 }

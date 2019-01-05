@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.leadpony.fika.core.renderer;
+package org.leadpony.fika.format.html.writer;
 
 import java.io.Writer;
 import java.util.Collections;
@@ -24,7 +24,7 @@ import java.util.Map;
  *
  * @author leadpony
  */
-public interface XmlFormatter {
+interface XmlFormatter {
 
     /**
      * Assigns the writer with which the formatted XML document will be written.

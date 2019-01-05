@@ -14,16 +14,26 @@
  * limitations under the License.
  */
 
+package org.leadpony.fika.format.html;
+
+import org.leadpony.fika.core.DocumentService;
+import org.leadpony.fika.core.spi.DocumentServiceProvider;
+
 /**
- * Defines the Fika core API.
+ * @author leadpony
  */
-module org.leadpony.fika.core {
-    exports org.leadpony.fika.core;
-    exports org.leadpony.fika.core.model;
-    exports org.leadpony.fika.core.spi;
+public class HtmlDocumentServiceProvider implements DocumentServiceProvider {
 
-    exports org.leadpony.fika.core.core;
+    @Override
+    public boolean supports(String mediaType) {
+        return "text/html".equals(mediaType);
+    }
 
-    uses org.leadpony.fika.core.spi.ParserProvider;
-    uses org.leadpony.fika.core.spi.DocumentServiceProvider;
+    @Override
+    public DocumentService createService(String mediaType) {
+        if (!supports(mediaType)) {
+            throw new IllegalArgumentException();
+        }
+        return new HtmlDocumentService();
+    }
 }
