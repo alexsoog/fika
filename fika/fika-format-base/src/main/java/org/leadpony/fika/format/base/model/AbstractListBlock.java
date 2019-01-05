@@ -13,16 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.leadpony.fika.format.base.model;
+
+import org.leadpony.fika.parser.model.ListBlock;
+import org.leadpony.fika.parser.model.NodeFactory;
 
 /**
- * Defines the Fika parser API.
+ * @author leadpony
  */
-module org.leadpony.fika.parser {
-    exports org.leadpony.fika.parser.model;
-    exports org.leadpony.fika.parser.core;
-    exports org.leadpony.fika.parser.renderer;
+abstract class AbstractListBlock extends AbstractContainerNode implements ListBlock {
 
-    exports org.leadpony.fika.parser.spi;
+    private boolean tight;
 
-    uses org.leadpony.fika.parser.spi.ParserProvider;
+    protected AbstractListBlock(NodeFactory factory, boolean tight) {
+        super(factory);
+        this.tight = tight;
+    }
+
+    @Override
+    public boolean isTight() {
+        return tight;
+    }
 }

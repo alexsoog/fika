@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.leadpony.fika.format.markdown.block;
 
 /**
- * Defines the Fika parser API.
+ * Block type.
+ * 
+ * @author leadpony
  */
-module org.leadpony.fika.parser {
-    exports org.leadpony.fika.parser.model;
-    exports org.leadpony.fika.parser.core;
-    exports org.leadpony.fika.parser.renderer;
+public interface BlockType {
 
-    exports org.leadpony.fika.parser.spi;
-
-    uses org.leadpony.fika.parser.spi.ParserProvider;
+    /**
+     * Returns the precedence of this block.
+     * 
+     * @return the precedence of the block.
+     */
+    int precedence();
 }

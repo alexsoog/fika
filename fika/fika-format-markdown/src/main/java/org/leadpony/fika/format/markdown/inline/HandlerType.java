@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.leadpony.fika.format.markdown.inline;
 
 /**
- * Defines the Fika parser API.
+ * Inline handler type.
+ * 
+ * @author leadpony
  */
-module org.leadpony.fika.parser {
-    exports org.leadpony.fika.parser.model;
-    exports org.leadpony.fika.parser.core;
-    exports org.leadpony.fika.parser.renderer;
+public interface HandlerType {
 
-    exports org.leadpony.fika.parser.spi;
-
-    uses org.leadpony.fika.parser.spi.ParserProvider;
+    /**
+     * Returns the precedence of this handler.
+     * 
+     * @return the precedence of this handler.
+     */
+    int precedence();
 }

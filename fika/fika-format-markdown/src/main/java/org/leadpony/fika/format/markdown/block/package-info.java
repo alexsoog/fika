@@ -15,14 +15,6 @@
  */
 
 /**
- * Defines the Fika parser API.
+ * Provides base components for block matchers.
  */
-module org.leadpony.fika.parser {
-    exports org.leadpony.fika.parser.model;
-    exports org.leadpony.fika.parser.core;
-    exports org.leadpony.fika.parser.renderer;
-
-    exports org.leadpony.fika.parser.spi;
-
-    uses org.leadpony.fika.parser.spi.ParserProvider;
-}
+package org.leadpony.fika.format.markdown.block;

@@ -13,16 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.leadpony.fika.format.markdown.common;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * Defines the Fika parser API.
+ * @author leadpony
  */
-module org.leadpony.fika.parser {
-    exports org.leadpony.fika.parser.model;
-    exports org.leadpony.fika.parser.core;
-    exports org.leadpony.fika.parser.renderer;
+public final class Sets {
+    
+    @SafeVarargs
+    public static <T> Set<T> of(T... elements) {
+        Set<T> set = new HashSet<>();
+        for (T element: elements) {
+            set.add(element);
+        }
+        return set;
+    }
 
-    exports org.leadpony.fika.parser.spi;
-
-    uses org.leadpony.fika.parser.spi.ParserProvider;
+    private Sets() {
+    }
 }

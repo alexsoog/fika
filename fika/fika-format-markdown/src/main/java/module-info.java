@@ -17,30 +17,31 @@
 /**
  * Defines the Markdown parser module.
  */
-module org.leadpony.fika.parser.markdown {
+module org.leadpony.fika.format.markdown {
     requires org.leadpony.fika.parser;
+    requires org.leadpony.fika.format.base;
 
-    uses org.leadpony.fika.parser.markdown.parser.FeatureProvider;
+    uses org.leadpony.fika.format.markdown.parser.FeatureProvider;
 
     provides org.leadpony.fika.parser.spi.ParserProvider
-        with org.leadpony.fika.parser.markdown.parser.MarkdownParserProvider;
+        with org.leadpony.fika.format.markdown.parser.MarkdownParserProvider;
 
-    provides org.leadpony.fika.parser.markdown.parser.FeatureProvider
-        with org.leadpony.fika.parser.markdown.parser.features.block.Admonition,
-             org.leadpony.fika.parser.markdown.parser.features.block.BlockQuote,
-             org.leadpony.fika.parser.markdown.parser.features.block.CodeBlock,
-             org.leadpony.fika.parser.markdown.parser.features.block.DefinitionList,
-             org.leadpony.fika.parser.markdown.parser.features.block.Heading,
-             org.leadpony.fika.parser.markdown.parser.features.block.HtmlBlock,
-             org.leadpony.fika.parser.markdown.parser.features.block.LinkDefinition,
-             org.leadpony.fika.parser.markdown.parser.features.block.List,
-             org.leadpony.fika.parser.markdown.parser.features.block.Paragraph,
-             org.leadpony.fika.parser.markdown.parser.features.block.ThematicBreak,
-             org.leadpony.fika.parser.markdown.parser.features.inline.Autolink,
-             org.leadpony.fika.parser.markdown.parser.features.inline.CodeSpan,
-             org.leadpony.fika.parser.markdown.parser.features.inline.Emphasis,
-             org.leadpony.fika.parser.markdown.parser.features.inline.HardLineBreak,
-             org.leadpony.fika.parser.markdown.parser.features.inline.Image,
-             org.leadpony.fika.parser.markdown.parser.features.inline.InlineHtml,
-             org.leadpony.fika.parser.markdown.parser.features.inline.Link;
+    provides org.leadpony.fika.format.markdown.parser.FeatureProvider
+        with org.leadpony.fika.format.markdown.parser.features.block.Admonition,
+             org.leadpony.fika.format.markdown.parser.features.block.BlockQuote,
+             org.leadpony.fika.format.markdown.parser.features.block.CodeBlock,
+             org.leadpony.fika.format.markdown.parser.features.block.DefinitionList,
+             org.leadpony.fika.format.markdown.parser.features.block.Heading,
+             org.leadpony.fika.format.markdown.parser.features.block.HtmlBlock,
+             org.leadpony.fika.format.markdown.parser.features.block.LinkDefinition,
+             org.leadpony.fika.format.markdown.parser.features.block.List,
+             org.leadpony.fika.format.markdown.parser.features.block.Paragraph,
+             org.leadpony.fika.format.markdown.parser.features.block.ThematicBreak,
+             org.leadpony.fika.format.markdown.parser.features.inline.Autolink,
+             org.leadpony.fika.format.markdown.parser.features.inline.CodeSpan,
+             org.leadpony.fika.format.markdown.parser.features.inline.Emphasis,
+             org.leadpony.fika.format.markdown.parser.features.inline.HardLineBreak,
+             org.leadpony.fika.format.markdown.parser.features.inline.Image,
+             org.leadpony.fika.format.markdown.parser.features.inline.InlineHtml,
+             org.leadpony.fika.format.markdown.parser.features.inline.Link;
 }

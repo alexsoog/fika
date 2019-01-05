@@ -13,16 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.leadpony.fika.format.base.model;
+
+import org.leadpony.fika.parser.model.Html;
+import org.leadpony.fika.parser.model.NodeFactory;
 
 /**
- * Defines the Fika parser API.
+ * Skeletal implementation of {@link Html}.
+ *
+ * @author leadpony
  */
-module org.leadpony.fika.parser {
-    exports org.leadpony.fika.parser.model;
-    exports org.leadpony.fika.parser.core;
-    exports org.leadpony.fika.parser.renderer;
+abstract class AbstractHtmlNode extends AbstractCharSequenceNode implements Html {
 
-    exports org.leadpony.fika.parser.spi;
-
-    uses org.leadpony.fika.parser.spi.ParserProvider;
+    protected AbstractHtmlNode(NodeFactory factory, String content) {
+        super(factory, content);
+    }
 }

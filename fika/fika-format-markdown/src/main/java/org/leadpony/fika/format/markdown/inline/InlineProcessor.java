@@ -13,16 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.leadpony.fika.format.markdown.inline;
+
+import org.leadpony.fika.parser.model.Text;
 
 /**
- * Defines the Fika parser API.
+ * Inline processor interface.
+ * 
+ * @author leadpony
  */
-module org.leadpony.fika.parser {
-    exports org.leadpony.fika.parser.model;
-    exports org.leadpony.fika.parser.core;
-    exports org.leadpony.fika.parser.renderer;
-
-    exports org.leadpony.fika.parser.spi;
-
-    uses org.leadpony.fika.parser.spi.ParserProvider;
+public interface InlineProcessor {
+  
+    final int MAX_TRIGGER_CODE = 127;
+    
+    /**
+     * Processes all inline nodes found in the specified text node.
+     * 
+     * @param text the text to process.
+     */
+    void processInlines(Text text);
 }

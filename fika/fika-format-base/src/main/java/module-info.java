@@ -14,15 +14,8 @@
  * limitations under the License.
  */
 
-/**
- * Defines the Fika parser API.
- */
-module org.leadpony.fika.parser {
-    exports org.leadpony.fika.parser.model;
-    exports org.leadpony.fika.parser.core;
-    exports org.leadpony.fika.parser.renderer;
+module org.leadpony.fika.format.base {
+    exports org.leadpony.fika.format.base.model;
 
-    exports org.leadpony.fika.parser.spi;
-
-    uses org.leadpony.fika.parser.spi.ParserProvider;
+    requires transitive org.leadpony.fika.parser;
 }

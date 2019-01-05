@@ -15,14 +15,7 @@
  */
 
 /**
- * Defines the Fika parser API.
+ * Provides common classes and interfaces shared by all document formats.
+ * @author leadpony
  */
-module org.leadpony.fika.parser {
-    exports org.leadpony.fika.parser.model;
-    exports org.leadpony.fika.parser.core;
-    exports org.leadpony.fika.parser.renderer;
-
-    exports org.leadpony.fika.parser.spi;
-
-    uses org.leadpony.fika.parser.spi.ParserProvider;
-}
+package org.leadpony.fika.format.base;

@@ -16,6 +16,7 @@
 
     <modules>
         <module>fika-core</module>
+        <module>fika-format-base</module>
         <module>fika-format-markdown</module>
     </modules>
 
