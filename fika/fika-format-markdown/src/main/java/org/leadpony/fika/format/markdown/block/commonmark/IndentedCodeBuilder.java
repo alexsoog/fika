@@ -21,7 +21,7 @@ import java.util.List;
 import org.leadpony.fika.format.markdown.block.AbstractBlockBuilder;
 import org.leadpony.fika.format.markdown.block.BlockType;
 import org.leadpony.fika.format.markdown.common.InputSequence;
-import org.leadpony.fika.parser.model.CodeBlock;
+import org.leadpony.fika.core.model.CodeBlock;
 
 class IndentedCodeBuilder extends AbstractBlockBuilder {
 

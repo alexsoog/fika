@@ -22,7 +22,7 @@ import static org.leadpony.fika.format.markdown.common.Strings.unescape;
 import org.leadpony.fika.format.markdown.block.AbstractBlockBuilder;
 import org.leadpony.fika.format.markdown.block.BlockType;
 import org.leadpony.fika.format.markdown.common.InputSequence;
-import org.leadpony.fika.parser.model.Block;
+import org.leadpony.fika.core.model.Block;
 
 class FencedCodeBuilder extends AbstractBlockBuilder {
 

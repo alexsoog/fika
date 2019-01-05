@@ -15,7 +15,7 @@
  */
 package org.leadpony.fika.format.markdown.inline;
 
-import org.leadpony.fika.parser.model.NodeFactory;
+import org.leadpony.fika.core.model.NodeFactory;
 
 /**
  * Skeletal implementation of {@link InlineHandler}.

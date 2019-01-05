@@ -15,8 +15,8 @@
  */
 package org.leadpony.fika.format.base.model;
 
-import org.leadpony.fika.parser.model.ListBlock;
-import org.leadpony.fika.parser.model.NodeFactory;
+import org.leadpony.fika.core.model.ListBlock;
+import org.leadpony.fika.core.model.NodeFactory;
 
 /**
  * @author leadpony

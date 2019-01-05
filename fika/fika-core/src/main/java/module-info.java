@@ -18,11 +18,11 @@
  * Defines the Fika parser API.
  */
 module org.leadpony.fika.parser {
-    exports org.leadpony.fika.parser.model;
-    exports org.leadpony.fika.parser.core;
-    exports org.leadpony.fika.parser.renderer;
+    exports org.leadpony.fika.core.model;
+    exports org.leadpony.fika.core.core;
+    exports org.leadpony.fika.core.renderer;
 
-    exports org.leadpony.fika.parser.spi;
+    exports org.leadpony.fika.core.spi;
 
-    uses org.leadpony.fika.parser.spi.ParserProvider;
+    uses org.leadpony.fika.core.spi.ParserProvider;
 }

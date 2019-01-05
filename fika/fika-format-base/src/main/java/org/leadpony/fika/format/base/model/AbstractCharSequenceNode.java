@@ -15,7 +15,7 @@
  */
 package org.leadpony.fika.format.base.model;
 
-import org.leadpony.fika.parser.model.NodeFactory;
+import org.leadpony.fika.core.model.NodeFactory;
 
 /**
  * Skeletal implementation of a node holding character data.

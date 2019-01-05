@@ -22,11 +22,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.leadpony.fika.parser.core.Feature;
-import org.leadpony.fika.parser.core.Parser;
-import org.leadpony.fika.parser.core.ParserFactory;
-import org.leadpony.fika.parser.core.ParserFactoryBuilder;
-import org.leadpony.fika.parser.model.NodeFactory;
+import org.leadpony.fika.core.core.Feature;
+import org.leadpony.fika.core.core.Parser;
+import org.leadpony.fika.core.core.ParserFactory;
+import org.leadpony.fika.core.core.ParserFactoryBuilder;
+import org.leadpony.fika.core.model.NodeFactory;
 import org.leadpony.fika.format.base.model.DefaultNodeFactory;
 
 /**

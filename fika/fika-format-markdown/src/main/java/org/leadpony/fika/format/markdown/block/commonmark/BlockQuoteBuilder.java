@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import org.leadpony.fika.format.markdown.block.BlockType;
 import org.leadpony.fika.format.markdown.block.ContainerBlockBuilder;
 import org.leadpony.fika.format.markdown.common.InputSequence;
-import org.leadpony.fika.parser.model.BlockQuote;
+import org.leadpony.fika.core.model.BlockQuote;
 
 /**
  * @author leadpony

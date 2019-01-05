@@ -21,8 +21,8 @@ import static org.leadpony.fika.format.markdown.common.Characters.isUnicodeWhite
 import org.leadpony.fika.format.markdown.inline.AbstractInlineHandler;
 import org.leadpony.fika.format.markdown.inline.Delimiter;
 import org.leadpony.fika.format.markdown.inline.DelimiterRun;
-import org.leadpony.fika.parser.model.Node;
-import org.leadpony.fika.parser.model.Text;
+import org.leadpony.fika.core.model.Node;
+import org.leadpony.fika.core.model.Text;
 
 /**
  * @author leadpony

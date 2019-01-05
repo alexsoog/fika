@@ -17,11 +17,11 @@ package org.leadpony.fika.parser.markdown;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.leadpony.fika.parser.core.Parser;
-import org.leadpony.fika.parser.core.ParserFactory;
-import org.leadpony.fika.parser.core.ParserService;
-import org.leadpony.fika.parser.model.Document;
-import org.leadpony.fika.parser.renderer.HtmlRenderer;
+import org.leadpony.fika.core.core.Parser;
+import org.leadpony.fika.core.core.ParserFactory;
+import org.leadpony.fika.core.core.ParserService;
+import org.leadpony.fika.core.model.Document;
+import org.leadpony.fika.core.renderer.HtmlRenderer;
 
 /**
  * @author leadpony

@@ -17,8 +17,8 @@ package org.leadpony.fika.format.markdown.parser;
 
 import java.util.Objects;
 
-import org.leadpony.fika.parser.core.ParserService;
-import org.leadpony.fika.parser.spi.ParserProvider;
+import org.leadpony.fika.core.core.ParserService;
+import org.leadpony.fika.core.spi.ParserProvider;
 
 /**
  * The implementation of {@link ParserProvider}.

@@ -21,9 +21,9 @@ import org.leadpony.fika.format.markdown.block.AbstractBlockBuilder;
 import org.leadpony.fika.format.markdown.block.BlockType;
 import org.leadpony.fika.format.markdown.common.InputSequence;
 import org.leadpony.fika.format.markdown.common.LinkDefinition;
-import org.leadpony.fika.parser.model.Block;
-import org.leadpony.fika.parser.model.Paragraph;
-import org.leadpony.fika.parser.model.Text;
+import org.leadpony.fika.core.model.Block;
+import org.leadpony.fika.core.model.Paragraph;
+import org.leadpony.fika.core.model.Text;
 
 /**
  * @author leadpony

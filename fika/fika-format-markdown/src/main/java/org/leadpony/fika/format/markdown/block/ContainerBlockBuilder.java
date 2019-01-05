@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Objects;
 
 import org.leadpony.fika.format.markdown.common.InputSequence;
-import org.leadpony.fika.parser.model.Block;
-import org.leadpony.fika.parser.model.Node;
+import org.leadpony.fika.core.model.Block;
+import org.leadpony.fika.core.model.Node;
 
 /**
  * Builder of container blocks such as documents, block quotes, and lists.

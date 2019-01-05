@@ -17,7 +17,7 @@ package org.leadpony.fika.format.markdown.inline;
 
 import org.leadpony.fika.format.markdown.common.InputSequence;
 import org.leadpony.fika.format.markdown.common.LinkDefinitionMap;
-import org.leadpony.fika.parser.model.NodeFactory;
+import org.leadpony.fika.core.model.NodeFactory;
 
 /**
  * The interface for handling inline nodes. 

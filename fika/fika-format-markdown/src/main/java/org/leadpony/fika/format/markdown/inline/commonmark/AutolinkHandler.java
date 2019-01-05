@@ -22,8 +22,8 @@ import org.leadpony.fika.format.markdown.common.InputSequence;
 import org.leadpony.fika.format.markdown.common.UrlEncoder;
 import org.leadpony.fika.format.markdown.inline.AbstractInlineHandler;
 import org.leadpony.fika.format.markdown.inline.HandlerType;
-import org.leadpony.fika.parser.model.Link;
-import org.leadpony.fika.parser.model.Text;
+import org.leadpony.fika.core.model.Link;
+import org.leadpony.fika.core.model.Text;
 
 /**
  * Handler for Autolinks.

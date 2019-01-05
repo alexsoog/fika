@@ -17,8 +17,8 @@ package org.leadpony.fika.format.markdown.block;
 
 import java.util.Set;
 
-import org.leadpony.fika.parser.model.Document;
-import org.leadpony.fika.parser.model.Text;
+import org.leadpony.fika.core.model.Document;
+import org.leadpony.fika.core.model.Text;
 
 /**
  * Block processor.

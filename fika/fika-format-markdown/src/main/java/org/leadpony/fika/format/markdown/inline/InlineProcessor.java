@@ -15,7 +15,7 @@
  */
 package org.leadpony.fika.format.markdown.inline;
 
-import org.leadpony.fika.parser.model.Text;
+import org.leadpony.fika.core.model.Text;
 
 /**
  * Inline processor interface.

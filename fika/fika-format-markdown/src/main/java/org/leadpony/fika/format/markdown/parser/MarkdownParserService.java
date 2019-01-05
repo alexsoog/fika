@@ -20,10 +20,10 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.leadpony.fika.parser.core.BasicFeature;
-import org.leadpony.fika.parser.core.Feature;
-import org.leadpony.fika.parser.core.ParserFactoryBuilder;
-import org.leadpony.fika.parser.core.ParserService;
+import org.leadpony.fika.core.core.BasicFeature;
+import org.leadpony.fika.core.core.Feature;
+import org.leadpony.fika.core.core.ParserFactoryBuilder;
+import org.leadpony.fika.core.core.ParserService;
 
 /**
  * The implementation of {@link ParserService}.

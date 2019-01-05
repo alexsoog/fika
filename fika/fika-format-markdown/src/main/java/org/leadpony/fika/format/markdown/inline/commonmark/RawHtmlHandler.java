@@ -21,7 +21,7 @@ import org.leadpony.fika.format.markdown.common.HtmlMatchers;
 import org.leadpony.fika.format.markdown.common.InputSequence;
 import org.leadpony.fika.format.markdown.inline.AbstractInlineHandler;
 import org.leadpony.fika.format.markdown.inline.HandlerType;
-import org.leadpony.fika.parser.model.HtmlInline;
+import org.leadpony.fika.core.model.HtmlInline;
 
 /**
  * @author leadpony

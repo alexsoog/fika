@@ -22,10 +22,10 @@ import java.util.Set;
 
 import org.leadpony.fika.format.markdown.common.InputSequence;
 import org.leadpony.fika.format.markdown.common.LinkDefinitionMap;
-import org.leadpony.fika.parser.model.Document;
-import org.leadpony.fika.parser.model.Node;
-import org.leadpony.fika.parser.model.NodeFactory;
-import org.leadpony.fika.parser.model.Text;
+import org.leadpony.fika.core.model.Document;
+import org.leadpony.fika.core.model.Node;
+import org.leadpony.fika.core.model.NodeFactory;
+import org.leadpony.fika.core.model.Text;
 
 /**
  * Default implementation of {@link BlockProcessor}.

@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 import org.leadpony.fika.format.markdown.common.InputSequence;
 import org.leadpony.fika.format.markdown.inline.AbstractInlineHandler;
 import org.leadpony.fika.format.markdown.inline.HandlerType;
-import org.leadpony.fika.parser.model.CodeSpan;
+import org.leadpony.fika.core.model.CodeSpan;
 
 /**
  * @author leadpony

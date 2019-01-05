@@ -15,8 +15,8 @@
  */
 package org.leadpony.fika.format.base.model;
 
-import org.leadpony.fika.parser.model.Html;
-import org.leadpony.fika.parser.model.NodeFactory;
+import org.leadpony.fika.core.model.Html;
+import org.leadpony.fika.core.model.NodeFactory;
 
 /**
  * Skeletal implementation of {@link Html}.

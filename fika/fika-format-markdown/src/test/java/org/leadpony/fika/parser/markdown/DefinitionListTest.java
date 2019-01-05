@@ -17,9 +17,9 @@ package org.leadpony.fika.parser.markdown;
 
 import java.util.stream.Stream;
 
-import org.leadpony.fika.parser.core.BasicFeature;
-import org.leadpony.fika.parser.core.ParserFactory;
-import org.leadpony.fika.parser.core.ParserService;
+import org.leadpony.fika.core.core.BasicFeature;
+import org.leadpony.fika.core.core.ParserFactory;
+import org.leadpony.fika.core.core.ParserService;
 
 /**
  * @author leadpony

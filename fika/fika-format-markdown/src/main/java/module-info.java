@@ -23,7 +23,7 @@ module org.leadpony.fika.format.markdown {
 
     uses org.leadpony.fika.format.markdown.parser.FeatureProvider;
 
-    provides org.leadpony.fika.parser.spi.ParserProvider
+    provides org.leadpony.fika.core.spi.ParserProvider
         with org.leadpony.fika.format.markdown.parser.MarkdownParserProvider;
 
     provides org.leadpony.fika.format.markdown.parser.FeatureProvider

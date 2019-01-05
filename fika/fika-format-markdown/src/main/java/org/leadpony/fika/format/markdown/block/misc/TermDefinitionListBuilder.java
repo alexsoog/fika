@@ -23,8 +23,8 @@ import org.leadpony.fika.format.markdown.block.ContainerBlockBuilder;
 import org.leadpony.fika.format.markdown.block.commonmark.BasicBlockType;
 import org.leadpony.fika.format.markdown.block.commonmark.ParagraphBuilder;
 import org.leadpony.fika.format.markdown.common.InputSequence;
-import org.leadpony.fika.parser.model.Block;
-import org.leadpony.fika.parser.model.Node;
+import org.leadpony.fika.core.model.Block;
+import org.leadpony.fika.core.model.Node;
 
 /**
  * Builder of term definition list.

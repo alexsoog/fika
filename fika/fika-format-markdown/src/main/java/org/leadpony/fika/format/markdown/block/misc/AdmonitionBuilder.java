@@ -21,7 +21,7 @@ import org.leadpony.fika.format.markdown.block.BlockType;
 import org.leadpony.fika.format.markdown.block.ContainerBlockBuilder;
 import org.leadpony.fika.format.markdown.block.commonmark.BasicBlockType;
 import org.leadpony.fika.format.markdown.common.InputSequence;
-import org.leadpony.fika.parser.model.Block;
+import org.leadpony.fika.core.model.Block;
 
 /**
  * Block-styled side content to the documentation,

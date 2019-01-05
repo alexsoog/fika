@@ -16,8 +16,8 @@
 package org.leadpony.fika.format.markdown.block;
 
 import org.leadpony.fika.format.markdown.common.LinkDefinitionMap;
-import org.leadpony.fika.parser.model.NodeFactory;
-import org.leadpony.fika.parser.model.Text;
+import org.leadpony.fika.core.model.NodeFactory;
+import org.leadpony.fika.core.model.Text;
 
 /**
  * The block processing context.

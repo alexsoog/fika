@@ -17,8 +17,8 @@ package org.leadpony.fika.format.markdown.inline.commonmark;
 
 import org.leadpony.fika.format.markdown.common.LinkDefinition;
 import org.leadpony.fika.format.markdown.inline.Delimiter;
-import org.leadpony.fika.parser.model.Node;
-import org.leadpony.fika.parser.model.Text;
+import org.leadpony.fika.core.model.Node;
+import org.leadpony.fika.core.model.Text;
 
 /**
  * Opening delimiter for links and images.

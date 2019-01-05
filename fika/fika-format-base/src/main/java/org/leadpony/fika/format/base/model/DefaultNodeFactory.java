@@ -17,28 +17,28 @@ package org.leadpony.fika.format.base.model;
 
 import static java.util.Objects.requireNonNull;
 
-import org.leadpony.fika.parser.model.Admonition;
-import org.leadpony.fika.parser.model.BlockQuote;
-import org.leadpony.fika.parser.model.CodeBlock;
-import org.leadpony.fika.parser.model.CodeSpan;
-import org.leadpony.fika.parser.model.Definition;
-import org.leadpony.fika.parser.model.DefinitionList;
-import org.leadpony.fika.parser.model.Document;
-import org.leadpony.fika.parser.model.Emphasis;
-import org.leadpony.fika.parser.model.HardLineBreak;
-import org.leadpony.fika.parser.model.Heading;
-import org.leadpony.fika.parser.model.HtmlBlock;
-import org.leadpony.fika.parser.model.HtmlInline;
-import org.leadpony.fika.parser.model.Image;
-import org.leadpony.fika.parser.model.Link;
-import org.leadpony.fika.parser.model.ListItem;
-import org.leadpony.fika.parser.model.NodeFactory;
-import org.leadpony.fika.parser.model.OrderedList;
-import org.leadpony.fika.parser.model.Paragraph;
-import org.leadpony.fika.parser.model.Term;
-import org.leadpony.fika.parser.model.Text;
-import org.leadpony.fika.parser.model.ThematicBreak;
-import org.leadpony.fika.parser.model.UnorderedList;
+import org.leadpony.fika.core.model.Admonition;
+import org.leadpony.fika.core.model.BlockQuote;
+import org.leadpony.fika.core.model.CodeBlock;
+import org.leadpony.fika.core.model.CodeSpan;
+import org.leadpony.fika.core.model.Definition;
+import org.leadpony.fika.core.model.DefinitionList;
+import org.leadpony.fika.core.model.Document;
+import org.leadpony.fika.core.model.Emphasis;
+import org.leadpony.fika.core.model.HardLineBreak;
+import org.leadpony.fika.core.model.Heading;
+import org.leadpony.fika.core.model.HtmlBlock;
+import org.leadpony.fika.core.model.HtmlInline;
+import org.leadpony.fika.core.model.Image;
+import org.leadpony.fika.core.model.Link;
+import org.leadpony.fika.core.model.ListItem;
+import org.leadpony.fika.core.model.NodeFactory;
+import org.leadpony.fika.core.model.OrderedList;
+import org.leadpony.fika.core.model.Paragraph;
+import org.leadpony.fika.core.model.Term;
+import org.leadpony.fika.core.model.Text;
+import org.leadpony.fika.core.model.ThematicBreak;
+import org.leadpony.fika.core.model.UnorderedList;
 
 /**
  * Default implementation of {@link NodeFactory}.

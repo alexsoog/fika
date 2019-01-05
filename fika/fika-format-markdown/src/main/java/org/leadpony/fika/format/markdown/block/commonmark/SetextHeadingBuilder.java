@@ -18,8 +18,8 @@ package org.leadpony.fika.format.markdown.block.commonmark;
 import org.leadpony.fika.format.markdown.block.AbstractBlockBuilder;
 import org.leadpony.fika.format.markdown.block.BlockType;
 import org.leadpony.fika.format.markdown.common.InputSequence;
-import org.leadpony.fika.parser.model.Block;
-import org.leadpony.fika.parser.model.Text;
+import org.leadpony.fika.core.model.Block;
+import org.leadpony.fika.core.model.Text;
 
 /**
  * Buidler of setext heading.

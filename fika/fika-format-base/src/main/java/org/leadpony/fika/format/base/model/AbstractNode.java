@@ -17,8 +17,8 @@ package org.leadpony.fika.format.base.model;
 
 import java.util.Collections;
 
-import org.leadpony.fika.parser.model.Node;
-import org.leadpony.fika.parser.model.NodeFactory;
+import org.leadpony.fika.core.model.Node;
+import org.leadpony.fika.core.model.NodeFactory;
 
 /**
  * Skeletal implementation of {@link Node}.

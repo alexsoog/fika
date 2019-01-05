@@ -28,11 +28,11 @@ import org.leadpony.fika.format.markdown.common.LinkDefinitionMap;
 import org.leadpony.fika.format.markdown.inline.DefaultInlineProcessor;
 import org.leadpony.fika.format.markdown.inline.InlineHandler;
 import org.leadpony.fika.format.markdown.inline.InlineProcessor;
-import org.leadpony.fika.parser.core.Parser;
-import org.leadpony.fika.parser.core.ParsingException;
-import org.leadpony.fika.parser.model.Document;
-import org.leadpony.fika.parser.model.NodeFactory;
-import org.leadpony.fika.parser.model.Text;
+import org.leadpony.fika.core.core.Parser;
+import org.leadpony.fika.core.core.ParsingException;
+import org.leadpony.fika.core.model.Document;
+import org.leadpony.fika.core.model.NodeFactory;
+import org.leadpony.fika.core.model.Text;
 
 /**
  * The parser for parsing the source written in Markdown.

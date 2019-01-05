@@ -18,8 +18,8 @@ package org.leadpony.fika.format.markdown.parser.features.block;
 import org.leadpony.fika.format.markdown.block.commonmark.HtmlBlockMatcher;
 import org.leadpony.fika.format.markdown.parser.FeatureProvider;
 import org.leadpony.fika.format.markdown.parser.ParserBuilder;
-import org.leadpony.fika.parser.core.BasicFeature;
-import org.leadpony.fika.parser.core.Feature;
+import org.leadpony.fika.core.core.BasicFeature;
+import org.leadpony.fika.core.core.Feature;
 
 /**
  * @author leadpony

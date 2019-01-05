@@ -21,8 +21,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-import org.leadpony.fika.parser.model.Node;
-import org.leadpony.fika.parser.model.NodeFactory;
+import org.leadpony.fika.core.model.Node;
+import org.leadpony.fika.core.model.NodeFactory;
 
 /**
  * Skeletal implementation of the node containing child nodes.
